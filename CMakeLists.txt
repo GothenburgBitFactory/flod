@@ -46,7 +46,7 @@ set (PACKAGE_STRING "${PACKAGE} ${VERSION}")
 
 add_subdirectory (src)
 
-set (doc_FILES ChangeLog INSTALL AUTHORS COPYING)
+set (doc_FILES ChangeLog AUTHORS COPYING)
 foreach (doc_FILE ${doc_FILES})
   install (FILES ${doc_FILE}  DESTINATION ${FLOD_DOCDIR})
 endforeach (doc_FILE)
