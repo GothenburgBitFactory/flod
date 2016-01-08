@@ -24,12 +24,77 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <cmake.h>
 #include <iostream>
+#include <map>
+#include <string>
+#include <new>
 
-int main (int argc, const char** argv)
+////////////////////////////////////////////////////////////////////////////////
+std::string getConfigFile ()
 {
-  std::cout << "queue\n";
-
-  return 0;
+  // TODO Check $FLODRC.
+  // TODO Find .flodrc.
+  return ".flodrc";
 }
 
+////////////////////////////////////////////////////////////////////////////////
+std::map <std::string, std::string> loadConfigFile (const std::string&)
+{
+  // TODO Load .flodrc.
+  return {};
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool processArgs (int, const char**, std::map <std::string, std::string>)
+{
+  // TODO Process argc, argv.
+  // TODO Apply CLI overrides to .flodrc.
+  return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::string composeUsage ()
+{
+  return "usage\n";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int main (int argc, const char** argv)
+{
+  int status = 0;
+
+  try
+  {
+    auto config = loadConfigFile (getConfigFile ());
+
+    if (processArgs (argc, argv, config))
+    {
+      // TODO Dispatch commands.
+    }
+    else
+      std::cout << composeUsage ();
+  }
+
+  catch (const std::string& error)
+  {
+    std::cerr << error << "\n";
+    status = -1;
+  }
+
+  catch (std::bad_alloc& error)
+  {
+    std::cerr << "Error: Memory allocation failed: " << error.what () << "\n";
+    status = -3;
+  }
+
+  catch (...)
+  {
+    std::cerr << "Error: Unknown error, please report.\n";
+    status = -2;
+  }
+
+  return status;
+}
+
+////////////////////////////////////////////////////////////////////////////////
