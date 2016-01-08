@@ -36,8 +36,28 @@ Post an event.
   $ queue Foo /path/to/event
 
 
+Configuration
+-------------
 
+By default, Flod will use a .flodrc file in the current directory, or traverse
+the filesystem 'upwards' until it finds one, or hits a volume boundary. This
+file can be overridden with the command line:
 
+  $ queue ... --config $FILE
+
+Or with an environment variable:
+
+  FLODRC=$FILE queue ...
+
+Command line override of individual setting:
+
+  $ queue ... --NAME=VALUE
+
+Command line configuration update:
+
+  $ queue config NAME VALUE       # Set NAME to VALUE
+  $ queue config NAME ''          # Set NAME to no value
+  $ queue config NAME             # Delete NAME, reverting to default, if any
 
 
 What is a queue?
@@ -48,9 +68,4 @@ A queue is a directory, in which event files are placed.
     my_queue/*
     my_queue/processing/*
     my_queue/archive/*
-
-
-Configuration
--------------
-
 
