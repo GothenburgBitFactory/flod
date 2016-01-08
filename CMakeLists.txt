@@ -29,12 +29,42 @@ else (_HAS_CXX11)
  message (FATAL_ERROR "C++11 support missing. Try upgrading your C++ compiler. If you have a good reason for using an outdated compiler, please let us know at support@tasktools.org.")
 endif (_HAS_CXX11)
 
-SET (FLOD_MAN3DIR share/man/man1 CACHE STRING "Installation directory for man pages, section 1")
-SET (FLOD_LIBDIR  lib            CACHE STRING "Installation directory for the library")
-SET (FLOD_DOCDIR  share/doc/flod CACHE STRING "Installation directory for doc files")
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+  set (_CXX11_FLAGS "${_CXX11_FLAGS} -stdlib=libc++")
+endif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set (LINUX true)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set (DARWIN true)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "kFreeBSD")
+  set (KFREEBSD true)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+  set (FREEBSD true)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+  set (OPENBSD true)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "NetBSD")
+  set (NETBSD true)
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+  set (SOLARIS true)
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "GNU")
+  set (GNUHURD true)
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "CYGWIN")
+  set (CYGWIN true)
+  # NOTE: Not setting -std=gnu++0x leads to compile errors even with
+  #       GCC 4.8.3, and debugging those leads to insanity. Adding this
+  #       workaround instead of fixing Cygwin.
+  set (_CXX11_FLAGS "-std=gnu++0x")
+else (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  set (UNKNOWN true)
+endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 set (CMAKE_CXX_FLAGS "${_CXX11_FLAGS} ${CMAKE_CXX_FLAGS}")
 set (CMAKE_CXX_FLAGS "-Wall -Wextra -Wsign-compare -Wreturn-type ${CMAKE_CXX_FLAGS}")
+
+SET (FLOD_MAN3DIR share/man/man1 CACHE STRING "Installation directory for man pages, section 1")
+SET (FLOD_LIBDIR  lib            CACHE STRING "Installation directory for the library")
+SET (FLOD_DOCDIR  share/doc/flod CACHE STRING "Installation directory for doc files")
 
 set (PACKAGE "${PROJECT_NAME}")
 set (VERSION "${PROJECT_VERSION}")
@@ -43,6 +73,11 @@ set (PACKAGE_NAME "${PACKAGE}")
 set (PACKAGE_TARNAME "${PACKAGE}")
 set (PACKAGE_VERSION "${VERSION}")
 set (PACKAGE_STRING "${PACKAGE} ${VERSION}")
+
+message ("-- Configuring cmake.h")
+configure_file (
+  ${CMAKE_SOURCE_DIR}/cmake.h.in
+  ${CMAKE_SOURCE_DIR}/cmake.h)
 
 add_subdirectory (src)
 
