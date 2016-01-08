@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8)
 set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
 
 project (flod)
-set (PROJECT_VERSION "1.1.0")
+set (PROJECT_VERSION "2.0.0")
 
 message ("CMAKE_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}")
 
