@@ -83,3 +83,33 @@ When an event file is to be processed, it is moved into the 'my_queue/processing
 directory. On successful completion, it moves into 'my_queue/archive'. On error
 it moves back to 'my_queue'.
 
+
+What is an event file?
+----------------------
+
+An event file is a text file based on RFC2822 [1]. It consists of a set of
+headers KV pairs, and a body. Here is an example:
+
+    name: value<CRLF>                 | header section
+    width: 3<CRLF>                    |
+    <CRLF>
+    body                              | optional body
+
+The header section is a set of KV pairs that comprise the metadata that is in
+every event file.
+
+
+Event File Types
+----------------
+
+There are several types of even files, and the actual header/body contents are
+type-specific, but are independent of the queue system. Instead, event file
+types are described by the direct producers and consumers, which are the hook
+scripts that are attached to queues.
+
+
+References
+----------
+
+[1] RFC2822 - https://tools.ietf.org/html/rfc2822
+
