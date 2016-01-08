@@ -69,3 +69,17 @@ A queue is a directory, in which event files are placed.
     my_queue/processing/*
     my_queue/archive/*
 
+An event file would be composed and written in a work directory, then moved into
+the 'my_queue' directory. It would not be written directly into 'my_queue',
+because that could be processed before the write completes. This means queues
+should be only writable by the owner, which is the user running flod, which will
+prevent this problem.
+
+An event will sit in the queue until it is processed, which is an unspecified
+time, and dependent on whether the queue processor is running. The queue is
+therefore a spool.
+
+When an event file is to be processed, it is moved into the 'my_queue/processing'
+directory. On successful completion, it moves into 'my_queue/archive'. On error
+it moves back to 'my_queue'.
+
