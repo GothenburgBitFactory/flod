@@ -19,6 +19,11 @@ Obtain info about a queue.
 
   $ queue info Foo
 
+Obtain queue stats, clear stats.
+
+  $ queue stats Foo
+  $ queue stats clear Foo
+
 Associate a script with a queue. Will process all outstanding events.
 
   $ queue hook Foo /path/to/script
@@ -106,6 +111,24 @@ There are several types of even files, and the actual header/body contents are
 type-specific, but are independent of the queue system. Instead, event file
 types are described by the direct producers and consumers, which are the hook
 scripts that are attached to queues.
+
+
+Example Usage
+-------------
+
+Create and hook a queue:
+
+  $ queue create Foo /var/queue/foo
+  $ queue hook Foo /path/to/script
+  $ queue stats clear Foo
+
+Launch a queue processor:
+
+  $ queue process Foo
+
+Queue an event file:
+
+  $ queue Foo /path/to/event
 
 
 References
