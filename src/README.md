@@ -1,5 +1,4 @@
-Queue
------
+# Queue
 
 Create a queue in /path/to/queue, and optionally record whether the event
 files are archived. Name the queue Foo, which means it processes Foo events.
@@ -41,8 +40,7 @@ Post an event.
   $ queue Foo /path/to/event
 
 
-Configuration
--------------
+## Configuration
 
 By default, Flod will use a .flodrc file in the current directory, or traverse
 the filesystem 'upwards' until it finds one, or hits a volume boundary. This
@@ -65,8 +63,7 @@ Command line configuration update:
   $ queue config NAME             # Delete NAME, reverting to default, if any
 
 
-What is a queue?
-----------------
+## What is a queue?
 
 A queue is a directory, in which event files are placed.
 
@@ -89,8 +86,7 @@ directory. On successful completion, it moves into 'my_queue/archive'. On error
 it moves back to 'my_queue'.
 
 
-What is an event file?
-----------------------
+## What is an event file?
 
 An event file is a text file based on RFC2822 [1]. It consists of a set of
 headers KV pairs, and a body. Here is an example:
@@ -104,8 +100,7 @@ The header section is a set of KV pairs that comprise the metadata that is in
 every event file.
 
 
-Event File Types
-----------------
+## Event File Types
 
 There are several types of even files, and the actual header/body contents are
 type-specific, but are independent of the queue system. Instead, event file
@@ -113,8 +108,7 @@ types are described by the direct producers and consumers, which are the hook
 scripts that are attached to queues.
 
 
-Example Usage
--------------
+## Example Usage
 
 Create and hook a queue:
 
@@ -131,8 +125,7 @@ Queue an event file:
   $ queue Foo /path/to/event
 
 
-References
-----------
+## References
 
 [1] RFC2822 - https://tools.ietf.org/html/rfc2822
 
