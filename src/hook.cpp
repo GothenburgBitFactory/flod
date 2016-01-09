@@ -34,9 +34,7 @@ int handleHook (
   const char** argv,
   std::map <std::string, std::string>& config)
 {
-  // TODO queue hook Foo         /path/to/script
-  // TODO queue hook Foo success /path/to/script
-  // TODO queue hook Foo failure /path/to/script
+  // TODO queue hook Foo [success | failure] [--scan T] /path/to/script
 
   return 0;
 }
