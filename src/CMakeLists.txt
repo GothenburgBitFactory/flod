@@ -8,6 +8,7 @@ add_executable(queue Q.cpp       Q.h
                      create.cpp
                      destroy.cpp
                      help.cpp
+                     info.cpp
                      queue.cpp
                      version.cpp)
 

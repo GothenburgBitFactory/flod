@@ -35,6 +35,7 @@ int handleVersion ();
 int handleCreate  (int, const char**, std::map <std::string, std::string>&);
 int handleDestroy (int, const char**, std::map <std::string, std::string>&);
 int handleClear   (int, const char**, std::map <std::string, std::string>&);
+int handleInfo    (int, const char**, std::map <std::string, std::string>&);
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
@@ -95,6 +96,7 @@ int main (int argc, const char** argv)
     else if (command == "create")  status = handleCreate  (argc, argv, config);
     else if (command == "destroy") status = handleDestroy (argc, argv, config);
     else if (command == "clear")   status = handleClear   (argc, argv, config);
+    else if (command == "info")    status = handleInfo    (argc, argv, config);
   }
 
   catch (const std::string& error)
