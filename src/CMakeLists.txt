@@ -12,6 +12,7 @@ add_executable(queue Q.cpp       Q.h
                      info.cpp
                      queue.cpp
                      stats.cpp
+                     unhook.cpp
                      version.cpp)
 
 install (TARGETS queue DESTINATION bin)
