@@ -41,7 +41,7 @@ int handleHelp ()
             << "  clear                              <name>            Clears a queue\n"
             << "  info                               <name>            Shows queue details\n"
             << "  stats [reset]                      <name>            Shows or resets queue statistics\n"
-            << "  hook                               <name> <path>     Sets up a queue hook\n"
+            << "  hook [success | failure]           <name> <path>     Sets up a queue hook\n"
             << "  unhook                             <name> <path>     Removes a queue hook\n"
             << "  process [--exit-on-idle] [--max N] <name>            Processes a queue\n"
             << "  post                               <name> <path>     Posts an event to a queue\n"
