@@ -31,7 +31,8 @@
 #include <new>
 
 int handleVersion ();
-int handleCreate (int, const char**, std::map <std::string, std::string>&);
+int handleCreate  (int, const char**, std::map <std::string, std::string>&);
+int handleDestroy (int, const char**, std::map <std::string, std::string>&);
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
@@ -103,6 +104,7 @@ int main (int argc, const char** argv)
          if (command == "help")    std::cout << composeUsage ();
     else if (command == "version") status = handleVersion ();
     else if (command == "create")  status = handleCreate (argc, argv, config);
+    else if (command == "destroy") status = handleDestroy (argc, argv, config);
   }
 
   catch (const std::string& error)
