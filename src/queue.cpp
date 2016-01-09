@@ -39,6 +39,7 @@ int handleInfo    (int, const char**, std::map <std::string, std::string>&);
 int handleStats   (int, const char**, std::map <std::string, std::string>&);
 int handleHook    (int, const char**, std::map <std::string, std::string>&);
 int handleUnhook  (int, const char**, std::map <std::string, std::string>&);
+int handleProcess (int, const char**, std::map <std::string, std::string>&);
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
@@ -103,6 +104,7 @@ int main (int argc, const char** argv)
     else if (command == "stats")   status = handleStats   (argc, argv, config);
     else if (command == "hook")    status = handleHook    (argc, argv, config);
     else if (command == "unhook")  status = handleUnhook  (argc, argv, config);
+    else if (command == "process") status = handleProcess (argc, argv, config);
   }
 
   catch (const std::string& error)
