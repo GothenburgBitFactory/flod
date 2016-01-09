@@ -18,10 +18,10 @@ Obtain info about a queue.
 
   $ queue info Foo
 
-Obtain queue stats, clear stats.
+Obtain queue stats, reset stats.
 
   $ queue stats Foo
-  $ queue stats clear Foo
+  $ queue stats reset Foo
 
 Associate a script with a queue. Will process all outstanding events.
 
