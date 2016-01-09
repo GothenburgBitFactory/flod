@@ -37,11 +37,25 @@ Q::Q ()
 void Q::initialize (const std::string& location)
 {
   _location = location;
+
+  // TODO Create a queue dir if it doesn't exist.
+  // TODO Set file permissions to owner-only.
+  // TODO Create 'active' dir.
+  // TODO Create 'archive' dir.
+  // TODO Create 'failed' dir.
 }
 
-// TODO Create a queue dir if it doesn't exist.
-// TODO Set file permissions to owner-only.
-// TODO Create 'processing' dir.
-// TODO Create 'archive' dir.
+////////////////////////////////////////////////////////////////////////////////
+bool Q::scan (std::string& event)
+{
+  // TODO Scan _location
+  // TODO If item is not in _snapshot
+  //   TODO Add item to snapshot
+  //   TODO event <-- item
+  //   TODO return true
+  // TODO If _snapshot contains missing item
+  //   TODO Remove _snapshot item
+  return false;
+}
 
 ////////////////////////////////////////////////////////////////////////////////

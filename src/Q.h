@@ -28,15 +28,18 @@
 #define INCLUDED_Q
 
 #include <string>
+#include <vector>
 
 class Q
 {
 public:
   Q ();
   void initialize (const std::string&);
+  bool scan (std::string&);
 
 private:
-  std::string _location;
+  std::string               _location;
+  std::vector <std::string> _snapshot;
 };
 
 #endif
