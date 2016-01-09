@@ -41,6 +41,7 @@ int handleHook    (int, const char**, std::map <std::string, std::string>&);
 int handleUnhook  (int, const char**, std::map <std::string, std::string>&);
 int handleProcess (int, const char**, std::map <std::string, std::string>&);
 int handlePost    (int, const char**, std::map <std::string, std::string>&);
+int handleConfig  (int, const char**, std::map <std::string, std::string>&);
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
@@ -107,6 +108,7 @@ int main (int argc, const char** argv)
     else if (command == "unhook")  status = handleUnhook  (argc, argv, config);
     else if (command == "process") status = handleProcess (argc, argv, config);
     else if (command == "post")    status = handlePost    (argc, argv, config);
+    else if (command == "config")  status = handleConfig  (argc, argv, config);
   }
 
   catch (const std::string& error)

@@ -5,6 +5,7 @@ include_directories (${CMAKE_SOURCE_DIR}/src
 
 add_executable(queue Q.cpp       Q.h
                      clear.cpp
+                     config.cpp
                      create.cpp
                      destroy.cpp
                      help.cpp
