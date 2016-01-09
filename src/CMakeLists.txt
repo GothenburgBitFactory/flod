@@ -10,6 +10,7 @@ add_executable(queue Q.cpp       Q.h
                      help.cpp
                      hook.cpp
                      info.cpp
+                     post.cpp
                      process.cpp
                      queue.cpp
                      stats.cpp
