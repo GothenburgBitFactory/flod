@@ -33,8 +33,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
 {
-  // TODO Check $FLODRC.
+  // Check $FLODRC.
+  char* override = getenv ("FLODRC");
+  if (override)
+    return std::string (override);
+
   // TODO Find .flodrc.
+
   return ".flodrc";
 }
 
@@ -46,10 +51,17 @@ std::map <std::string, std::string> loadConfigFile (const std::string&)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool processArgs (int, const char**, std::map <std::string, std::string>)
+bool processArgs (
+  int argc,
+  const char** argv,
+  std::map <std::string, std::string>& config)
 {
   // TODO Process argc, argv.
   // TODO Apply CLI overrides to .flodrc.
+  for (int i = 1; i < argc; ++i)
+  {
+  }
+
   return false;
 }
 
