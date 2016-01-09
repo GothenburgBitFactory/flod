@@ -31,6 +31,7 @@
 #include <new>
 
 int handleVersion ();
+int handleCreate (int, const char**, std::map <std::string, std::string>&);
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
@@ -92,8 +93,9 @@ int main (int argc, const char** argv)
     std::string command;
     if (processArgs (argc, argv, command, config))
     {
-      // TODO Dispatch commands.
-      if (command == "version") status = handleVersion ();
+      // Dispatch commands.
+           if (command == "version") status = handleVersion ();
+      else if (command == "create")  status = handleCreate (argc, argv, config);
     }
     else
       std::cout << composeUsage ();

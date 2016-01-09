@@ -4,8 +4,9 @@ include_directories (${CMAKE_SOURCE_DIR}/src
                      ${CMAKE_SOURCE_DIR}/queue)
 
 add_executable(queue Q.cpp       Q.h
-                     version.cpp
-                     queue.cpp)
+                     create.cpp
+                     queue.cpp
+                     version.cpp)
 
 install (TARGETS queue DESTINATION bin)
 
