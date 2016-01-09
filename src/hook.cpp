@@ -25,24 +25,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
-#include <iostream>
+#include <map>
+#include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
-int handleHelp ()
+int handleHook (
+  int argc,
+  const char** argv,
+  std::map <std::string, std::string>& config)
 {
-  std::cout << "\n"
-            << "usage: queue <command> [<args>]\n"
-            << "\n"
-            << "Command:\n"
-            << "  help                                   Shows usage\n"
-            << "  version                                Display program version\n"
-            << "  create [--noarchive] <name> <path>     Create a queue\n"
-            << "  destroy[--force]     <name>            Destroy a queue\n"
-            << "  clear                <name>            Clears a queue\n"
-            << "  info                 <name>            Shows queue details\n"
-            << "  stats [reset]        <name>            Shows or resets queue statistics\n"
-            << "  hook                 <name> <path>     Sets up a queue hook\n"
-            << "\n";
+  // TODO queue hook Foo /path/to/script
 
   return 0;
 }

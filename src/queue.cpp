@@ -37,6 +37,7 @@ int handleDestroy (int, const char**, std::map <std::string, std::string>&);
 int handleClear   (int, const char**, std::map <std::string, std::string>&);
 int handleInfo    (int, const char**, std::map <std::string, std::string>&);
 int handleStats   (int, const char**, std::map <std::string, std::string>&);
+int handleHook    (int, const char**, std::map <std::string, std::string>&);
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
@@ -99,6 +100,7 @@ int main (int argc, const char** argv)
     else if (command == "clear")   status = handleClear   (argc, argv, config);
     else if (command == "info")    status = handleInfo    (argc, argv, config);
     else if (command == "stats")   status = handleStats   (argc, argv, config);
+    else if (command == "hook")    status = handleHook    (argc, argv, config);
   }
 
   catch (const std::string& error)
