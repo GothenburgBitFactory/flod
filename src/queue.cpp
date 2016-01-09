@@ -30,6 +30,8 @@
 #include <string>
 #include <new>
 
+int handleVersion ();
+
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
 {
@@ -54,15 +56,19 @@ std::map <std::string, std::string> loadConfigFile (const std::string&)
 bool processArgs (
   int argc,
   const char** argv,
+  std::string& command,
   std::map <std::string, std::string>& config)
 {
   // TODO Process argc, argv.
   // TODO Apply CLI overrides to .flodrc.
   for (int i = 1; i < argc; ++i)
   {
+    if (argv[i][0] != '-' &&
+        command == "")
+      command = argv[i];
   }
 
-  return false;
+  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +76,9 @@ std::string composeUsage ()
 {
   return "\n"
          "usage: queue <command> [<args>]\n"
-         "\n";
+         "\n"
+         "Command:\n"
+         "  version           Display program version\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,10 +89,11 @@ int main (int argc, const char** argv)
   try
   {
     auto config = loadConfigFile (getConfigFile ());
-
-    if (processArgs (argc, argv, config))
+    std::string command;
+    if (processArgs (argc, argv, command, config))
     {
       // TODO Dispatch commands.
+      if (command == "version") status = handleVersion ();
     }
     else
       std::cout << composeUsage ();
