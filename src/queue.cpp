@@ -30,6 +30,7 @@
 #include <string>
 #include <new>
 
+int handleHelp ();
 int handleVersion ();
 int handleCreate  (int, const char**, std::map <std::string, std::string>&);
 int handleDestroy (int, const char**, std::map <std::string, std::string>&);
@@ -77,19 +78,6 @@ void processArgs (
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string composeUsage ()
-{
-  return "\n"
-         "usage: queue <command> [<args>]\n"
-         "\n"
-         "Command:\n"
-         "  help                                   Shows usage\n"
-         "  version                                Display program version\n"
-         "  create [--noarchive] <name> <path>     Create a queue\n"
-         "\n";
-}
-
-////////////////////////////////////////////////////////////////////////////////
 int main (int argc, const char** argv)
 {
   int status = 0;
@@ -101,7 +89,7 @@ int main (int argc, const char** argv)
     processArgs (argc, argv, command, config);
 
     // Dispatch commands.
-         if (command == "help")    std::cout << composeUsage ();
+         if (command == "help")    status = handleHelp ();
     else if (command == "version") status = handleVersion ();
     else if (command == "create")  status = handleCreate (argc, argv, config);
     else if (command == "destroy") status = handleDestroy (argc, argv, config);
