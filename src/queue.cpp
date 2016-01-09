@@ -54,13 +54,13 @@ std::map <std::string, std::string> loadConfigFile (const std::string&)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool processArgs (
+void processArgs (
   int argc,
   const char** argv,
   std::string& command,
   std::map <std::string, std::string>& config)
 {
-  command = "help";
+  command = "";
 
   // TODO Process argc, argv.
   // TODO Apply CLI overrides to .flodrc.
@@ -71,7 +71,8 @@ bool processArgs (
       command = argv[i];
   }
 
-  return true;
+  if (command == "")
+    command = "help";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,13 +97,12 @@ int main (int argc, const char** argv)
   {
     auto config = loadConfigFile (getConfigFile ());
     std::string command;
-    if (processArgs (argc, argv, command, config))
-    {
-      // Dispatch commands.
-           if (command == "help")    std::cout << composeUsage ();
-      else if (command == "version") status = handleVersion ();
-      else if (command == "create")  status = handleCreate (argc, argv, config);
-    }
+    processArgs (argc, argv, command, config);
+
+    // Dispatch commands.
+         if (command == "help")    std::cout << composeUsage ();
+    else if (command == "version") status = handleVersion ();
+    else if (command == "create")  status = handleCreate (argc, argv, config);
   }
 
   catch (const std::string& error)
