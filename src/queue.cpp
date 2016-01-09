@@ -60,6 +60,8 @@ bool processArgs (
   std::string& command,
   std::map <std::string, std::string>& config)
 {
+  command = "help";
+
   // TODO Process argc, argv.
   // TODO Apply CLI overrides to .flodrc.
   for (int i = 1; i < argc; ++i)
@@ -79,7 +81,10 @@ std::string composeUsage ()
          "usage: queue <command> [<args>]\n"
          "\n"
          "Command:\n"
-         "  version           Display program version\n";
+         "  help                                   Shows usage\n"
+         "  version                                Display program version\n"
+         "  create [--noarchive] <name> <path>     Create a queue\n"
+         "\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,11 +99,10 @@ int main (int argc, const char** argv)
     if (processArgs (argc, argv, command, config))
     {
       // Dispatch commands.
-           if (command == "version") status = handleVersion ();
+           if (command == "help")    std::cout << composeUsage ();
+      else if (command == "version") status = handleVersion ();
       else if (command == "create")  status = handleCreate (argc, argv, config);
     }
-    else
-      std::cout << composeUsage ();
   }
 
   catch (const std::string& error)

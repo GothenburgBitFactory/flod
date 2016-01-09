@@ -34,6 +34,8 @@ int handleCreate (
   const char** argv,
   std::map <std::string, std::string>& config)
 {
+  // TODO queue create Foo /path/to/queue --[no]archive
+
   return 0;
 }
 
