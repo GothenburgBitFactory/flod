@@ -37,7 +37,7 @@ Process a queue.
 
 Post an event.
 
-  $ queue Foo /path/to/event
+  $ queue post Foo /path/to/event
 
 
 ## Configuration
