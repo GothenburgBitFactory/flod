@@ -7,8 +7,7 @@ files are archived. Name the queue Foo, which means it processes Foo events.
 
 Destroy a queue in /path/to/queue.
 
-  $ queue destroy Foo
-  $ queue destroy Foo --force
+  $ queue destroy Foo [--force]
 
 Flush a queue by archiving or deleting its events.
 
@@ -25,7 +24,7 @@ Obtain queue stats, reset stats.
 
 Associate a script with a queue. Will process all outstanding events.
 
-  $ queue hook Foo /path/to/script
+  $ queue hook Foo /path/to/script [--scan 60]
   $ queue hook Foo success /path/to/script
   $ queue hook Foo failure /path/to/script
 
