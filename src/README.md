@@ -26,6 +26,8 @@ Obtain queue stats, reset stats.
 Associate a script with a queue. Will process all outstanding events.
 
   $ queue hook Foo /path/to/script
+  $ queue hook Foo success /path/to/script
+  $ queue hook Foo failure /path/to/script
 
 Disassociate a script from a queue. Will abandon all outstanding events.
 
@@ -68,22 +70,22 @@ Command line configuration update:
 A queue is a directory, in which event files are placed.
 
     my_queue/*
-    my_queue/processing/*
+    my_queue/active/*
     my_queue/archive/*
+    my_queue/failed/*
 
-An event file would be composed and written in a work directory, then moved into
-the 'my_queue' directory. It would not be written directly into 'my_queue',
-because that could be processed before the write completes. This means queues
-should be only writable by the owner, which is the user running flod, which will
-prevent this problem.
+An event file is composed and written in a work directory, then moved into the
+'my_queue' directory. It is not written directly into 'my_queue', which could
+mean it is processed before the write completes. Queues are only writable by
+the owner, which is the user running flod.
 
-An event will sit in the queue until it is processed, which is an unspecified
-time, and dependent on whether the queue processor is running. The queue is
-therefore a spool.
+An event will sit in the queue until it is processed, which is dependent on
+whether the queue processor is running and whether the queue is hooked. The
+queue is therefore a spool.
 
-When an event file is to be processed, it is moved into the 'my_queue/processing'
+When an event file is processed, it is moved into the 'my_queue/active'
 directory. On successful completion, it moves into 'my_queue/archive'. On error
-it moves back to 'my_queue'.
+it moves to 'my_queue/failed'.
 
 
 ## What is an event file?
