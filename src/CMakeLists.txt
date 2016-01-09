@@ -10,6 +10,7 @@ add_executable(queue Q.cpp       Q.h
                      help.cpp
                      info.cpp
                      queue.cpp
+                     stats.cpp
                      version.cpp)
 
 install (TARGETS queue DESTINATION bin)

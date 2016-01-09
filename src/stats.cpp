@@ -25,23 +25,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
-#include <iostream>
+#include <map>
+#include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
-int handleHelp ()
+int handleStats (
+  int argc,
+  const char** argv,
+  std::map <std::string, std::string>& config)
 {
-  std::cout << "\n"
-            << "usage: queue <command> [<args>]\n"
-            << "\n"
-            << "Command:\n"
-            << "  help                                   Shows usage\n"
-            << "  version                                Display program version\n"
-            << "  create [--noarchive] <name> <path>     Create a queue\n"
-            << "  destroy[--force]     <name>            Destroy a queue\n"
-            << "  clear                <name>            Clears a queue\n"
-            << "  info                 <name>            Shows queue details\n"
-            << "  stats [reset]        <name>            Shows or resets queue statistics\n"
-            << "\n";
+  // TODO queue stats [reset] Foo
 
   return 0;
 }
