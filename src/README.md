@@ -3,7 +3,7 @@
 Create a queue in /path/to/queue, and optionally record whether the event
 files are archived. Name the queue Foo, which means it processes Foo events.
 
-  $ queue create Foo [--path /path/to/queue] --[no]archive
+  $ queue create Foo /path/to/queue --[no]archive
 
 Destroy a queue in /path/to/queue.
 
