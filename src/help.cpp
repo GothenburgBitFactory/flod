@@ -37,7 +37,7 @@ int handleHelp ()
             << "  help                                                  Shows usage\n"
             << "  version                                               Display program version\n"
             << "  create [--noarchive]                <name> <path>     Create a queue\n"
-            << "  destroy[--force]                    <name>            Destroy a queue\n"
+            << "  destroy [--force]                   <name>            Destroy a queue\n"
             << "  clear                               <name>            Clears a queue\n"
             << "  info                                <name>            Shows queue details\n"
             << "  stats [reset]                       <name>            Shows or resets queue statistics\n"
