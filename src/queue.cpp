@@ -109,6 +109,11 @@ int main (int argc, const char** argv)
     else if (command == "process") status = handleProcess (argc, argv, config);
     else if (command == "post")    status = handlePost    (argc, argv, config);
     else if (command == "config")  status = handleConfig  (argc, argv, config);
+    else
+    {
+      std::cerr << "Urecognized command '" << command << "'\n";
+      status = handleHelp ();
+    }
   }
 
   catch (const std::string& error)
