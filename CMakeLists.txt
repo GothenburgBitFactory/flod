@@ -29,6 +29,9 @@ ExternalProject_Add (common-1.0
                      )
 
 add_subdirectory (src)
+if (EXISTS ${CMAKE_SOURCE_DIR}/test)
+  add_subdirectory (test EXCLUDE_FROM_ALL)
+endif (EXISTS ${CMAKE_SOURCE_DIR}/test)
 
 set (doc_FILES ChangeLog AUTHORS COPYING)
 foreach (doc_FILE ${doc_FILES})
