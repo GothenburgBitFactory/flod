@@ -5,3 +5,4 @@ cmake_install.cmake
 CPackConfig.cmake
 CPackSourceConfig.cmake
 cmake.h
+common-1.0-prefix
