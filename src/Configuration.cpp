@@ -81,6 +81,8 @@ void Configuration::parse (const std::string& input, int nest /* = 1 */)
       {
         std::string key   = trim (line.substr (0, equal));
         std::string value = trim (line.substr (equal+1, line.length () - equal));
+
+        (*this)[key] = jsonDecode (value);
       }
       else
       {
