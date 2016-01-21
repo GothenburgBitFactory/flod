@@ -77,7 +77,7 @@ bool Q::destroy (bool force)
              item.name != "archive" ||
              item.name != "failed")
     {
-      throw std::string {"Cannot remove queue - there are ㄡnrecognized contents."};
+      throw std::string {"Cannot remove queue - there are unrecognized contents."};
     }
   }
 
