@@ -28,14 +28,47 @@
 #include <Configuration.h>
 #include <map>
 #include <string>
+#include <cstring>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
+// queue destroy Foo [--force]
 int handleDestroy (
   int argc,
   const char** argv,
   Configuration& config)
 {
-  // TODO queue destroy Foo [--force]
+  // Process arguments.
+  std::string name = "";
+  bool force = false;
+  for (int i = 2; i < argc; ++i)
+  {
+    std::cout << "# argv[" << i << "] " << argv[i] << "\n";
+
+    if (argv[i][0] == '-')
+    {
+      if (! strcmp (argv[i], "--force"))
+        force = true;
+    }
+    else
+    {
+      if (name == "")
+        name = argv[i];
+    }
+  }
+
+  // Validate arguments.
+  if (name == "")
+    throw std::string ("Queue name required.");
+
+  // Execute command.
+  std::cout << "# queue destroying "
+            << name
+            << (force ? " using force" : "")
+            << ".\n";
+
+  // TODO Destroy queue.
+  // TODO Update config details.
 
   return 0;
 }
