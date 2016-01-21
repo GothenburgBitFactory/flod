@@ -35,13 +35,21 @@ int main (int, char**)
   t.skip ("No tests");
 
   // TODO Temporary testing.
-  Q q;
-  q.create ("./myq");
-  std::string event;
-  if (q.scan (event))
-    t.diag ("Event: " + event);
-  q.destroy ();
-  q.destroy (true);
+  try
+  {
+    Q q;
+    q.create ("./myq");
+    std::string event;
+    if (q.scan (event))
+      t.diag ("Event: " + event);
+    //q.destroy ();
+    //q.destroy (true);
+  }
+
+  catch (std::string& e)
+  {
+    t.diag (e);
+  }
 
   return 0;
 }
