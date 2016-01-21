@@ -31,7 +31,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Create the queue directories, if they do not already exist.
 // Set file permissions to owner-only.
-void Q::initialize (const std::string& location)
+void Q::create (const std::string& location)
 {
   _location = location;
 
@@ -58,7 +58,11 @@ void Q::initialize (const std::string& location)
 ////////////////////////////////////////////////////////////////////////////////
 bool Q::scan (std::string& event)
 {
+  // Record 'before' state, for comparison.
+  auto before = _snapshot;
+
   // TODO Scan _location
+
   // TODO If item is not in _snapshot
   //   TODO Add item to snapshot
   //   TODO event <-- item

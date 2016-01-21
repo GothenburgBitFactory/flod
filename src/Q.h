@@ -34,7 +34,7 @@ class Q
 {
 public:
   Q () {};
-  void initialize (const std::string&);
+  void create (const std::string&);
   bool scan (std::string&);
 
 private:
