@@ -42,20 +42,13 @@ void Q::create (const std::string& location)
   if (! base.exists ())
     base.create (0700);
 
-  Directory active (base);
-  active += "active";
-  if (! active.exists ())
-    active.create (0700);
-
-  Directory archive (base);
-  archive += "archive";
-  if (! archive.exists ())
-    archive.create (0700);
-
-  Directory failed (base);
-  failed += "failed";
-  if (! failed.exists ())
-    failed.create (0700);
+  for (const auto& item : structure)
+  {
+    Directory dir {base};
+    dir += item;
+    if (! dir.exists ())
+      dir.create (0700);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,9 +66,7 @@ bool Q::destroy (bool force)
       if (! force)
         throw std::string {"Cannot remove queue that is not empty.  Use '--force'."};
     }
-    else if (item.name != "active" ||
-             item.name != "archive" ||
-             item.name != "failed")
+    else if (std::find (structure.begin (), structure.end (), item.name ()) == structure.end ())
     {
       throw std::string {"Cannot remove queue - there are unrecognized contents."};
     }
