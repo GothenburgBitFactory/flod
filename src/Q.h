@@ -35,6 +35,7 @@ class Q
 public:
   Q () {};
   void create (const std::string&);
+  bool destroy (bool force = false);
   bool scan (std::string&);
 
 private:

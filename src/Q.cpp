@@ -56,6 +56,16 @@ void Q::create (const std::string& location)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool Q::destroy (bool force)
+{
+  // TODO Scan for contents.
+  // TODO If there are contents, and !force, fail.
+  // TODO Recursively remove queue.
+
+  return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 bool Q::scan (std::string& event)
 {
   // Record 'before' state, for comparison.
