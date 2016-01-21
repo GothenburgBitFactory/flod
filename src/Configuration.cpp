@@ -141,6 +141,17 @@ double Configuration::getReal (const std::string& key)
 ////////////////////////////////////////////////////////////////////////////////
 bool Configuration::getBoolean (const std::string& key)
 {
+  if ((*this).find (key) != (*this).end ())
+  {
+    std::string value = lowerCase ((*this)[key]);
+    if (value == "true"   ||
+        value == "1"      ||
+        value == "y"      ||
+        value == "yes"    ||
+        value == "on")
+      return true;
+  }
+
   return false;
 }
 
