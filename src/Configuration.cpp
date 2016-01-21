@@ -78,6 +78,48 @@ bool setVariableInFile (
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool unsetVariableInFile (
+  const std::string& file,
+  const std::string& name)
+{
+  // Read configuration file.
+  std::vector <std::string> contents;
+  File::read (file, contents);
+
+  bool found = false;
+  bool change = false;
+
+  for (auto line = contents.begin (); line != contents.end (); )
+  {
+    bool lineDeleted = false;
+
+    // If there is a comment on the line, it must follow the pattern.
+    auto comment = line->find ("#");
+    auto pos     = line->find (name + "=");
+
+    if (pos != std::string::npos &&
+        (comment == std::string::npos ||
+         comment > pos))
+    {
+      found = true;
+
+      // vector::erase method returns a valid iterator to the next object
+      line = contents.erase (line);
+      lineDeleted = true;
+      change = true;
+    }
+
+    if (! lineDeleted)
+      line++;
+  }
+
+  if (change)
+    File::write (file, contents);
+
+  return change;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Read the Configuration file and populate the *this map.  The file format is
 // simply lines with name=value pairs.  Whitespace between name, = and value is
 // not tolerated, but blank lines and comments starting with # are allowed.
