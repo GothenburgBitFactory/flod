@@ -74,8 +74,8 @@ bool Q::scan (std::string& event)
   auto before = _snapshot;
 
   // TODO Scan _location
-  Directory queued (_location);
-  for (const auto& entry : queued.list ())
+  Directory events (_location);
+  for (const auto& entry : events.list ())
   {
     if (! Path (entry).is_directory ())
     {
@@ -87,6 +87,9 @@ bool Q::scan (std::string& event)
       //   TODO return true
       // TODO If _snapshot contains missing item
       //   TODO Remove _snapshot item
+
+      event = entry;
+      return true;
     }
   }
 
