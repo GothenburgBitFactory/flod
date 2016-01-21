@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
+#include <Configuration.h>
 #include <map>
 #include <string>
 
@@ -32,7 +33,7 @@
 int handleUnhook (
   int argc,
   const char** argv,
-  std::map <std::string, std::string>& config)
+  Configuration& config)
 {
   // TODO queue unhook Foo /path/to/script
 

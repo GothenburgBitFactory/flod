@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
+#include <Configuration.h>
 #include <iostream>
 #include <map>
 #include <string>
@@ -32,16 +33,16 @@
 
 int handleHelp ();
 int handleVersion ();
-int handleCreate  (int, const char**, std::map <std::string, std::string>&);
-int handleDestroy (int, const char**, std::map <std::string, std::string>&);
-int handleClear   (int, const char**, std::map <std::string, std::string>&);
-int handleInfo    (int, const char**, std::map <std::string, std::string>&);
-int handleStats   (int, const char**, std::map <std::string, std::string>&);
-int handleHook    (int, const char**, std::map <std::string, std::string>&);
-int handleUnhook  (int, const char**, std::map <std::string, std::string>&);
-int handleProcess (int, const char**, std::map <std::string, std::string>&);
-int handlePost    (int, const char**, std::map <std::string, std::string>&);
-int handleConfig  (int, const char**, std::map <std::string, std::string>&);
+int handleCreate  (int, const char**, Configuration&);
+int handleDestroy (int, const char**, Configuration&);
+int handleClear   (int, const char**, Configuration&);
+int handleInfo    (int, const char**, Configuration&);
+int handleStats   (int, const char**, Configuration&);
+int handleHook    (int, const char**, Configuration&);
+int handleUnhook  (int, const char**, Configuration&);
+int handleProcess (int, const char**, Configuration&);
+int handlePost    (int, const char**, Configuration&);
+int handleConfig  (int, const char**, Configuration&);
 
 ////////////////////////////////////////////////////////////////////////////////
 std::string getConfigFile ()
@@ -57,18 +58,11 @@ std::string getConfigFile ()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::map <std::string, std::string> loadConfigFile (const std::string&)
-{
-  // TODO Load .flodrc.
-  return {};
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void processArgs (
   int argc,
   const char** argv,
   std::string& command,
-  std::map <std::string, std::string>& config)
+  Configuration& config)
 {
   command = "";
 
@@ -92,7 +86,9 @@ int main (int argc, const char** argv)
 
   try
   {
-    auto config = loadConfigFile (getConfigFile ());
+    Configuration config;
+    config.load (getConfigFile ());
+
     std::string command;
     processArgs (argc, argv, command, config);
 
