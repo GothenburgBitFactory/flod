@@ -37,12 +37,12 @@ int main (int, char**)
   Args a1;
   a1.limitPositionals (2);
   a1.addOption ("option1");
-  a1.addOption ("option2");
+  a1.addOption ("option2", true);
   a1.addOption ("option3", true);
   a1.addNamed ("named1");
   a1.addNamed ("named2");
   a1.addNamed ("named3", "default");
-  const char* argv1[] = {"binary", "-option1", "--option2", "--named1", "value1", "pos1", "--named2", "value2", "pos2"};
+  const char* argv1[] = {"binary", "-option1", "--nooption2", "--named1", "value1", "pos1", "--named2", "value2", "pos2"};
   a1.scan (9, argv1);
   t.diag (a1.dump ());
 
@@ -51,7 +51,7 @@ int main (int, char**)
   t.is (a1.getPositional (1), "pos2",      "Args --> positional[1] 'pos2'");
 
   t.is (a1.getOption ("option1"), true,    "Args --> option1 'true'");
-  t.is (a1.getOption ("option2"), true,    "Args --> option2 'true'");
+  t.is (a1.getOption ("option2"), false,   "Args --> option2 'false'");
   t.is (a1.getOption ("option3"), true,    "Args --> option3 'true'");
 
   t.is (a1.getNamed ("named1"), "value1",  "Args --> named1 'value1'");
