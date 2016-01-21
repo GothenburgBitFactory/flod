@@ -26,6 +26,7 @@
 
 #include <cmake.h>
 #include <Configuration.h>
+#include <Args.h>
 #include <map>
 #include <string>
 #include <cstring>
@@ -38,48 +39,46 @@ int handleCreate (
   const char** argv,
   Configuration& config)
 {
-  // Process arguments.
-  std::string name = "";
-  std::string path = "";
-  bool archive = true;
-  for (int i = 2; i < argc; ++i)
+  // Process arguments;
+  Args args;
+  args.limitPositionals (3);         // queue <name> <location>
+  args.addOption ("archive", true);  // [--[no]archive]
+  args.scan (argc, argv);
+
+  if (args.getPositionalCount () == 3)
   {
-    std::cout << "# argv[" << i << "] " << argv[i] << "\n";
+    auto archive = args.getOption ("archive");
+    auto command = args.getPositional (0);
+    auto name    = args.getPositional (1);
+    auto path    = args.getPositional (2);
 
-    if (argv[i][0] == '-')
-    {
-      if (! strcmp (argv[i], "--archive"))
-        archive = true;
-      else if (! strcmp (argv[i], "--noarchive"))
-        archive = false;
-    }
-    else
-    {
-      if (name == "")
-        name = argv[i];
-      else
-        path = argv[i];
-    }
+    // Validate arguments.
+    if (name == "")
+      throw std::string ("Queue name required.");
+
+    if (path == "")
+      throw std::string ("Queue location required.");
+
+    // Execute command.
+    std::cout << "# queue creating "
+              << name
+              << " at location "
+              << path
+              << " with "
+              << (archive ? "" : "no ")
+              << "archiving.\n";
+
+    // TODO Store config details.
+    // TODO Create queue.
   }
-
-  // Validate arguments.
-  if (name == "")
-    throw std::string ("Queue name required.");
-
-  if (path == "")
+  else if (args.getPositionalCount () == 2)
     throw std::string ("Queue location required.");
 
-  // Execute command.
-  std::cout << "# queue creating "
-            << name
-            << " at location "
-            << path
-            << " with "
-            << (archive ? "" : "no ")
-            << "archiving.\n";
+  else if (args.getPositionalCount () == 1)
+    throw std::string ("Queue name required.");
 
-  // TODO Store config details.
-  // TODO Create queue.
+  else
+    throw std::string ("queue create [--[no]archive] <name> <location>");
 
   return 0;
 }
