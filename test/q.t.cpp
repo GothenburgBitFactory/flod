@@ -33,6 +33,16 @@ int main (int, char**)
 {
   UnitTest t (1);
   t.skip ("No tests");
+
+  // TODO Temporary testing.
+  Q q;
+  q.create ("./myq");
+  std::string event;
+  if (q.scan (event))
+    t.diag ("Event: " + event);
+  q.destroy ();
+  q.destroy (true);
+
   return 0;
 }
 
