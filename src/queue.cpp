@@ -66,13 +66,14 @@ void processArgs (
 {
   command = "";
 
-  // TODO Process argc, argv.
-  // TODO Apply CLI overrides to .flodrc.
+  // Simply scan argv, looking for the first non-binary, non-option arg, and
+  // assume what it finds is a command.
   for (int i = 1; i < argc; ++i)
   {
-    if (argv[i][0] != '-' &&
-        command == "")
+    if (argv[i][0] != '-' && command == "")
       command = argv[i];
+
+    // TODO Apply CLI overrides to configuration.
   }
 
   if (command == "")
