@@ -49,6 +49,8 @@ public:
   void set (const std::string&, const std::string&);
   std::vector <std::string> all () const;
 
+  std::string file () const;
+
 private:
   File _original_file {};
 };
