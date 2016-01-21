@@ -63,6 +63,13 @@ void Args::scan (int argc, const char** argv)
         _options[name] = true;
       }
 
+      // Recognized option, but reversed.
+      else if (name.find ("no") == 0 &&
+               _options.find (name.substr (2)) != _options.end ())
+      {
+        _options[name.substr (2)] = false;
+      }
+
       // Recognized named arg.
       else if (_named.find (name) != _named.end ())
       {
