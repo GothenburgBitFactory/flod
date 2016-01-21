@@ -25,29 +25,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
-#include <iostream>
+#include <Configuration.h>
+#include <map>
+#include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
-int handleHelp ()
+int handleRetry (
+  int argc,
+  const char** argv,
+  Configuration& config)
 {
-  std::cout << "\n"
-            << "usage: queue <command> [<args>]\n"
-            << "\n"
-            << "Command:\n"
-            << "  help                                                  Shows usage\n"
-            << "  version                                               Display program version\n"
-            << "  create [--noarchive]                <name> <path>     Create a queue\n"
-            << "  destroy [--force]                   <name>            Destroy a queue\n"
-            << "  clear                               <name>            Clears a queue\n"
-            << "  retry                               <name>            Retries failed events\n"
-            << "  info                                <name>            Shows queue details\n"
-            << "  stats [reset]                       <name>            Shows or resets queue statistics\n"
-            << "  hook [success | failure] [--scan T] <name> <path>     Sets up a queue hook\n"
-            << "  unhook                              <name> <path>     Removes a queue hook\n"
-            << "  process [--exit-on-idle] [--max N]  <name>            Processes a queue\n"
-            << "  post                                <name> <path>     Posts an event to a queue\n"
-            << "  config                              <name> [<value>]  Sets, clears and defaults configuration\n"
-            << "\n";
+  // TODO queue retry Foo
 
   return 0;
 }

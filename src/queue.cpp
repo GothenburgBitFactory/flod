@@ -36,6 +36,7 @@ int handleVersion ();
 int handleCreate  (int, const char**, Configuration&);
 int handleDestroy (int, const char**, Configuration&);
 int handleClear   (int, const char**, Configuration&);
+int handleRetry   (int, const char**, Configuration&);
 int handleInfo    (int, const char**, Configuration&);
 int handleStats   (int, const char**, Configuration&);
 int handleHook    (int, const char**, Configuration&);
@@ -115,6 +116,7 @@ int main (int argc, const char** argv)
     else if (command == "create")  status = handleCreate  (argc, argv, config);
     else if (command == "destroy") status = handleDestroy (argc, argv, config);
     else if (command == "clear")   status = handleClear   (argc, argv, config);
+    else if (command == "retry")   status = handleRetry   (argc, argv, config);
     else if (command == "info")    status = handleInfo    (argc, argv, config);
     else if (command == "stats")   status = handleStats   (argc, argv, config);
     else if (command == "hook")    status = handleHook    (argc, argv, config);

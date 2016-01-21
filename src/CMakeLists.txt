@@ -14,6 +14,7 @@ set (flod_SRCS Configuration.cpp Configuration.h
                info.cpp
                post.cpp
                process.cpp
+               retry.cpp
                stats.cpp
                unhook.cpp
                version.cpp)
