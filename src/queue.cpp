@@ -52,9 +52,20 @@ std::string getConfigFile ()
   if (override)
     return std::string (override);
 
-  // TODO Find .flodrc.
+  // Discover .flodrc between $PWD and directories above, excluding /.
+  Directory d {Directory::cwd ()};
+  do
+  {
+    File config (d._data + "/.flodrc");
+    if (config.exists () &&
+        ! config.is_directory ())
+      return config._data;
+  }
+  while (d._data != "/" &&
+         d.up ());
 
-  return ".flodrc";
+  // Could not find .flodrc, assuming home dir.
+  return "~/.flodrc";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
