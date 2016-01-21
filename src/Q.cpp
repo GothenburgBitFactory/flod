@@ -26,17 +26,33 @@
 
 #include <cmake.h>
 #include <Q.h>
+#include <FS.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+// Create the queue directories, if they do not already exist.
+// Set file permissions to owner-only.
 void Q::initialize (const std::string& location)
 {
   _location = location;
 
-  // TODO Create a queue dir if it doesn't exist.
-  // TODO Set file permissions to owner-only.
-  // TODO Create 'active' dir.
-  // TODO Create 'archive' dir.
-  // TODO Create 'failed' dir.
+  Directory base (_location);
+  if (! base.exists ())
+    base.create (0700);
+
+  Directory active (base);
+  active += "active";
+  if (! active.exists ())
+    active.create (0700);
+
+  Directory archive (base);
+  archive += "archive";
+  if (! archive.exists ())
+    archive.create (0700);
+
+  Directory failed (base);
+  failed += "failed";
+  if (! failed.exists ())
+    failed.create (0700);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
