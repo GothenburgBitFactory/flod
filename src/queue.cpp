@@ -26,6 +26,7 @@
 
 #include <cmake.h>
 #include <Configuration.h>
+#include <text.h>
 #include <iostream>
 #include <map>
 #include <string>
@@ -110,20 +111,29 @@ int main (int argc, const char** argv)
     std::string command;
     processArgs (argc, argv, command, config);
 
-    // Dispatch commands.
-         if (command == "help")    status = handleHelp    ();
-    else if (command == "version") status = handleVersion ();
-    else if (command == "create")  status = handleCreate  (argc, argv, config);
-    else if (command == "destroy") status = handleDestroy (argc, argv, config);
-    else if (command == "clear")   status = handleClear   (argc, argv, config);
-    else if (command == "retry")   status = handleRetry   (argc, argv, config);
-    else if (command == "info")    status = handleInfo    (argc, argv, config);
-    else if (command == "stats")   status = handleStats   (argc, argv, config);
-    else if (command == "hook")    status = handleHook    (argc, argv, config);
-    else if (command == "unhook")  status = handleUnhook  (argc, argv, config);
-    else if (command == "process") status = handleProcess (argc, argv, config);
-    else if (command == "post")    status = handlePost    (argc, argv, config);
-    else if (command == "config")  status = handleConfig  (argc, argv, config);
+    std::vector <std::string> matches;
+    if (autoComplete (command,
+                      {"help", "version", "create", "destroy", "clear", "retry",
+                       "info", "stats", "hook", "unhook", "process", "config"},
+                      matches) == 1)
+    {
+      command = matches[0];
+
+      // Dispatch commands.
+           if (command == "help")    status = handleHelp    ();
+      else if (command == "version") status = handleVersion ();
+      else if (command == "create")  status = handleCreate  (argc, argv, config);
+      else if (command == "destroy") status = handleDestroy (argc, argv, config);
+      else if (command == "clear")   status = handleClear   (argc, argv, config);
+      else if (command == "retry")   status = handleRetry   (argc, argv, config);
+      else if (command == "info")    status = handleInfo    (argc, argv, config);
+      else if (command == "stats")   status = handleStats   (argc, argv, config);
+      else if (command == "hook")    status = handleHook    (argc, argv, config);
+      else if (command == "unhook")  status = handleUnhook  (argc, argv, config);
+      else if (command == "process") status = handleProcess (argc, argv, config);
+      else if (command == "post")    status = handlePost    (argc, argv, config);
+      else if (command == "config")  status = handleConfig  (argc, argv, config);
+    }
     else
     {
       std::cerr << "Urecognized command '" << command << "'\n";
