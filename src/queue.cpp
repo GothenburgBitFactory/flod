@@ -45,6 +45,11 @@ int handlePost    (int, const char**, Configuration&);
 int handleConfig  (int, const char**, Configuration&);
 
 ////////////////////////////////////////////////////////////////////////////////
+// The $FLODRC environment variable overrides all.
+// The whole path between $PWD and one level below / is scanned.
+// If not found, assumes ~/.flodrc.
+//
+// Note: This is expensive, and performed only once.
 std::string getConfigFile ()
 {
   // Check $FLODRC.
