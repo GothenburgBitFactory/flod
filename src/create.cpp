@@ -28,14 +28,58 @@
 #include <Configuration.h>
 #include <map>
 #include <string>
+#include <cstring>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
+// queue create Foo /path/to/queue --[no]archive
 int handleCreate (
   int argc,
   const char** argv,
   Configuration& config)
 {
-  // TODO queue create Foo /path/to/queue --[no]archive
+  // Process arguments.
+  std::string name = "";
+  std::string path = "";
+  bool archive = true;
+  for (int i = 2; i < argc; ++i)
+  {
+    std::cout << "# argv[" << i << "] " << argv[i] << "\n";
+
+    if (argv[i][0] == '-')
+    {
+      if (! strcmp (argv[i], "--archive"))
+        archive = true;
+      else if (! strcmp (argv[i], "--noarchive"))
+        archive = false;
+    }
+    else
+    {
+      if (name == "")
+        name = argv[i];
+      else
+        path = argv[i];
+    }
+  }
+
+  // Validate arguments.
+  if (name == "")
+    throw std::string ("Queue name required.");
+
+  if (path == "")
+    throw std::string ("Queue location required.");
+
+  // Execute command.
+  std::cout << "# queue creating "
+            << name
+            << " at location "
+            << path
+            << " with "
+            << (archive ? "" : "no ")
+            << "archiving.\n";
+
+  // TODO Store config details.
+  // TODO Create queue.
 
   return 0;
 }
