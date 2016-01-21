@@ -26,6 +26,7 @@
 
 #include <cmake.h>
 #include <Args.h>
+#include <text.h>
 #include <sstream>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,11 +55,7 @@ void Args::scan (int argc, const char** argv)
     // Is an option or named arg.
     if (argv[i][0] == '-')
     {
-      std::string name;
-      if (argv[i][1] == '-')
-        name = std::string (argv[i]).substr (2);
-      else
-        name = std::string (argv[i]).substr (1);
+      auto name = ltrim (argv[i], "-");
 
       // Recognized option.
       if (_options.find (name) != _options.end ())
