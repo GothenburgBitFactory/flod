@@ -27,6 +27,7 @@
 #include <cmake.h>
 #include <Q.h>
 #include <FS.h>
+#include <iostream> // TODO Remove
 
 ////////////////////////////////////////////////////////////////////////////////
 // Create the queue directories, if they do not already exist.
@@ -66,19 +67,29 @@ bool Q::destroy (bool force)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Scans the queue for new events
 bool Q::scan (std::string& event)
 {
   // Record 'before' state, for comparison.
   auto before = _snapshot;
 
   // TODO Scan _location
+  Directory queued (_location);
+  for (const auto& entry : queued.list ())
+  {
+    if (! Path (entry).is_directory ())
+    {
+      std::cout << "# Q::scan " << entry << "\n";
 
-  // TODO If item is not in _snapshot
-  //   TODO Add item to snapshot
-  //   TODO event <-- item
-  //   TODO return true
-  // TODO If _snapshot contains missing item
-  //   TODO Remove _snapshot item
+      // TODO If item is not in _snapshot
+      //   TODO Add item to snapshot
+      //   TODO event <-- item
+      //   TODO return true
+      // TODO If _snapshot contains missing item
+      //   TODO Remove _snapshot item
+    }
+  }
+
   return false;
 }
 
