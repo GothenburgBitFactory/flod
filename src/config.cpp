@@ -27,6 +27,7 @@
 #include <cmake.h>
 #include <Configuration.h>
 #include <Args.h>
+#include <text.h>
 #include <map>
 #include <string>
 #include <iostream>
@@ -40,7 +41,7 @@ int handleConfig (
   // Process arguments;
   Args args;
   args.limitPositionals (3);         // config <name> [<value>]
-  args.addOption ("force");          // [--[no]force]
+  args.addOption ("force", false);   // [--[no]force]
   args.scan (argc, argv);
 
   if (args.getPositionalCount () == 0)
@@ -60,9 +61,16 @@ int handleConfig (
   // queue config <anme>
   if (args.getPositionalCount () == 2)
   {
-    // TODO Delete name from config.
-
-    std::cout << "# config deleting '" << name << "'\n";
+    if (force ||
+        confirm ("Please confirm that you wish to remove '" + name + "'"))
+    {
+      if (unsetVariableInFile (config.file (), name))
+        std::cout << "Removed '" << name << "'.\n";
+      else
+        std::cout << "No changes necessary.\n";
+    }
+    else
+      std::cout << "No confirmation. No changes made.\n";
   }
 
   // queue config <name> <value>
@@ -70,8 +78,16 @@ int handleConfig (
   {
     auto value = args.getPositional (2);
 
-    // TODO Set name = value in config.
-    std::cout << "# config setting '" << name << "' to '" << value << "'\n";
+    if (force ||
+        confirm ("Please confirm that you wish to set '" + name + "' to a value of '" + value + "'"))
+    {
+      if (setVariableInFile (config.file (), name, value))
+        std::cout << "Modified '" << name << "' to have value '" << value << "'.\n";
+      else
+        std::cout << "No changes necessary.\n";
+    }
+    else
+      std::cout << "No confirmation. No changes made.\n";
   }
 
   return 0;
