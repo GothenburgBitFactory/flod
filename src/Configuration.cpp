@@ -32,6 +32,52 @@
 #include <text.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+bool setVariableInFile (
+  const std::string& file,
+  const std::string& name,
+  const std::string& value)
+{
+  // Read the file contents.
+  std::vector <std::string> contents;
+  File::read (file, contents);
+
+  bool found = false;
+  bool change = false;
+
+  for (auto& line : contents)
+  {
+    // If there is a comment on the line, it must follow the pattern.
+    auto comment = line.find ("#");
+    auto pos     = line.find (name + "=");
+
+    if (pos != std::string::npos &&
+        (comment == std::string::npos ||
+         comment > pos))
+    {
+      found = true;
+      if (comment != std::string::npos)
+        line = name + "=" + jsonEncode (value) + " " + line.substr (comment);
+      else
+        line = name + "=" + jsonEncode (value);
+
+      change = true;
+    }
+  }
+
+  // Not found, so append instead.
+  if (!found)
+  {
+    contents.push_back (name + "=" + jsonEncode (value));
+    change = true;
+  }
+
+  if (change)
+    File::write (file, contents);
+
+  return change;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Read the Configuration file and populate the *this map.  The file format is
 // simply lines with name=value pairs.  Whitespace between name, = and value is
 // not tolerated, but blank lines and comments starting with # are allowed.

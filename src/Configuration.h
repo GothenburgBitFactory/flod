@@ -32,6 +32,8 @@
 #include <string>
 #include <FS.h>
 
+bool setVariableInFile   (const std::string&, const std::string&, const std::string&);
+
 class Configuration : public std::map <std::string, std::string>
 {
 public:
