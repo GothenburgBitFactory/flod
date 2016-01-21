@@ -46,7 +46,7 @@ int handleHelp ()
             << "  unhook                              <name> <path>     Removes a queue hook\n"
             << "  process [--exit-on-idle] [--max N]  <name>            Processes a queue\n"
             << "  post                                <name> <path>     Posts an event to a queue\n"
-            << "  config                              <name> [<value>]  Sets, clears and defaults configuration\n"
+            << "  config [--force]                    <name> [<value>]  Sets, clears and defaults configuration\n"
             << "\n";
 
   return 0;

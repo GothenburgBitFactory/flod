@@ -26,8 +26,10 @@
 
 #include <cmake.h>
 #include <Configuration.h>
+#include <Args.h>
 #include <map>
 #include <string>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
 int handleConfig (
@@ -35,7 +37,42 @@ int handleConfig (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue config <name> [<value>]
+  // Process arguments;
+  Args args;
+  args.limitPositionals (3);         // config <name> [<value>]
+  args.addOption ("force");          // [--[no]force]
+  args.scan (argc, argv);
+
+  if (args.getPositionalCount () == 0)
+    throw std::string ("queue config [--force] <name> [<value>]");
+
+  else if (args.getPositionalCount () == 1)
+    throw std::string ("Configuration setting name required.");
+
+  auto force   = args.getOption ("force");
+  auto command = args.getPositional (0);
+  auto name    = args.getPositional (1);
+
+  // Validate arguments.
+  if (name == "")
+    throw std::string ("Configuration setting required.");
+
+  // queue config <anme>
+  if (args.getPositionalCount () == 2)
+  {
+    // TODO Delete name from config.
+
+    std::cout << "# config deleting '" << name << "'\n";
+  }
+
+  // queue config <name> <value>
+  else if (args.getPositionalCount () == 3)
+  {
+    auto value = args.getPositional (2);
+
+    // TODO Set name = value in config.
+    std::cout << "# config setting '" << name << "' to '" << value << "'\n";
+  }
 
   return 0;
 }
