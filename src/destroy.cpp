@@ -26,6 +26,7 @@
 
 #include <cmake.h>
 #include <Configuration.h>
+#include <Args.h>
 #include <map>
 #include <string>
 #include <cstring>
@@ -38,37 +39,36 @@ int handleDestroy (
   const char** argv,
   Configuration& config)
 {
-  // Process arguments.
-  std::string name = "";
-  bool force = false;
-  for (int i = 2; i < argc; ++i)
+  // Process arguments;
+  Args args;
+  args.limitPositionals (2);         // destroy <name>
+  args.addOption ("force", true);  // [--[no]force]
+  args.scan (argc, argv);
+
+  if (args.getPositionalCount () == 2)
   {
-    std::cout << "# argv[" << i << "] " << argv[i] << "\n";
+    auto force   = args.getOption ("force");
+    auto command = args.getPositional (0);
+    auto name    = args.getPositional (1);
 
-    if (argv[i][0] == '-')
-    {
-      if (! strcmp (argv[i], "--force"))
-        force = true;
-    }
-    else
-    {
-      if (name == "")
-        name = argv[i];
-    }
+    // Validate arguments.
+    if (name == "")
+      throw std::string ("Queue name required.");
+
+    // Execute command.
+    std::cout << "# queue destroying "
+              << name
+              << (force ? " using force" : "")
+              << ".\n";
+
+    // TODO Destroy queue.
+    // TODO Update config details.
   }
-
-  // Validate arguments.
-  if (name == "")
+  else if (args.getPositionalCount () == 1)
     throw std::string ("Queue name required.");
 
-  // Execute command.
-  std::cout << "# queue destroying "
-            << name
-            << (force ? " using force" : "")
-            << ".\n";
-
-  // TODO Destroy queue.
-  // TODO Update config details.
+  else
+    throw std::string ("queue destroy [--force] <name>");
 
   return 0;
 }
