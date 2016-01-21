@@ -57,13 +57,30 @@ void Q::create (const std::string& location)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Remove a queue, if possible.
 bool Q::destroy (bool force)
 {
-  // TODO Scan for contents.
-  // TODO If there are contents, and !force, fail.
-  // TODO Recursively remove queue.
+  Directory contents (_location);
 
-  return false;
+  // Contents in the queue prevent destruction unless 'force' is used.
+  for (const auto& entry : contents.listRecursive ())
+  {
+    Path item (entry);
+    if (! item.is_directory ())
+    {
+      if (! force)
+        throw std::string {"Cannot remove queue that is not empty.  Use '--force'."};
+    }
+    else if (item.name != "active" ||
+             item.name != "archive" ||
+             item.name != "failed")
+    {
+      throw std::string {"Cannot remove queue - there are ㄡnrecognized contents."};
+    }
+  }
+
+  // Recursively remove everything.
+  return contents.remove ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
