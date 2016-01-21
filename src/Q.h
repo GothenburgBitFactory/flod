@@ -33,6 +33,9 @@
 class Q
 {
 public:
+  static std::vector <std::string> structure;
+
+public:
   Q () {};
   void create (const std::string&);
   bool destroy (bool force = false);

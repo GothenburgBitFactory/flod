@@ -29,6 +29,8 @@
 #include <FS.h>
 #include <iostream> // TODO Remove
 
+std::vector <std::string> Q::structure = {"active", "archive", "failed"};
+
 ////////////////////////////////////////////////////////////////////////////////
 // Create the queue directories, if they do not already exist.
 // Set file permissions to owner-only.
