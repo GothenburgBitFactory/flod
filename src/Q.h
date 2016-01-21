@@ -33,13 +33,13 @@
 class Q
 {
 public:
-  Q ();
+  Q () {};
   void initialize (const std::string&);
   bool scan (std::string&);
 
 private:
-  std::string               _location;
-  std::vector <std::string> _snapshot;
+  std::string               _location {"."};
+  std::vector <std::string> _snapshot {};
 };
 
 #endif
