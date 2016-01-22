@@ -56,18 +56,18 @@ bool setVariableInFile (
     {
       found = true;
       if (comment != std::string::npos)
-        line = name + "=" + jsonEncode (value) + " " + line.substr (comment);
+        line = name + "=" + value + " " + line.substr (comment);
       else
-        line = name + "=" + jsonEncode (value);
+        line = name + "=" + value;
 
       change = true;
     }
   }
 
   // Not found, so append instead.
-  if (!found)
+  if (! found)
   {
-    contents.push_back (name + "=" + jsonEncode (value));
+    contents.push_back (name + "=" + value);
     change = true;
   }
 
