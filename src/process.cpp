@@ -35,7 +35,12 @@ int handleProcess (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue process Foo [--exit-on-idle] [--max N]
+  // TODO central process Foo [--exit-on-idle] [--max N]
+
+  // TODO Create a set of Q objects.
+  // TODO Iterate over the Q objects.
+    // TODO New event? Hooked?  Trigger.
+    // TODO Timed out work?  Requeue.
 
   return 0;
 }

@@ -19,14 +19,14 @@ set (flod_SRCS Configuration.cpp Configuration.h
                unhook.cpp
                version.cpp)
 
-add_library (queue STATIC ${flod_SRCS})
+add_library (central STATIC ${flod_SRCS})
 include_directories(${CMAKE_INSTALL_PREFIX}/include)
 link_directories(${CMAKE_INSTALL_PREFIX}/lib)
-add_executable (queue_executable queue.cpp)
+add_executable (central_executable central.cpp)
 
-target_link_libraries (queue_executable queue common ${FLOD_LIBRARIES})
+target_link_libraries (central_executable central common ${FLOD_LIBRARIES})
 
-set_property (TARGET queue_executable PROPERTY OUTPUT_NAME "queue")
+set_property (TARGET central_executable PROPERTY OUTPUT_NAME "central")
 
-install (TARGETS queue_executable DESTINATION bin)
+install (TARGETS central_executable DESTINATION bin)
 

@@ -35,7 +35,7 @@ int handleClear (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue clear Foo
+  // TODO central clear Foo
 
   return 0;
 }

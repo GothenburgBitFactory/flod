@@ -35,7 +35,7 @@ int handlePost (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue post Foo /path/to/event
+  // TODO central post Foo /path/to/event
 
   return 0;
 }

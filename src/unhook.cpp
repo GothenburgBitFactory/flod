@@ -35,7 +35,7 @@ int handleUnhook (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue unhook Foo /path/to/script
+  // TODO central unhook Foo /path/to/script
 
   return 0;
 }

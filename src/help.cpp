@@ -31,7 +31,7 @@
 int handleHelp ()
 {
   std::cout << "\n"
-            << "usage: queue <command> [<args>]\n"
+            << "usage: central <command> [<args>]\n"
             << "\n"
             << "Command:\n"
             << "  help                                                  Shows usage\n"

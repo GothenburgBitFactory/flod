@@ -35,7 +35,7 @@ int handleRetry (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue retry Foo
+  // TODO central retry Foo
 
   return 0;
 }

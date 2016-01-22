@@ -35,7 +35,7 @@ int handleInfo (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue info Foo
+  // TODO central info Foo
 
   return 0;
 }

@@ -45,7 +45,7 @@ int handleConfig (
   args.scan (argc, argv);
 
   if (args.getPositionalCount () == 0)
-    throw std::string ("queue config [--force] <name> [<value>]");
+    throw std::string ("central config [--force] <name> [<value>]");
 
   else if (args.getPositionalCount () == 1)
     throw std::string ("Configuration setting name required.");
@@ -58,7 +58,7 @@ int handleConfig (
   if (name == "")
     throw std::string ("Configuration setting required.");
 
-  // queue config <anme>
+  // central config <anme>
   if (args.getPositionalCount () == 2)
   {
     if (force ||
@@ -73,7 +73,7 @@ int handleConfig (
       std::cout << "No confirmation. No changes made.\n";
   }
 
-  // queue config <name> <value>
+  // central config <name> <value>
   else if (args.getPositionalCount () == 3)
   {
     auto value = args.getPositional (2);

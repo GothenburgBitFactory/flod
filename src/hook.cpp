@@ -35,7 +35,7 @@ int handleHook (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue hook Foo [success | failure] [--scan T] /path/to/script
+  // TODO central hook Foo [success | failure] [--scan T] /path/to/script
 
   return 0;
 }

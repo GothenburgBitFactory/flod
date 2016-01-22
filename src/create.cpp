@@ -33,7 +33,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-// queue create Foo /path/to/queue --[no]archive
+// central create Foo /path/to/queue --[no]archive
 int handleCreate (
   int argc,
   const char** argv,
@@ -41,7 +41,7 @@ int handleCreate (
 {
   // Process arguments;
   Args args;
-  args.limitPositionals (3);         // queue <name> <location>
+  args.limitPositionals (3);         // central <name> <location>
   args.addOption ("archive", true);  // [--[no]archive]
   args.scan (argc, argv);
 
@@ -60,7 +60,7 @@ int handleCreate (
       throw std::string ("Queue location required.");
 
     // Execute command.
-    std::cout << "# queue creating "
+    std::cout << "# central creating "
               << name
               << " at location "
               << path
@@ -78,7 +78,7 @@ int handleCreate (
     throw std::string ("Queue name required.");
 
   else
-    throw std::string ("queue create [--[no]archive] <name> <location>");
+    throw std::string ("central create [--[no]archive] <name> <location>");
 
   return 0;
 }

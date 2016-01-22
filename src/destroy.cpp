@@ -33,7 +33,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-// queue destroy Foo [--force]
+// central destroy Foo [--force]
 int handleDestroy (
   int argc,
   const char** argv,
@@ -56,7 +56,7 @@ int handleDestroy (
       throw std::string ("Queue name required.");
 
     // Execute command.
-    std::cout << "# queue destroying "
+    std::cout << "# central destroying "
               << name
               << (force ? " using force" : "")
               << ".\n";
@@ -68,7 +68,7 @@ int handleDestroy (
     throw std::string ("Queue name required.");
 
   else
-    throw std::string ("queue destroy [--force] <name>");
+    throw std::string ("central destroy [--force] <name>");
 
   return 0;
 }

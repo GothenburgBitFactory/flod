@@ -35,7 +35,7 @@ int handleStats (
   const char** argv,
   Configuration& config)
 {
-  // TODO queue stats [reset] Foo
+  // TODO central stats [reset] Foo
 
   return 0;
 }

@@ -3,42 +3,42 @@
 Create a queue in /path/to/queue, and optionally record whether the event
 files are archived. Name the queue Foo, which means it processes Foo events.
 
-  $ queue create Foo /path/to/queue --[no]archive
+  $ central create Foo /path/to/queue --[no]archive
 
 Destroy a queue in /path/to/queue.
 
-  $ queue destroy Foo [--force]
+  $ central destroy Foo [--force]
 
 Flush a queue by archiving or deleting its events.
 
-  $ queue clear Foo
+  $ central clear Foo
 
 Obtain info about a queue.
 
-  $ queue info Foo
+  $ central info Foo
 
 Obtain queue stats, reset stats.
 
-  $ queue stats Foo
-  $ queue stats reset Foo
+  $ central stats Foo
+  $ central stats reset Foo
 
 Associate a script with a queue. Will process all outstanding events.
 
-  $ queue hook Foo /path/to/script [--scan 60]
-  $ queue hook Foo success /path/to/script
-  $ queue hook Foo failure /path/to/script
+  $ central hook Foo /path/to/script [--scan 60]
+  $ central hook Foo success /path/to/script
+  $ central hook Foo failure /path/to/script
 
 Disassociate a script from a queue. Will abandon all outstanding events.
 
-  $ queue unhook Foo /path/to/script
+  $ central unhook Foo /path/to/script
 
 Process a queue.
 
-  $ queue process Foo [--exit-on-idle] [--max N]
+  $ central process Foo [--exit-on-idle] [--max N]
 
 Post an event.
 
-  $ queue post Foo /path/to/event
+  $ central post Foo /path/to/event
 
 
 ## Configuration
@@ -47,21 +47,21 @@ By default, Flod will use a .flodrc file in the current directory, or traverse
 the filesystem 'upwards' until it finds one, or hits a volume boundary. This
 file can be overridden with the command line:
 
-  $ queue ... --config $FILE
+  $ central ... --config $FILE
 
 Or with an environment variable:
 
-  FLODRC=$FILE queue ...
+  FLODRC=$FILE central ...
 
 Command line override of individual setting:
 
-  $ queue ... --NAME=VALUE
+  $ central ... --NAME=VALUE
 
 Command line configuration update:
 
-  $ queue config NAME VALUE       # Set NAME to VALUE
-  $ queue config NAME ''          # Set NAME to no value
-  $ queue config NAME             # Delete NAME, reverting to default, if any
+  $ central config NAME VALUE       # Set NAME to VALUE
+  $ central config NAME ''          # Set NAME to no value
+  $ central config NAME             # Delete NAME, reverting to default, if any
 
 
 ## What is a queue?
@@ -113,17 +113,17 @@ scripts that are attached to queues.
 
 Create and hook a queue:
 
-  $ queue create Foo /var/queue/foo
-  $ queue hook Foo /path/to/script
-  $ queue stats clear Foo
+  $ central create Foo /var/queue/foo
+  $ central hook Foo /path/to/script
+  $ central stats clear Foo
 
 Launch a queue processor:
 
-  $ queue process Foo
+  $ central process Foo
 
 Queue an event file:
 
-  $ queue Foo /path/to/event
+  $ central Foo /path/to/event
 
 
 ## References

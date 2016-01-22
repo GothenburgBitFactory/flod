@@ -30,8 +30,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 int handleVersion ()
 {
-  // TODO queue version
-  std::cout << "queue " << PACKAGE_VERSION << "\n";
+  // TODO central version
+  std::cout << "central " << PACKAGE_VERSION << "\n";
   return 0;
 }
 
