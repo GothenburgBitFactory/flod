@@ -27,6 +27,7 @@
 #include <cmake.h>
 #include <Configuration.h>
 #include <Args.h>
+#include <Q.h>
 #include <map>
 #include <string>
 #include <cstring>
@@ -55,14 +56,29 @@ int handleDestroy (
     if (name == "")
       throw std::string ("Queue name required.");
 
-    // Execute command.
-    std::cout << "# central destroying "
+    // TODO Remove all config "queue.<name>.*" entries.
+
+    // Update config details.
+    auto location = config.get ("queue." + name + ".location");
+    if (location == "")
+      throw std::string ("Queue '" + name + "' not configured.");
+
+    if (! unsetVariableInFile (config.file (), "queue." + name + ".location"))
+      throw std::string ("Could not remove configuration 'queue." + name + ".location'.");
+
+    if (! unsetVariableInFile (config.file (), "queue." + name + ".archive"))
+      throw std::string ("Could not remove configuration 'queue." + name + ".archive'.");
+
+    // Destroy queue.
+    Q q;
+    q.create (location);
+    q.destroy (force);
+    std::cout << "Removed " << location << "\n";
+
+    std::cout << "Central destroyed "
               << name
               << (force ? " using force" : "")
               << ".\n";
-
-    // TODO Destroy queue.
-    // TODO Update config details.
   }
   else if (args.getPositionalCount () == 1)
     throw std::string ("Queue name required.");
