@@ -28,6 +28,7 @@
 #include <Configuration.h>
 #include <Args.h>
 #include <Q.h>
+#include <text.h>
 #include <map>
 #include <string>
 #include <cstring>
@@ -56,7 +57,12 @@ int handleDestroy (
     if (name == "")
       throw std::string ("Queue name required.");
 
-    // TODO Remove all config "queue.<name>.*" entries.
+    // Remove all config "queue.<name>.*" entries.
+    std::string prefix = "queue." + name + ".";
+    for (const auto& setting : config.all ())
+      if (closeEnough (prefix, setting))
+        if (! unsetVariableInFile (config.file (), "queue." + name + ".location"))
+          throw std::string ("Could not remove configuration 'queue." + name + ".location'.");
 
     // Update config details.
     auto location = config.get ("queue." + name + ".location");
