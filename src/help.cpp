@@ -28,7 +28,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-int handleHelp ()
+void handleHelp ()
 {
   std::cout << "\n"
             << "usage: central <command> [<args>]\n"
@@ -48,8 +48,6 @@ int handleHelp ()
             << "  post                                <name> <path>     Posts an event to a queue\n"
             << "  config [--force]                    <name> [<value>]  Sets, clears and defaults configuration\n"
             << "\n";
-
-  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

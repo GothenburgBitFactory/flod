@@ -32,7 +32,7 @@
 #include <string>
 #include <new>
 
-int handleHelp ();
+void handleHelp ();
 void handleVersion ();
 int handleCreate  (int, const char**, Configuration&);
 int handleDestroy (int, const char**, Configuration&);
@@ -120,7 +120,7 @@ int main (int argc, const char** argv)
       command = matches[0];
 
       // Dispatch commands.
-           if (command == "help")    status = handleHelp    ();
+           if (command == "help")             handleHelp    ();
       else if (command == "version")          handleVersion ();
       else if (command == "create")  status = handleCreate  (argc, argv, config);
       else if (command == "destroy") status = handleDestroy (argc, argv, config);
@@ -137,7 +137,7 @@ int main (int argc, const char** argv)
     else
     {
       std::cerr << "Urecognized command '" << command << "'\n";
-      status = handleHelp ();
+      handleHelp ();
     }
   }
 
