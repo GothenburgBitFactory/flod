@@ -28,11 +28,12 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-int handleVersion ()
+void handleVersion ()
 {
-  // TODO central version
-  std::cout << "central " << PACKAGE_VERSION << "\n";
-  return 0;
+  std::cout << "\n"
+            << PACKAGE_STRING << "\n"
+            << "Copyright (C) 2012 - 2016, P. Beckingham, F.Hernandez\n"
+            << "\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
