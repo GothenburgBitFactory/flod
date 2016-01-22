@@ -27,6 +27,7 @@
 #include <cmake.h>
 #include <Configuration.h>
 #include <Args.h>
+#include <Q.h>
 #include <map>
 #include <string>
 #include <cstring>
@@ -59,17 +60,25 @@ int handleCreate (
     if (path == "")
       throw std::string ("Queue location required.");
 
-    // Execute command.
-    std::cout << "# central creating "
-              << name
-              << " at location "
-              << path
-              << " with "
-              << (archive ? "" : "no ")
-              << "archiving.\n";
+    // TODO Warn if queue already exists.
 
-    // TODO Store config details.
-    // TODO Create queue.
+    // Store config details.
+    if (! setVariableInFile (config.file (), "queue." + name + ".location", path))
+      throw std::string ("Could not write configuration 'queue." + name + ".location'.");
+
+    if (! setVariableInFile (config.file (), "queue." + name + ".archive",  (archive ? "yes" : "no")))
+      throw std::string ("Could not write configuration 'queue." + name + ".archive'.");
+
+    // Create queue.
+    Q q;
+    q.create (path);
+
+    std::cout << "Central created queue '"
+              << name
+              << "' at location "
+              << path
+              << (archive ? " with " : " without ")
+              << "archiving.\n";
   }
   else if (args.getPositionalCount () == 2)
     throw std::string ("Queue location required.");
