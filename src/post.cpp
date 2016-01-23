@@ -67,6 +67,11 @@ int handlePost (
               << name
               << ".\n";
   }
+  else if (args.getPositionalCount () == 2)
+    throw std::string ("Event file required.");
+
+  else if (args.getPositionalCount () == 1)
+    throw std::string ("Queue name required.");
 
   else
     throw std::string ("central post <name> <event>");
