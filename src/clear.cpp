@@ -43,30 +43,23 @@ void handleClear (
   args.limitPositionals (2);        // clear <name>
   args.scan (argc, argv);
 
-  if (args.getPositionalCount () == 2)
-  {
-    auto command = args.getPositional (0);
-    auto name    = args.getPositional (1);
-
-    // Validate arguments.
-    if (name == "")
-      throw std::string ("Queue name required.");
-
-    // TODO Validate queue name.
-
-    Q q;
-    q.create (name, config.get ("queue." + name + ".location"));
-    q.clear ();
-
-    std::cout << "Central cleared queue "
-              << name
-              << ".\n";
-  }
-  else if (args.getPositionalCount () == 1)
+  if (args.getPositionalCount () == 1)
     throw std::string ("Queue name required.");
 
-  else
-    throw std::string ("central clear <name>");
+  auto command = args.getPositional (0);
+  auto name    = args.getPositional (1);
+
+  // Warn if queue doesn't exist.
+  if (! config.has ("queue." + name + ".location"))
+    throw std::string ("Queue '" + name + "' is already defined.");
+
+  Q q;
+  q.create (name, config.get ("queue." + name + ".location"));
+  q.clear ();
+
+  std::cout << "Central cleared queue '"
+            << name
+            << "'.\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
