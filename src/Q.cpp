@@ -111,9 +111,9 @@ bool Q::post (const std::string& event) const
 {
   File file (event);
 
-  // TODO Compose new event file name: <name>.YYYYMMDDThhmmss.<original>.msg
-  // TODO Copy event to /tmp/<new-name.
-  // TODO Move /tmp/<new-name> location/
+  // TODO Compose event prefix string: <name>.YYYYMMDDThhmmss
+  // TODO cp event location/staging/<prefix>.<event>
+  // TODO rename location/staging/<prefix>.<event> location/<prefix>.<event>
 
   return false;
 }
