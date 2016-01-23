@@ -28,6 +28,10 @@
 #include <Q.h>
 #include <FS.h>
 #include <iostream> // TODO Remove
+#include <sstream>
+#include <iomanip>
+#include <ctime>
+#include <sys/time.h>
 
 std::vector <std::string> Q::structure = {"active", "archive", "failed", "staging"};
 
@@ -112,14 +116,13 @@ void Q::post (const std::string& event) const
 {
   // Compose event prefix string: <name>.YYYYMMDDThhmmss.
   auto prefix = composeEventPrefix ();
+  auto name = File (event).name ();
+  std::string staging      = _location + "/staging/" + prefix + name;
+  std::string destination  = _location + "/"         + prefix + name;
 
-  File file (event);
-  std::string staging      = _location + "/staging/" + prefix + file.name ();
-  std::string destination  = _location + "/"         + prefix + file.name ();
-
-  // The copy is expensive, the rename is atomic.
+  // The copy is expensive, the move is atomic.
   File::copy (event, staging);
-  File::rename (staging, destination);
+  File::move (staging, destination);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,11 +140,27 @@ void Q::clear ()
 // Compose event prefix string: <name>.YYYYMMDDThhmmss.
 std::string Q::composeEventPrefix () const
 {
-  std::string prefix = _name + '.';
+  struct timeval nowus;
+  gettimeofday (&nowus, nullptr);
+  time_t now   = static_cast <time_t> (nowus.tv_sec);
+  time_t usecs = static_cast <time_t> (nowus.tv_usec);
+  struct tm* t = localtime (&now);
 
-  prefix += '.';
+  std::stringstream prefix;
+  prefix << _name
+         << '.'
+         << std::setw (4) << std::setfill ('0') << t->tm_year + 1900
+         << std::setw (2) << std::setfill ('0') << t->tm_mon + 1
+         << std::setw (2) << std::setfill ('0') << t->tm_mday
+         << 'T'
+         << std::setw (2) << std::setfill ('0') << t->tm_hour
+         << std::setw (2) << std::setfill ('0') << t->tm_min
+         << std::setw (2) << std::setfill ('0') << t->tm_sec
+         << '.'
+         << std::setw (6) << std::setfill ('0') << usecs
+         << '.';
 
-  return prefix;
+  return prefix.str ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
