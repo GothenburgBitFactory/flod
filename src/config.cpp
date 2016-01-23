@@ -44,19 +44,12 @@ void handleConfig (
   args.addOption ("force", false);   // [--[no]force]
   args.scan (argc, argv);
 
-  if (args.getPositionalCount () == 0)
-    throw std::string ("central config [--force] <name> [<value>]");
-
-  else if (args.getPositionalCount () == 1)
+  if (args.getPositionalCount () == 1)
     throw std::string ("Configuration setting name required.");
 
   auto force   = args.getOption ("force");
   auto command = args.getPositional (0);
   auto name    = args.getPositional (1);
-
-  // Validate arguments.
-  if (name == "")
-    throw std::string ("Configuration setting required.");
 
   // central config <anme>
   if (args.getPositionalCount () == 2)
