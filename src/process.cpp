@@ -26,21 +26,45 @@
 
 #include <cmake.h>
 #include <Configuration.h>
+#include <Args.h>
 #include <map>
 #include <string>
+#include <stdlib.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+// central process [--exit-on-idle] [--max N]
 int handleProcess (
   int argc,
   const char** argv,
   Configuration& config)
 {
-  // TODO central process Foo [--exit-on-idle] [--max N]
+  // Process arguments;
+  Args args;
+  args.limitPositionals (1);               // process
+  args.addOption ("exit-on-idle", false);  // [--[no]exit-on-idle]
+  args.addNamed ("max", "0");              // [--max N]
+  args.scan (argc, argv);
 
-  // TODO Create a set of Q objects.
-  // TODO Iterate over the Q objects.
-    // TODO New event? Hooked?  Trigger.
-    // TODO Timed out work?  Requeue.
+  if (args.getPositionalCount () == 1)
+  {
+    auto exit_on_idle = args.getOption ("exit-on-idle");
+    int maxN          = strtol (args.getNamed ("max").c_str (), NULL, 10);
+    auto command      = args.getPositional (0);
+
+    int event_count = 0;
+    // TODO while (maxN == 0 || event_count < maxN)
+      // TODO Create a Hook object for each defined hook.
+      // TODO Create a Q object for each defined queue.
+      // TODO loop over Q
+        // TODO q.scan
+        // TODO dispatch hooks
+        // TODO scan active for timed out work --> requeue.
+
+      // TODO Exit if all queues were empty and exit_on_idle
+  }
+
+  else
+    throw std::string ("central process [--exit-on-idle] [--max N]");
 
   return 0;
 }
