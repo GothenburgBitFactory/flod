@@ -100,7 +100,8 @@ int main (int argc, const char** argv)
     std::vector <std::string> matches;
     if (autoComplete (command,
                       {"help", "version", "create", "destroy", "clear", "retry",
-                       "info", "stats", "hook", "unhook", "process", "config"},
+                       "info", "stats", "hook", "unhook", "process", "post",
+                       "config"},
                       matches) == 1)
     {
       command = matches[0];
