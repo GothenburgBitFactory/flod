@@ -107,3 +107,15 @@ bool Q::scan (std::string& event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+bool Q::post (const std::string& event) const
+{
+  File file (event);
+
+  // TODO Compose new event file name: <name>.YYYYMMDDThhmmss.<original>.msg
+  // TODO Copy event to /tmp/<new-name.
+  // TODO Move /tmp/<new-name> location/
+
+  return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////

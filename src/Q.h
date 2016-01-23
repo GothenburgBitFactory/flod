@@ -40,6 +40,7 @@ public:
   void create (const std::string&);
   bool destroy (bool force = false);
   bool scan (std::string&);
+  bool post (const std::string&) const;
 
 private:
   std::string               _location {"."};
