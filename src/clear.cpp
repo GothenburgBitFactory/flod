@@ -26,16 +26,48 @@
 
 #include <cmake.h>
 #include <Configuration.h>
+#include <Args.h>
+#include <Q.h>
 #include <map>
 #include <string>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
+// central clear Foo
 int handleClear (
   int argc,
   const char** argv,
   Configuration& config)
 {
-  // TODO central clear Foo
+  // Process arguments;
+  Args args;
+  args.limitPositionals (2);        // clear <name>
+  args.scan (argc, argv);
+
+  if (args.getPositionalCount () == 2)
+  {
+    auto command = args.getPositional (0);
+    auto name    = args.getPositional (1);
+
+    // Validate arguments.
+    if (name == "")
+      throw std::string ("Queue name required.");
+
+    // TODO Validate queue name.
+
+    Q q;
+    q.create (config.get ("queue." + name + ".location"));
+    q.clear ();
+
+    std::cout << "Central cleared queue "
+              << name
+              << ".\n";
+  }
+  else if (args.getPositionalCount () == 1)
+    throw std::string ("Queue name required.");
+
+  else
+    throw std::string ("central clear <name>");
 
   return 0;
 }
