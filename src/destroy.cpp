@@ -69,17 +69,17 @@ int handleDestroy (
     if (location == "")
       throw std::string ("Queue '" + name + "' not configured.");
 
-    if (! unsetVariableInFile (config.file (), "queue." + name + ".location"))
-      throw std::string ("Could not remove configuration 'queue." + name + ".location'.");
-
-    if (! unsetVariableInFile (config.file (), "queue." + name + ".archive"))
-      throw std::string ("Could not remove configuration 'queue." + name + ".archive'.");
-
     // Destroy queue.
     Q q;
     q.create (name, location);
     q.destroy (force);
     std::cout << "Removed " << location << "\n";
+
+    if (! unsetVariableInFile (config.file (), "queue." + name + ".location"))
+      throw std::string ("Could not remove configuration 'queue." + name + ".location'.");
+
+    if (! unsetVariableInFile (config.file (), "queue." + name + ".archive"))
+      throw std::string ("Could not remove configuration 'queue." + name + ".archive'.");
 
     std::cout << "Central destroyed "
               << name
