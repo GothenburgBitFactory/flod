@@ -26,8 +26,11 @@
 
 #include <cmake.h>
 #include <central.h>
+#include <Args.h>
+#include <Q.h>
 #include <map>
 #include <string>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
 void handleUnhook (
@@ -35,7 +38,27 @@ void handleUnhook (
   const char** argv,
   Configuration& config)
 {
-  // TODO central unhook Foo /path/to/script
+  // Process arguments;
+  Args args;
+  args.limitPositionals (3);         // unhook <name> <script>
+  args.scan (argc, argv);
+
+  if (args.getPositionalCount () == 1)
+    throw std::string ("Queue name required.");
+
+  if (args.getPositionalCount () == 2)
+    throw std::string ("Hook script command required.");
+
+  auto command = args.getPositional (0);
+  auto name    = args.getPositional (1);
+  auto script  = args.getPositional (2);
+
+  // Error on missing queue
+  auto location = config.get ("queue." + name + ".location");
+  if (location == "")
+    throw std::string ("Queue '" + name + "' not configured.");
+
+  std::cout << "# unhook unimplemnted.\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
