@@ -57,9 +57,11 @@ int handlePost (
     if (event == "")
       throw std::string ("Event file required.");
 
-    // TODO Compose new event file name: <name>.YYYYMMDDThhmmss.<original>.msg
-    // TODO Copy event to /tmp/<new-name.
-    // TODO Move /tmp/<new-name> q
+    // TODO Validate queue name.
+
+    Q q;
+    q.create (config.get ("queue." + name + ".location"));
+    q.post (event);
 
     std::cout << "Central posted event to queue "
               << name
