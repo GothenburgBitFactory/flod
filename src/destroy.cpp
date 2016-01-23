@@ -45,46 +45,38 @@ void handleDestroy (
   args.limitPositionals (2);        // destroy <name>
   args.addOption ("force", false);  // [--[no]force]
   args.scan (argc, argv);
-
-  if (args.getPositionalCount () == 2)
-  {
-    auto force   = args.getOption ("force");
-    auto command = args.getPositional (0);
-    auto name    = args.getPositional (1);
-
-    // Validate arguments.
-    if (name == "")
-      throw std::string ("Queue name required.");
-
-    // Update config details.
-    auto location = config.get ("queue." + name + ".location");
-    if (location == "")
-      throw std::string ("Queue '" + name + "' not configured.");
-
-    // Destroy queue.
-    Q q;
-    q.create (name, location);
-    q.destroy (force);
-    std::cout << "Removed " << location << "\n";
-
-    // Remove all config "queue.<name>.*" entries.
-    std::string prefix = "queue." + name + ".";
-    for (const auto& setting : config.all ())
-      if (closeEnough (setting, prefix))
-        if (! unsetVariableInFile (config.file (), setting))
-          throw std::string ("Could not remove configuration '" + setting + "'.");
-
-    std::cout << "Central destroyed "
-              << name
-              << (force ? " using force" : "")
-              << ".\n";
-  }
-  else if (args.getPositionalCount () == 1)
+ 
+  if (args.getPositionalCount () == 1)
     throw std::string ("Queue name required.");
 
-  else
-    throw std::string ("central destroy [--force] <name>");
+  auto force   = args.getOption ("force");
+  auto command = args.getPositional (0);
+  auto name    = args.getPositional (1);
 
+  // Update config details.
+  auto location = config.get ("queue." + name + ".location");
+  if (location == "")
+    throw std::string ("Queue '" + name + "' not configured.");
+
+  // Destroy queue.
+  Q q;
+  q.create (name, location);
+  q.destroy (force);
+  std::cout << "Removed " << location << "\n";
+
+  // Remove all config "queue.<name>.*" entries.
+  std::string prefix = "queue." + name + ".";
+  for (const auto& setting : config.all ())
+    if (closeEnough (setting, prefix))
+      if (! unsetVariableInFile (config.file (), setting))
+        throw std::string ("Could not remove configuration '" + setting + "'.");
+
+  std::cout << "Central destroyed queue '"
+            << name
+            << "' at location "
+            << location
+            << (force ? " using force" : "")
+            << ".\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
