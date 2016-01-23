@@ -57,13 +57,6 @@ int handleDestroy (
     if (name == "")
       throw std::string ("Queue name required.");
 
-    // Remove all config "queue.<name>.*" entries.
-    std::string prefix = "queue." + name + ".";
-    for (const auto& setting : config.all ())
-      if (closeEnough (prefix, setting))
-        if (! unsetVariableInFile (config.file (), "queue." + name + ".location"))
-          throw std::string ("Could not remove configuration 'queue." + name + ".location'.");
-
     // Update config details.
     auto location = config.get ("queue." + name + ".location");
     if (location == "")
@@ -75,11 +68,12 @@ int handleDestroy (
     q.destroy (force);
     std::cout << "Removed " << location << "\n";
 
-    if (! unsetVariableInFile (config.file (), "queue." + name + ".location"))
-      throw std::string ("Could not remove configuration 'queue." + name + ".location'.");
-
-    if (! unsetVariableInFile (config.file (), "queue." + name + ".archive"))
-      throw std::string ("Could not remove configuration 'queue." + name + ".archive'.");
+    // Remove all config "queue.<name>.*" entries.
+    std::string prefix = "queue." + name + ".";
+    for (const auto& setting : config.all ())
+      if (closeEnough (setting, prefix))
+        if (! unsetVariableInFile (config.file (), setting))
+          throw std::string ("Could not remove configuration '" + setting + "'.");
 
     std::cout << "Central destroyed "
               << name
