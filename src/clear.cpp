@@ -33,8 +33,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-// central clear Foo
-int handleClear (
+void handleClear (
   int argc,
   const char** argv,
   Configuration& config)
@@ -68,8 +67,6 @@ int handleClear (
 
   else
     throw std::string ("central clear <name>");
-
-  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

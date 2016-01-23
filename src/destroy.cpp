@@ -35,15 +35,14 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-// central destroy Foo [--force]
-int handleDestroy (
+void handleDestroy (
   int argc,
   const char** argv,
   Configuration& config)
 {
   // Process arguments;
   Args args;
-  args.limitPositionals (2);         // destroy <name>
+  args.limitPositionals (2);        // destroy <name>
   args.addOption ("force", false);  // [--[no]force]
   args.scan (argc, argv);
 
@@ -86,7 +85,6 @@ int handleDestroy (
   else
     throw std::string ("central destroy [--force] <name>");
 
-  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

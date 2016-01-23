@@ -33,8 +33,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-// central post Foo /path/to/event
-int handlePost (
+void handlePost (
   int argc,
   const char** argv,
   Configuration& config)
@@ -75,8 +74,6 @@ int handlePost (
 
   else
     throw std::string ("central post <name> <event>");
-
-  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

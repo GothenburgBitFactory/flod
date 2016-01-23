@@ -32,17 +32,17 @@
 // Command handlers.
 void handleHelp ();
 void handleVersion ();
-int handleCreate  (int, const char**, Configuration&);
-int handleDestroy (int, const char**, Configuration&);
-int handleClear   (int, const char**, Configuration&);
-int handleRetry   (int, const char**, Configuration&);
-int handleInfo    (int, const char**, Configuration&);
-int handleStats   (int, const char**, Configuration&);
-int handleHook    (int, const char**, Configuration&);
-int handleUnhook  (int, const char**, Configuration&);
-int handleProcess (int, const char**, Configuration&);
-int handlePost    (int, const char**, Configuration&);
-int handleConfig  (int, const char**, Configuration&);
+void handleCreate  (int, const char**, Configuration&);
+void handleDestroy (int, const char**, Configuration&);
+void handleClear   (int, const char**, Configuration&);
+void handleRetry   (int, const char**, Configuration&);
+void handleInfo    (int, const char**, Configuration&);
+void handleStats   (int, const char**, Configuration&);
+void handleHook    (int, const char**, Configuration&);
+void handleUnhook  (int, const char**, Configuration&);
+void handleProcess (int, const char**, Configuration&);
+void handlePost    (int, const char**, Configuration&);
+void handleConfig  (int, const char**, Configuration&);
 
 #endif
 

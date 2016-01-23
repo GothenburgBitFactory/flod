@@ -33,7 +33,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-int handleConfig (
+void handleConfig (
   int argc,
   const char** argv,
   Configuration& config)
@@ -89,8 +89,6 @@ int handleConfig (
     else
       std::cout << "No confirmation. No changes made.\n";
   }
-
-  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

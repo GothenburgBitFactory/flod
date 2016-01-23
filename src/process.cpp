@@ -32,8 +32,7 @@
 #include <stdlib.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-// central process [--exit-on-idle] [--max N]
-int handleProcess (
+void handleProcess (
   int argc,
   const char** argv,
   Configuration& config)
@@ -65,8 +64,6 @@ int handleProcess (
 
   else
     throw std::string ("central process [--exit-on-idle] [--max N]");
-
-  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

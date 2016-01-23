@@ -34,8 +34,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-// central create Foo /path/to/queue [--[no]archive] [--timeout N]
-int handleCreate (
+void handleCreate (
   int argc,
   const char** argv,
   Configuration& config)
@@ -85,8 +84,6 @@ int handleCreate (
             << "archiving"
             << (timeout != "" ? " with timeout " + timeout + "s" : "")
             << ".\n";
-
-  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

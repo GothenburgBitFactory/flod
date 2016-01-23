@@ -107,19 +107,19 @@ int main (int argc, const char** argv)
       command = matches[0];
 
       // Dispatch commands.
-           if (command == "help")             handleHelp    ();
-      else if (command == "version")          handleVersion ();
-      else if (command == "create")  status = handleCreate  (argc, argv, config);
-      else if (command == "destroy") status = handleDestroy (argc, argv, config);
-      else if (command == "clear")   status = handleClear   (argc, argv, config);
-      else if (command == "retry")   status = handleRetry   (argc, argv, config);
-      else if (command == "info")    status = handleInfo    (argc, argv, config);
-      else if (command == "stats")   status = handleStats   (argc, argv, config);
-      else if (command == "hook")    status = handleHook    (argc, argv, config);
-      else if (command == "unhook")  status = handleUnhook  (argc, argv, config);
-      else if (command == "process") status = handleProcess (argc, argv, config);
-      else if (command == "post")    status = handlePost    (argc, argv, config);
-      else if (command == "config")  status = handleConfig  (argc, argv, config);
+           if (command == "help")    handleHelp    ();
+      else if (command == "version") handleVersion ();
+      else if (command == "create")  handleCreate  (argc, argv, config);
+      else if (command == "destroy") handleDestroy (argc, argv, config);
+      else if (command == "clear")   handleClear   (argc, argv, config);
+      else if (command == "retry")   handleRetry   (argc, argv, config);
+      else if (command == "info")    handleInfo    (argc, argv, config);
+      else if (command == "stats")   handleStats   (argc, argv, config);
+      else if (command == "hook")    handleHook    (argc, argv, config);
+      else if (command == "unhook")  handleUnhook  (argc, argv, config);
+      else if (command == "process") handleProcess (argc, argv, config);
+      else if (command == "post")    handlePost    (argc, argv, config);
+      else if (command == "config")  handleConfig  (argc, argv, config);
     }
     else
     {
