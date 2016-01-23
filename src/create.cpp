@@ -83,8 +83,9 @@ int handleCreate (
               << "' at location "
               << path
               << (archive ? " with " : " without ")
+              << "archiving"
               << (timeout != "" ? " with timeout " + timeout + "s" : "")
-              << "archiving.\n";
+              << ".\n";
   }
   else if (args.getPositionalCount () == 2)
     throw std::string ("Queue location required.");
