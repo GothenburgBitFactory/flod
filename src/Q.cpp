@@ -29,7 +29,7 @@
 #include <FS.h>
 #include <iostream> // TODO Remove
 
-std::vector <std::string> Q::structure = {"active", "archive", "failed"};
+std::vector <std::string> Q::structure = {"active", "archive", "failed", "staging"};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Create the queue directories, if they do not already exist.
