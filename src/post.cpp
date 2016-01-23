@@ -26,16 +26,48 @@
 
 #include <cmake.h>
 #include <Configuration.h>
+#include <Args.h>
+#include <Q.h>
 #include <map>
 #include <string>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
+// central post Foo /path/to/event
 int handlePost (
   int argc,
   const char** argv,
   Configuration& config)
 {
-  // TODO central post Foo /path/to/event
+  // Process arguments;
+  Args args;
+  args.limitPositionals (3);         // post <name> <event>
+  args.scan (argc, argv);
+
+  if (args.getPositionalCount () == 3)
+  {
+    auto command = args.getPositional (0);
+    auto name    = args.getPositional (1);
+    auto event   = args.getPositional (2);
+
+    // Validate arguments.
+    if (name == "")
+      throw std::string ("Queue name required.");
+
+    if (event == "")
+      throw std::string ("Event file required.");
+
+    // TODO Compose new event file name: <name>.YYYYMMDDThhmmss.<original>.msg
+    // TODO Copy event to /tmp/<new-name.
+    // TODO Move /tmp/<new-name> q
+
+    std::cout << "Central posted event to queue "
+              << name
+              << ".\n";
+  }
+
+  else
+    throw std::string ("central post <name> <event>");
 
   return 0;
 }
