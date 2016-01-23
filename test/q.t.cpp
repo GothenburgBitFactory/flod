@@ -38,7 +38,7 @@ int main (int, char**)
   try
   {
     Q q;
-    q.create ("./myq");
+    q.create ("myq", "./myq");
     std::string event;
     if (q.scan (event))
       t.diag ("Event: " + event);
