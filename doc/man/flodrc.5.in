@@ -1,0 +1,78 @@
+.TH flod 5 2015-11-29 "${PACKAGE_STRING}" "User Manuals"
+
+.SH NAME
+flodwrc \- Configuration details for the central(1) command
+
+.SH SYNOPSIS
+.B $HOME/.flodrc
+.br
+.B FLODRC=<directory-path>/.flodrc central ...
+
+.SH DESCRIPTION
+.B Central
+obtains its configuration data from a file called
+.I .flodrc
+\&. This file is normally located in the user's home directory:
+
+.RS
+$HOME/.flodrc
+.RE
+
+...
+
+.SH EDITING
+
+.SH NESTING CONFIGURATION FILES
+
+.SH ENVIRONMENT VARIABLES
+
+.SH CONFIGURATION VARIABLES
+Valid variable names and their default values are:
+
+.SS FILES
+
+.SS MISCELLANEOUS
+
+.TP
+.TP
+.B name=value
+...
+
+.SS DATES
+
+.SS HOLIDAYS
+
+.SS DEFAULTS
+
+.SS REPORTS
+
+.SH "CREDITS & COPYRIGHTS"
+Copyright (C) 2006 \- 2016 P. Beckingham, F. Hernandez.
+
+This man page was originally written by Federico Hernandez.
+
+Flod is distributed under the MIT license. See
+http://www.opensource.org/licenses/mit-license.php for more information.
+
+.SH SEE ALSO
+.BR flod(1)
+
+For more information regarding Flod, see the following:
+
+.TP
+The official site at
+<http://taskwarrior.org/???>
+
+.TP
+The official code repository at
+<https://git.tasktools.org/scm/ts/flod2.git>
+
+.TP
+You can contact the project by emailing
+<support@taskwarrior.org>
+
+.SH REPORTING BUGS
+.TP
+Bugs in Flod may be reported to the issue-tracker at
+<https://bug.tasktools.org/>
+

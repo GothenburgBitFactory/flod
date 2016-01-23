@@ -17,6 +17,13 @@ set (PACKAGE_TARNAME "${PACKAGE}")
 set (PACKAGE_VERSION "${VERSION}")
 set (PACKAGE_STRING "${PACKAGE} ${VERSION}")
 
+if (FREEBSD)
+SET (FLOD_MAN1DIR man/man1 CACHE STRING "Installation directory for man pages, section 1")
+SET (FLOD_MAN5DIR man/man5 CACHE STRING "Installation directory for man pages, section 5")
+else (FREEBSD)
+SET (FLOD_MAN1DIR share/man/man1 CACHE STRING "Installation directory for man pages, section 1")
+SET (FLOD_MAN5DIR share/man/man5 CACHE STRING "Installation directory for man pages, section 5")
+endif (FREEBSD)
 SET (FLOD_DOCDIR  share/doc/flod CACHE STRING "Installation directory for doc files")
 
 message ("-- Configuring cmake.h")
@@ -31,6 +38,7 @@ ExternalProject_Add (common-1.0
                      )
 
 add_subdirectory (src)
+add_subdirectory (doc)
 if (EXISTS ${CMAKE_SOURCE_DIR}/test)
   add_subdirectory (test EXCLUDE_FROM_ALL)
 endif (EXISTS ${CMAKE_SOURCE_DIR}/test)
