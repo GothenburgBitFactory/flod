@@ -108,15 +108,18 @@ bool Q::scan (std::string& event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool Q::post (const std::string& event) const
+void Q::post (const std::string& event) const
 {
+  // Compose event prefix string: <name>.YYYYMMDDThhmmss.
+  auto prefix = composeEventPrefix ();
+
   File file (event);
+  std::string staging      = _location + "/staging/" + prefix + file.name ();
+  std::string destination  = _location + "/"         + prefix + file.name ();
 
-  // TODO Compose event prefix string: <name>.YYYYMMDDThhmmss
-  // TODO cp event location/staging/<prefix>.<event>
-  // TODO rename location/staging/<prefix>.<event> location/<prefix>.<event>
-
-  return false;
+  // The copy is expensive, the rename is atomic.
+  File::copy (event, staging);
+  File::rename (staging, destination);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,6 +131,17 @@ void Q::clear ()
       File (entry).remove ();
 
   _snapshot.clear ();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Compose event prefix string: <name>.YYYYMMDDThhmmss.
+std::string Q::composeEventPrefix () const
+{
+  std::string prefix = _name + '.';
+
+  prefix += '.';
+
+  return prefix;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

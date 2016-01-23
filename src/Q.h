@@ -40,8 +40,11 @@ public:
   void create (const std::string&, const std::string&);
   bool destroy (bool force = false);
   bool scan (std::string&);
-  bool post (const std::string&) const;
+  void post (const std::string&) const;
   void clear ();
+
+private:
+  std::string composeEventPrefix () const;
 
 private:
   std::string               _name     {"queue"};
