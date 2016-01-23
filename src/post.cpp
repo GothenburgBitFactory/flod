@@ -43,37 +43,35 @@ void handlePost (
   args.limitPositionals (3);         // post <name> <event>
   args.scan (argc, argv);
 
-  if (args.getPositionalCount () == 3)
-  {
-    auto command = args.getPositional (0);
-    auto name    = args.getPositional (1);
-    auto event   = args.getPositional (2);
+  if (args.getPositionalCount () == 1)
+    throw std::string ("Queue name required.");
 
-    // Validate arguments.
-    if (name == "")
-      throw std::string ("Queue name required.");
-
-    if (event == "")
-      throw std::string ("Event file required.");
-
-    // TODO Validate queue name.
-
-    Q q;
-    q.create (name, config.get ("queue." + name + ".location"));
-    q.post (event);
-
-    std::cout << "Central posted event to queue "
-              << name
-              << ".\n";
-  }
   else if (args.getPositionalCount () == 2)
     throw std::string ("Event file required.");
 
-  else if (args.getPositionalCount () == 1)
+  auto command = args.getPositional (0);
+  auto name    = args.getPositional (1);
+  auto event   = args.getPositional (2);
+
+  // Validate arguments.
+  if (name == "")
     throw std::string ("Queue name required.");
 
-  else
-    throw std::string ("central post <name> <event>");
+  if (event == "")
+    throw std::string ("Event file required.");
+
+  // Verify queue configured.
+  auto location = config.get ("queue." + name + ".location");
+  if (location == "")
+    throw std::string ("Queue '" + name + "' not configured.");
+
+  Q q;
+  q.create (name, config.get ("queue." + name + ".location"));
+  q.post (event);
+
+  std::cout << "Central posted event to queue "
+            << name
+            << ".\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
