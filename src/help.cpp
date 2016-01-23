@@ -36,7 +36,7 @@ void handleHelp ()
             << "Command:\n"
             << "  help                                                  Shows usage\n"
             << "  version                                               Display program version\n"
-            << "  create [--noarchive]                <name> <path>     Create a queue\n"
+            << "  create [--noarchive] [--timeout N]  <name> <path>     Create a queue\n"
             << "  destroy [--force]                   <name>            Destroy a queue\n"
             << "  clear                               <name>            Clears a queue\n"
             << "  retry                               <name>            Retries failed events\n"

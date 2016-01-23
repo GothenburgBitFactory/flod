@@ -34,7 +34,7 @@
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-// central create Foo /path/to/queue --[no]archive
+// central create Foo /path/to/queue [--[no]archive] [--timeout N]
 int handleCreate (
   int argc,
   const char** argv,
@@ -44,11 +44,13 @@ int handleCreate (
   Args args;
   args.limitPositionals (3);         // central <name> <location>
   args.addOption ("archive", true);  // [--[no]archive]
+  args.addNamed ("timeout", "3600"); // [--timeout N]
   args.scan (argc, argv);
 
   if (args.getPositionalCount () == 3)
   {
     auto archive = args.getOption ("archive");
+    auto timeout = args.getNamed ("timeout");
     auto command = args.getPositional (0);
     auto name    = args.getPositional (1);
     auto path    = args.getPositional (2);
@@ -69,6 +71,9 @@ int handleCreate (
     if (! setVariableInFile (config.file (), "queue." + name + ".archive",  (archive ? "yes" : "no")))
       throw std::string ("Could not write configuration 'queue." + name + ".archive'.");
 
+    if (! setVariableInFile (config.file (), "queue." + name + ".timeout",  timeout))
+      throw std::string ("Could not write configuration 'queue." + name + ".timeout'.");
+
     // Create queue.
     Q q;
     q.create (path);
@@ -78,6 +83,7 @@ int handleCreate (
               << "' at location "
               << path
               << (archive ? " with " : " without ")
+              << (timeout != "" ? " with timeout " + timeout + "s" : "")
               << "archiving.\n";
   }
   else if (args.getPositionalCount () == 2)
@@ -87,7 +93,7 @@ int handleCreate (
     throw std::string ("Queue name required.");
 
   else
-    throw std::string ("central create [--[no]archive] <name> <location>");
+    throw std::string ("central create [--[no]archive] [--timeout N] <name> <location>");
 
   return 0;
 }
