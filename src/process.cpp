@@ -30,6 +30,7 @@
 #include <map>
 #include <string>
 #include <stdlib.h>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
 void handleProcess (
@@ -44,26 +45,20 @@ void handleProcess (
   args.addNamed ("max", "0");              // [--max N]
   args.scan (argc, argv);
 
-  if (args.getPositionalCount () == 1)
-  {
-    auto exit_on_idle = args.getOption ("exit-on-idle");
-    int maxN          = strtol (args.getNamed ("max").c_str (), NULL, 10);
-    auto command      = args.getPositional (0);
+  auto exit_on_idle = args.getOption ("exit-on-idle");
+  int maxN          = strtol (args.getNamed ("max").c_str (), NULL, 10);
+  auto command      = args.getPositional (0);
 
-    int event_count = 0;
-    // TODO while (maxN == 0 || event_count < maxN)
-      // TODO Create a Hook object for each defined hook.
-      // TODO Create a Q object for each defined queue.
-      // TODO loop over Q
-        // TODO q.scan
-        // TODO dispatch hooks
-        // TODO scan active for timed out work --> requeue.
+  int event_count = 0;
+  // TODO while (maxN == 0 || event_count < maxN)
+    // TODO Create a Hook object for each defined hook.
+    // TODO Create a Q object for each defined queue.
+    // TODO loop over Q
+      // TODO q.scan
+      // TODO dispatch hooks
+      // TODO scan active for timed out work --> requeue.
 
-      // TODO Exit if all queues were empty and exit_on_idle
-  }
-
-  else
-    throw std::string ("central process [--exit-on-idle] [--max N]");
+    // TODO Exit if all queues were empty and exit_on_idle
 }
 
 ////////////////////////////////////////////////////////////////////////////////
