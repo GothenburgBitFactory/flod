@@ -34,8 +34,9 @@ std::vector <std::string> Q::structure = {"active", "archive", "failed"};
 ////////////////////////////////////////////////////////////////////////////////
 // Create the queue directories, if they do not already exist.
 // Set file permissions to owner-only.
-void Q::create (const std::string& location)
+void Q::create (const std::string& name, const std::string& location)
 {
+  _name = name;
   _location = location;
 
   Directory base (_location);

@@ -76,7 +76,7 @@ int handleCreate (
 
     // Create queue.
     Q q;
-    q.create (path);
+    q.create (name, path);
 
     std::cout << "Central created queue '"
               << name

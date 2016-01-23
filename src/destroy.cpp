@@ -77,7 +77,7 @@ int handleDestroy (
 
     // Destroy queue.
     Q q;
-    q.create (location);
+    q.create (name, location);
     q.destroy (force);
     std::cout << "Removed " << location << "\n";
 

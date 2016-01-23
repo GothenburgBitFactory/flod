@@ -60,7 +60,7 @@ int handlePost (
     // TODO Validate queue name.
 
     Q q;
-    q.create (config.get ("queue." + name + ".location"));
+    q.create (name, config.get ("queue." + name + ".location"));
     q.post (event);
 
     std::cout << "Central posted event to queue "

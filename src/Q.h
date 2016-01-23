@@ -37,13 +37,14 @@ public:
 
 public:
   Q () {};
-  void create (const std::string&);
+  void create (const std::string&, const std::string&);
   bool destroy (bool force = false);
   bool scan (std::string&);
   bool post (const std::string&) const;
   void clear ();
 
 private:
+  std::string               _name     {"queue"};
   std::string               _location {"."};
   std::vector <std::string> _snapshot {};
 };

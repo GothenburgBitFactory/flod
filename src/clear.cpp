@@ -56,7 +56,7 @@ int handleClear (
     // TODO Validate queue name.
 
     Q q;
-    q.create (config.get ("queue." + name + ".location"));
+    q.create (name, config.get ("queue." + name + ".location"));
     q.clear ();
 
     std::cout << "Central cleared queue "
