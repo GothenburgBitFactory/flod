@@ -33,6 +33,7 @@
 #include <ctime>
 #include <sys/time.h>
 
+//                                        0         1          2         3
 std::vector <std::string> Q::structure = {"active", "archive", "failed", "staging"};
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +138,44 @@ void Q::clear ()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+std::vector <std::string> Q::queue () const
+{
+  return events (_location);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector <std::string> Q::active () const
+{
+  Directory queueDir (_location);
+  queueDir += Q::structure[0];
+  return events (queueDir._data);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector <std::string> Q::archive () const
+{
+  Directory queueDir (_location);
+  queueDir += Q::structure[1];
+  return events (queueDir._data);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector <std::string> Q::failed () const
+{
+  Directory queueDir (_location);
+  queueDir += Q::structure[2];
+  return events (queueDir._data);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector <std::string> Q::staging () const
+{
+  Directory queueDir (_location);
+  queueDir += Q::structure[3];
+  return events (queueDir._data);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Compose event prefix string: <name>.YYYYMMDDThhmmss.
 std::string Q::composeEventPrefix () const
 {
@@ -161,6 +200,19 @@ std::string Q::composeEventPrefix () const
          << '.';
 
   return prefix.str ();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector <std::string> Q::events (const std::string& path) const
+{
+  std::vector <std::string> events;
+  Directory queueDir (path);
+
+  for (const auto& entry : queueDir.list ())
+    if (! Path (entry).is_directory ())
+      events.push_back (entry);
+
+  return events;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

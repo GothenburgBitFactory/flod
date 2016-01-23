@@ -42,9 +42,15 @@ public:
   bool scan (std::string&);
   void post (const std::string&) const;
   void clear ();
+  std::vector <std::string> queue () const;
+  std::vector <std::string> active () const;
+  std::vector <std::string> archive () const;
+  std::vector <std::string> failed () const;
+  std::vector <std::string> staging () const;
 
 private:
   std::string composeEventPrefix () const;
+  std::vector <std::string> events (const std::string&) const;
 
 private:
   std::string               _name     {"queue"};
