@@ -47,54 +47,44 @@ int handleCreate (
   args.addNamed ("timeout", "3600"); // [--timeout N]
   args.scan (argc, argv);
 
-  if (args.getPositionalCount () == 3)
-  {
-    auto archive = args.getOption ("archive");
-    auto timeout = args.getNamed ("timeout");
-    auto command = args.getPositional (0);
-    auto name    = args.getPositional (1);
-    auto path    = args.getPositional (2);
-
-    // Validate arguments.
-    if (name == "")
-      throw std::string ("Queue name required.");
-
-    if (path == "")
-      throw std::string ("Queue location required.");
-
-    // TODO Warn if queue already exists.
-
-    // Store config details.
-    if (! setVariableInFile (config.file (), "queue." + name + ".location", path))
-      throw std::string ("Could not write configuration 'queue." + name + ".location'.");
-
-    if (! setVariableInFile (config.file (), "queue." + name + ".archive",  (archive ? "yes" : "no")))
-      throw std::string ("Could not write configuration 'queue." + name + ".archive'.");
-
-    if (! setVariableInFile (config.file (), "queue." + name + ".timeout",  timeout))
-      throw std::string ("Could not write configuration 'queue." + name + ".timeout'.");
-
-    // Create queue.
-    Q q;
-    q.create (name, path);
-
-    std::cout << "Central created queue '"
-              << name
-              << "' at location "
-              << path
-              << (archive ? " with " : " without ")
-              << "archiving"
-              << (timeout != "" ? " with timeout " + timeout + "s" : "")
-              << ".\n";
-  }
-  else if (args.getPositionalCount () == 2)
-    throw std::string ("Queue location required.");
-
-  else if (args.getPositionalCount () == 1)
+  if (args.getPositionalCount () == 1)
     throw std::string ("Queue name required.");
 
-  else
-    throw std::string ("central create [--[no]archive] [--timeout N] <name> <location>");
+  if (args.getPositionalCount () == 2)
+    throw std::string ("Queue location required.");
+
+  auto archive = args.getOption ("archive");
+  auto timeout = args.getNamed ("timeout");
+  auto command = args.getPositional (0);
+  auto name    = args.getPositional (1);
+  auto path    = args.getPositional (2);
+
+  // Warn if queue already exists.
+  if (config.has ("queue." + name + ".location"))
+    throw std::string ("Queue '" + name + "' is already defined.");
+
+  // Store config details.
+  if (! setVariableInFile (config.file (), "queue." + name + ".location", path))
+    throw std::string ("Could not write configuration 'queue." + name + ".location'.");
+
+  if (! setVariableInFile (config.file (), "queue." + name + ".archive",  (archive ? "yes" : "no")))
+    throw std::string ("Could not write configuration 'queue." + name + ".archive'.");
+
+  if (! setVariableInFile (config.file (), "queue." + name + ".timeout",  timeout))
+    throw std::string ("Could not write configuration 'queue." + name + ".timeout'.");
+
+  // Create queue.
+  Q q;
+  q.create (name, path);
+
+  std::cout << "Central created queue '"
+            << name
+            << "' at location "
+            << path
+            << (archive ? " with " : " without ")
+            << "archiving"
+            << (timeout != "" ? " with timeout " + timeout + "s" : "")
+            << ".\n";
 
   return 0;
 }
