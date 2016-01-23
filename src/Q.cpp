@@ -121,9 +121,14 @@ void Q::post (const std::string& event) const
   std::string staging      = _location + "/staging/" + prefix + name;
   std::string destination  = _location + "/"         + prefix + name;
 
+  // TODO Detect collision in 'staging'.
+
   // The copy is expensive, the move is atomic.
-  File::copy (event, staging);
-  File::move (staging, destination);
+  if (! File::copy (event, staging))
+    throw std::string {"Failed to copy missing " + event};
+
+  if (! File::move (staging, destination))
+    throw std::string {"Failed to move " + staging + " to " + destination};
 }
 
 ////////////////////////////////////////////////////////////////////////////////
