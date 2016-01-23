@@ -41,6 +41,7 @@ public:
   bool destroy (bool force = false);
   bool scan (std::string&);
   bool post (const std::string&) const;
+  void clear ();
 
 private:
   std::string               _location {"."};

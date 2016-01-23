@@ -119,3 +119,14 @@ bool Q::post (const std::string& event) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void Q::clear ()
+{
+  Directory events (_location);
+  for (const auto& entry : events.list ())
+    if (! Path (entry).is_directory ())
+      File (entry).remove ();
+
+  _snapshot.clear ();
+}
+
+////////////////////////////////////////////////////////////////////////////////
