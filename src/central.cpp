@@ -25,26 +25,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
-#include <Configuration.h>
+#include <central.h>
 #include <text.h>
 #include <iostream>
 #include <map>
 #include <string>
 #include <new>
-
-void handleHelp ();
-void handleVersion ();
-int handleCreate  (int, const char**, Configuration&);
-int handleDestroy (int, const char**, Configuration&);
-int handleClear   (int, const char**, Configuration&);
-int handleRetry   (int, const char**, Configuration&);
-int handleInfo    (int, const char**, Configuration&);
-int handleStats   (int, const char**, Configuration&);
-int handleHook    (int, const char**, Configuration&);
-int handleUnhook  (int, const char**, Configuration&);
-int handleProcess (int, const char**, Configuration&);
-int handlePost    (int, const char**, Configuration&);
-int handleConfig  (int, const char**, Configuration&);
 
 ////////////////////////////////////////////////////////////////////////////////
 // The $FLODRC environment variable overrides all.

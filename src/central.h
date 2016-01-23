@@ -24,20 +24,25 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <cmake.h>
-#include <central.h>
-#include <map>
-#include <string>
+#ifndef INCLUDED_CENTRAL
+#define INCLUDED_CENTRAL
 
-////////////////////////////////////////////////////////////////////////////////
-int handleStats (
-  int argc,
-  const char** argv,
-  Configuration& config)
-{
-  // TODO central stats [reset] Foo
+#include <Configuration.h>
 
-  return 0;
-}
+// Command handlers.
+void handleHelp ();
+void handleVersion ();
+int handleCreate  (int, const char**, Configuration&);
+int handleDestroy (int, const char**, Configuration&);
+int handleClear   (int, const char**, Configuration&);
+int handleRetry   (int, const char**, Configuration&);
+int handleInfo    (int, const char**, Configuration&);
+int handleStats   (int, const char**, Configuration&);
+int handleHook    (int, const char**, Configuration&);
+int handleUnhook  (int, const char**, Configuration&);
+int handleProcess (int, const char**, Configuration&);
+int handlePost    (int, const char**, Configuration&);
+int handleConfig  (int, const char**, Configuration&);
 
-////////////////////////////////////////////////////////////////////////////////
+#endif
+

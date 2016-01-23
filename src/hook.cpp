@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
-#include <Configuration.h>
+#include <central.h>
 #include <map>
 #include <string>
 

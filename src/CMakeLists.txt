@@ -22,7 +22,7 @@ set (flod_SRCS Configuration.cpp Configuration.h
 add_library (central STATIC ${flod_SRCS})
 include_directories(${CMAKE_INSTALL_PREFIX}/include)
 link_directories(${CMAKE_INSTALL_PREFIX}/lib)
-add_executable (central_executable central.cpp)
+add_executable (central_executable central.cpp central.h)
 
 target_link_libraries (central_executable central common ${FLOD_LIBRARIES})
 
