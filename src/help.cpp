@@ -44,9 +44,9 @@ void handleHelp ()
             << "  stats [reset]                       <name>            Shows or resets queue statistics\n"
             << "  hook [success | failure] [--scan T] <name> <path>     Sets up a queue hook\n"
             << "  unhook                              <name> <path>     Removes a queue hook\n"
-            << "  process [--exit-on-idle] [--max N]  <name>            Processes a queue\n"
             << "  post                                <name> <path>     Posts an event to a queue\n"
             << "  config [--force]                    <name> [<value>]  Sets, clears and defaults configuration\n"
+            << "  process [--exit-on-idle] [--max N]                    Processes all queues\n"
             << "\n";
 }
 
