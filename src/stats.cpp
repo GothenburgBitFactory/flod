@@ -26,8 +26,11 @@
 
 #include <cmake.h>
 #include <central.h>
+#include <Args.h>
+#include <Q.h>
 #include <map>
 #include <string>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
 void handleStats (
@@ -35,7 +38,27 @@ void handleStats (
   const char** argv,
   Configuration& config)
 {
-  // TODO central stats [reset] Foo
+  // Process arguments;
+  Args args;
+  args.limitPositionals (3);        // stats [reset] <name>
+  args.scan (argc, argv);
+ 
+  if (args.getPositionalCount () == 1)
+    throw std::string ("Queue name required.");
+
+  auto command = args.getPositional (0);
+  auto name    = args.getPositional (1);
+
+  bool reset = false;
+  if (args.getPositionalCount () == 3)
+    if (args.getPositional (2) == "reset")
+      reset = true;
+
+  // TODO Obtain Q stats
+  // TODO if (reset)
+    // TODO reset stats
+
+  std::cout << "# stats unimplemented\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
