@@ -196,42 +196,49 @@ void Configuration::parse (const std::string& input, int nest /* = 1 */)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool Configuration::has (const std::string& key)
+bool Configuration::has (const std::string& key) const
 {
   return (*this).find (key) != (*this).end ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Return the configuration value given the specified key.
-std::string Configuration::get (const std::string& key)
+std::string Configuration::get (const std::string& key) const
 {
-  return (*this)[key];
+  auto found = find (key);
+  if (found != end ())
+    return found->second;
+
+  return "";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int Configuration::getInteger (const std::string& key)
+int Configuration::getInteger (const std::string& key) const
 {
-  if ((*this).find (key) != (*this).end ())
-    return strtoimax ((*this)[key].c_str (), nullptr, 10);
+  auto found = find (key);
+  if (found != end ())
+    return strtoimax (found->second.c_str (), nullptr, 10);
 
   return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-double Configuration::getReal (const std::string& key)
+double Configuration::getReal (const std::string& key) const
 {
-  if ((*this).find (key) != (*this).end ())
-    return strtod ((*this)[key].c_str (), nullptr);
+  auto found = find (key);
+  if (found != end ())
+    return strtod (found->second.c_str (), nullptr);
 
   return 0.0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool Configuration::getBoolean (const std::string& key)
+bool Configuration::getBoolean (const std::string& key) const
 {
-  if ((*this).find (key) != (*this).end ())
+  auto found = find (key);
+  if (found != end ())
   {
-    std::string value = lowerCase ((*this)[key]);
+    auto value = lowerCase (found->second);
     if (value == "true"   ||
         value == "1"      ||
         value == "y"      ||

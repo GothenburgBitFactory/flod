@@ -41,11 +41,11 @@ public:
   void load  (const std::string&, int nest = 1);
   void parse (const std::string&, int nest = 1);
 
-  bool        has        (const std::string&);
-  std::string get        (const std::string&);
-  int         getInteger (const std::string&);
-  double      getReal    (const std::string&);
-  bool        getBoolean (const std::string&);
+  bool        has        (const std::string&) const;
+  std::string get        (const std::string&) const;
+  int         getInteger (const std::string&) const;
+  double      getReal    (const std::string&) const;
+  bool        getBoolean (const std::string&) const;
 
   void set (const std::string&, const int);
   void set (const std::string&, const double);
