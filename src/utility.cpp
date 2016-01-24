@@ -24,29 +24,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDED_CENTRAL
-#define INCLUDED_CENTRAL
+#include <cmake.h>
+#include <central.h>
 
-#include <Configuration.h>
-#include <string>
+////////////////////////////////////////////////////////////////////////////////
+std::string getQueueLocation (const Configuration& config, const std::string& name)
+{
+  std::string key = "queue." + name + ".location";
+  if (! config.has (key))
+    throw std::string ("Queue '" + name + "' not configured.");
 
-// Command handlers.
-void handleHelp ();
-void handleVersion ();
-void handleCreate  (int, const char**, Configuration&);
-void handleDestroy (int, const char**, Configuration&);
-void handleClear   (int, const char**, Configuration&);
-void handleRetry   (int, const char**, Configuration&);
-void handleInfo    (int, const char**, Configuration&);
-void handleStats   (int, const char**, Configuration&);
-void handleHook    (int, const char**, Configuration&);
-void handleUnhook  (int, const char**, Configuration&);
-void handleProcess (int, const char**, Configuration&);
-void handlePost    (int, const char**, Configuration&);
-void handleConfig  (int, const char**, Configuration&);
+  return config.get (key);
+}
 
-// Helper functions.
-std::string getQueueLocation (const Configuration&, const std::string&);
-
-#endif
-
+////////////////////////////////////////////////////////////////////////////////

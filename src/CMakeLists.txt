@@ -17,6 +17,7 @@ set (flod_SRCS Configuration.cpp Configuration.h
                retry.cpp
                stats.cpp
                unhook.cpp
+               utility.cpp
                version.cpp)
 
 add_library (central STATIC ${flod_SRCS})
