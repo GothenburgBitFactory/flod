@@ -53,10 +53,7 @@ void handleDestroy (
   auto command = args.getPositional (0);
   auto name    = args.getPositional (1);
 
-  // Update config details.
-  auto location = config.get ("queue." + name + ".location");
-  if (location == "")
-    throw std::string ("Queue '" + name + "' not configured.");
+  auto location = getQueueLocation (config, name);
 
   // Destroy queue.
   Q q;
