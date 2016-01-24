@@ -43,7 +43,7 @@ void manageQueue (
 {
   // TODO If no scripts hook this queue, exit.
 
-  auto location = config.get        ("queue." + name + ".location");
+  auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
   auto timeout  = config.getInteger ("queue." + name + ".timeout");
 
