@@ -121,7 +121,13 @@ void Q::post (const std::string& event) const
   std::string staging      = _location + "/staging/" + prefix + name;
   std::string destination  = _location + "/"         + prefix + name;
 
-  // TODO Detect collision in 'staging'.
+  // Detect collision in 'staging'.
+  if (File (staging).exists ())
+    throw std::string {"Staging area collision - unlikely, but it just happened."};
+
+  // Detect collision in queue.
+  if (File (destination).exists ())
+    throw std::string {"Queued event collision - unlikely, but it just happened."};
 
   // The copy is expensive, the move is atomic.
   if (! File::copy (event, staging))
