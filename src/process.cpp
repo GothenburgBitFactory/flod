@@ -32,39 +32,29 @@
 #include <string>
 #include <stdlib.h>
 #include <iostream>
+#include <thread>
 
 ////////////////////////////////////////////////////////////////////////////////
-// Note: not used.
-int trigger (const std::string& script, const std::string& event)
+void manageQueue (
+  std::string name,
+  Configuration config,
+  bool exit_on_idle)
 {
-  // TODO Launch script, pass event on cli
-  // TODO Obtain exit code
-  return 0;  // Return the exit code.
-}
+  // Note: config is a copy, no mutex needed.
+  auto location = config.get        ("queue." + name + ".location");
+  auto archive  = config.getBoolean ("queue." + name + ".archive");
+  auto timeout  = config.getInteger ("queue." + name + ".timeout");
 
-////////////////////////////////////////////////////////////////////////////////
-std::vector <Q> createQs (Configuration& config)
-{
-  std::set <std::string> names;
-  for (const auto& item : config.all ())
-  {
-    if (item.substr (0, 6) == "queue.")
-    {
-      auto period = item.find (".", 6);
-      if (period != std::string::npos)
-        names.insert (item.substr (6, period - 6));
-    }
-  }
+  // Instantiate the queue
+  Q q;
+  q.create (name, location);
 
-  std::vector <Q> queues;
-  for (const auto& name : names)
-  {
-    Q q;
-    q.create (name, config.get ("queue." + name + ".location"));
-    queues.push_back (q);
-  }
+  // TODO loop
+    // TODO q.scan
+      // TODO Dispatch hooks
 
-  return queues;
+    // TODO scan active for timed out work --> requeue.
+    // TODO Exit if all queues were empty and exit_on_idle
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,33 +67,30 @@ void handleProcess (
   Args args;
   args.limitPositionals (1);               // process
   args.addOption ("exit-on-idle", false);  // [--[no]exit-on-idle]
-  args.addNamed ("max", "0");              // [--max N]
   args.scan (argc, argv);
 
   auto exit_on_idle = args.getOption ("exit-on-idle");
-  int maxN          = strtol (args.getNamed ("max").c_str (), NULL, 10);
-  auto command      = args.getPositional (0);
 
-  // TODO Create a Hook object for each defined hook.
-
-  // Create a Q object for each defined queue.
-  auto queues = createQs (config);
-
-  int eventCount = 0;
-  while (maxN == 0 || eventCount < maxN)
+  // Obtain a set of queue names.
+  std::set <std::string> names;
+  for (const auto& item : config.all ())
   {
-    for (auto& queue : queues)
+    if (item.substr (0, 6) == "queue.")
     {
-      // TODO q.scan
-      // TODO dispatch hooks
-      // TODO scan active for timed out work --> requeue.
+      auto period = item.find (".", 6);
+      if (period != std::string::npos)
+        names.insert (item.substr (6, period - 6));
     }
-
-    // TODO Exit if all queues were empty and exit_on_idle
-
-    // TODO Stop the wheels from spinning during development.
-    break;
   }
+
+  // Create a thread to manage each queue.
+  std::vector <std::thread> managers;
+  for (const auto& name : names)
+    managers.push_back (std::thread (manageQueue, name, config, exit_on_idle));
+
+  // Gather loose ends.
+  for (auto& manager : managers)
+    manager.join ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
