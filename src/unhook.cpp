@@ -53,10 +53,7 @@ void handleUnhook (
   auto name    = args.getPositional (1);
   auto script  = args.getPositional (2);
 
-  // Error on missing queue
-  auto location = config.get ("queue." + name + ".location");
-  if (location == "")
-    throw std::string ("Queue '" + name + "' not configured.");
+  auto location = getQueueLocation (config, name);
 
   // TODO Assert entry exists.
   // TODO Remove configuration.
