@@ -27,10 +27,45 @@
 #include <cmake.h>
 #include <central.h>
 #include <Args.h>
-#include <map>
+#include <Q.h>
+#include <set>
 #include <string>
 #include <stdlib.h>
 #include <iostream>
+
+////////////////////////////////////////////////////////////////////////////////
+// Note: not used.
+int trigger (const std::string& script, const std::string& event)
+{
+  // TODO Launch script, pass event on cli
+  // TODO Obtain exit code
+  return 0;  // Return the exit code.
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector <Q> createQs (Configuration& config)
+{
+  std::set <std::string> names;
+  for (const auto& item : config.all ())
+  {
+    if (item.substr (0, 6) == "queue.")
+    {
+      auto period = item.find (".", 6);
+      if (period != std::string::npos)
+        names.insert (item.substr (6, period - 6));
+    }
+  }
+
+  std::vector <Q> queues;
+  for (const auto& name : names)
+  {
+    Q q;
+    q.create (name, config.get ("queue." + name + ".location"));
+    queues.push_back (q);
+  }
+
+  return queues;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void handleProcess (
