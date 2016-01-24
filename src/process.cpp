@@ -35,12 +35,14 @@
 #include <thread>
 
 ////////////////////////////////////////////////////////////////////////////////
+// Arguments are deliberately by value, not by ref.
 void manageQueue (
   std::string name,
   Configuration config,
   bool exit_on_idle)
 {
-  // Note: config is a copy, no mutex needed.
+  // TODO If no scripts hook this queue, exit.
+
   auto location = config.get        ("queue." + name + ".location");
   auto archive  = config.getBoolean ("queue." + name + ".archive");
   auto timeout  = config.getInteger ("queue." + name + ".timeout");
