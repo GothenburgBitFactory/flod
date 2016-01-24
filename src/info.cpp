@@ -50,9 +50,7 @@ void handleInfo (
   auto name    = args.getPositional (1);
 
   // Warn if queue already exists.
-  auto location = config.get ("queue." + name + ".location");
-  if (location == "")
-    throw std::string ("Queue '" + name + "' not configured.");
+  auto location = getQueueLocation (config, name);
 
   // Create queue.
   Q q;
