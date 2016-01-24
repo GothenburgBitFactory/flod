@@ -60,13 +60,8 @@ void handlePost (
   if (event == "")
     throw std::string ("Event file required.");
 
-  // Verify queue configured.
-  auto location = config.get ("queue." + name + ".location");
-  if (location == "")
-    throw std::string ("Queue '" + name + "' not configured.");
-
   Q q;
-  q.create (name, config.get ("queue." + name + ".location"));
+  q.create (name, getQueueLocation (config, name));
   q.post (event);
 
   std::cout << "Central posted event to queue "
