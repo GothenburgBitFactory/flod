@@ -49,12 +49,8 @@ void handleClear (
   auto command = args.getPositional (0);
   auto name    = args.getPositional (1);
 
-  // Warn if queue doesn't exist.
-  if (! config.has ("queue." + name + ".location"))
-    throw std::string ("Queue '" + name + "' is already defined.");
-
   Q q;
-  q.create (name, config.get ("queue." + name + ".location"));
+  q.create (name, getQueueLocation (config, name));
   q.clear ();
 
   std::cout << "Central cleared queue '"
