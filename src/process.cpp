@@ -84,16 +84,26 @@ void handleProcess (
   int maxN          = strtol (args.getNamed ("max").c_str (), NULL, 10);
   auto command      = args.getPositional (0);
 
-  int event_count = 0;
-  // TODO while (maxN == 0 || event_count < maxN)
-    // TODO Create a Hook object for each defined hook.
-    // TODO Create a Q object for each defined queue.
-    // TODO loop over Q
+  // TODO Create a Hook object for each defined hook.
+
+  // Create a Q object for each defined queue.
+  auto queues = createQs (config);
+
+  int eventCount = 0;
+  while (maxN == 0 || eventCount < maxN)
+  {
+    for (auto& queue : queues)
+    {
       // TODO q.scan
       // TODO dispatch hooks
       // TODO scan active for timed out work --> requeue.
+    }
 
     // TODO Exit if all queues were empty and exit_on_idle
+
+    // TODO Stop the wheels from spinning during development.
+    break;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
