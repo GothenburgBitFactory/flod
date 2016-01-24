@@ -28,6 +28,7 @@
 #include <central.h>
 #include <Args.h>
 #include <Q.h>
+#include <FS.h>
 #include <map>
 #include <string>
 #include <cstring>
@@ -62,8 +63,10 @@ void handleCreate (
   if (config.has ("queue." + name + ".location"))
     throw std::string ("Queue '" + name + "' is already defined.");
 
+  Path location (path);
+
   // Store config details.
-  if (! setVariableInFile (config.file (), "queue." + name + ".location", path))
+  if (! setVariableInFile (config.file (), "queue." + name + ".location", location._data))
     throw std::string ("Could not write configuration 'queue." + name + ".location'.");
 
   if (! setVariableInFile (config.file (), "queue." + name + ".archive",  (archive ? "yes" : "no")))
