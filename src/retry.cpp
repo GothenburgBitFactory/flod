@@ -49,10 +49,7 @@ void handleRetry (
   auto command = args.getPositional (0);
   auto name    = args.getPositional (1);
 
-  // Warn if queue already exists.
-  auto location = config.get ("queue." + name + ".location");
-  if (location == "")
-    throw std::string ("Queue '" + name + "' is already defined.");
+  auto location = getQueueLocation (config, name);
 
   // Retry queue.
   Q q;
