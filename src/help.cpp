@@ -42,7 +42,7 @@ void handleHelp ()
             << "  retry                               <name>            Retries failed events\n"
             << "  info                                <name>            Shows queue details\n"
             << "  stats [reset]                       <name>            Shows or resets queue statistics\n"
-            << "  hook [success | failure] [--scan T] <name> <path>     Sets up a queue hook\n"
+            << "  hook [--scan T]                     <name> <path>     Sets up a queue hook\n"
             << "  unhook                              <name> <path>     Removes a queue hook\n"
             << "  post                                <name> <path>     Posts an event to a queue\n"
             << "  config [--force]                    <name> [<value>]  Sets, clears and defaults configuration\n"

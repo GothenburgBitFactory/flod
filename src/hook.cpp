@@ -60,7 +60,11 @@ void handleHook (
   if (location == "")
     throw std::string ("Queue '" + name + "' not configured.");
 
-  std::cout << "# hook unimplemnted.\n";
+  // TODO Assert script exists.
+  // TODO Generate unique name for hook.
+  // TODO Add configuration.
+
+  std::cout << "# hook unimplemented.\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
