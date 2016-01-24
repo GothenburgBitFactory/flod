@@ -58,7 +58,33 @@ void handleInfo (
   Q q;
   q.create (name, location);
 
-  std::cout << "# info unimplemented\n";
+  std::cout << "\n"
+            << name << " --> " << location << "\n"
+            << "  Archive:  " << config.get ("queue." + name + ".archive") << "\n"
+            << "  Timeout:  " << config.get ("queue." + name + ".timeout") << "s\n"
+            << "\n";
+
+  std::cout << "  Queued:\n";
+  for (const auto& event : q.queue ())
+    std::cout << "    " << event << "\n";
+
+  std::cout << "  Active:\n";
+  for (const auto& event : q.active ())
+    std::cout << "    " << event << "\n";
+
+  std::cout << "  Failed:\n";
+  for (const auto& event : q.failed ())
+    std::cout << "    " << event << "\n";
+
+  std::cout << "  Staging:\n";
+  for (const auto& event : q.staging ())
+    std::cout << "    " << event << "\n";
+
+  std::cout << "  Archive:\n";
+  for (const auto& event : q.archive ())
+    std::cout << "    " << event << "\n";
+
+  std::cout << "\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
