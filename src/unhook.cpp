@@ -58,7 +58,10 @@ void handleUnhook (
   if (location == "")
     throw std::string ("Queue '" + name + "' not configured.");
 
-  std::cout << "# unhook unimplemnted.\n";
+  // TODO Assert entry exists.
+  // TODO Remove configuration.
+
+  std::cout << "# unhook unimplemented.\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
