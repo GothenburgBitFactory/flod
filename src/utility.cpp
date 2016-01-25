@@ -38,3 +38,19 @@ std::string getQueueLocation (const Configuration& config, const std::string& na
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Obtain a set of queue names.
+std::set <std::string> getQueueNames (const Configuration& config)
+{
+  std::set <std::string> names;
+  for (const auto& item : config.all ())
+  {
+    if (item.substr (0, 6) == "queue.")
+    {
+      auto period = item.find (".", 6);
+      if (period != std::string::npos)
+        names.insert (item.substr (6, period - 6));
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////

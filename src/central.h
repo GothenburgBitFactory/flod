@@ -29,6 +29,7 @@
 
 #include <Configuration.h>
 #include <string>
+#include <set>
 
 // Command handlers.
 void handleHelp ();
@@ -47,6 +48,7 @@ void handleConfig  (int, const char**, Configuration&);
 
 // Helper functions.
 std::string getQueueLocation (const Configuration&, const std::string&);
+std::set <std::string> getQueueNames (const Configuration&);
 
 #endif
 
