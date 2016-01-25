@@ -28,7 +28,6 @@
 #include <Q.h>
 #include <FS.h>
 #include <text.h>
-#include <iostream> // TODO Remove
 #include <sstream>
 #include <iomanip>
 #include <ctime>
@@ -90,12 +89,10 @@ bool Q::scan (std::string& event)
   Directory events {_location};
   for (const auto& item : events.list ())
   {
-    std::cout << "# Q::scan " << item << "\n";
     if (std::find (Q::structure.begin (),
                    Q::structure.end (),
                    Path (item).name ()) == Q::structure.end ())
     {
-      std::cout << "#   event\n";
       event = item;
       return true;
     }
