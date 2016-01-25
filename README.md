@@ -70,3 +70,42 @@ There needs to be platform-specific configuration, including:
    in order to build and test a project.
 
 3. Permanent queue details, such as a location, and set of triggered scripts.
+
+
+## Example System
+
+Recreating and extending the functionality of Flod 0.x requires creating
+several queues and hook scripts.
+
+   Queue   |  Mechanism
+   --------|---------------------------------------------------------------
+   commit  |  Source:   'git commit' hooks identify project, branch, commit
+           |  Triggers: platform script that forwards the message to the
+           |            build-* queues for each platform
+           |
+   build-P |  Source:   platform script
+           |  Triggers: VM manager for platform P
+           |
+   result  |  Source:   build script on platform P provides results from
+           |            each of the clone/prebuild/build/test steps
+           |  Triggers: aggregator script that composes a tinderbox report
+           |            fragment for the project/branch/commit, and posts a
+           |            message to the 'report' queue
+           |  Triggers: clean build detector, that identified project/branch
+           |            commit that passes 100% tests on all platforms, and
+           |            posts a message to the 'tarball' queue
+           |
+   report  |  Source:   aggregator script
+           |  Triggers: assembly script that combines report fragments into
+           |            an HTML page which is copied to the web server
+           |            docroot
+           |
+   tarball |  Source:   clean build aggregator that identifies builds that
+           |            should be made into snapshot tarballs
+           |  Triggers: tarball creation and release script
+
+This arrangement would permit a git hook to notify Flod of a commit on a branch
+of a project, which would in turn cause multiple VMs to be started to build the
+project on various platforms, the results of which are combined in a report
+with clean builds automatically creating snapshot tarballs. Map reduce.
+
