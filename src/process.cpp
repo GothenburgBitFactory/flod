@@ -41,8 +41,9 @@ void manageQueue (
   Configuration config,
   bool exit_on_idle)
 {
-  // TODO If no scripts hook this queue, exit.
+  std::cout << "# manageQueue\n";
 
+  // TODO If no scripts hook this queue, exit.
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
   auto timeout  = config.getInteger ("queue." + name + ".timeout");
@@ -51,12 +52,21 @@ void manageQueue (
   Q q;
   q.create (name, location);
 
-  // TODO loop
-    // TODO q.scan
+  while (1)
+  {
+    std::string event;
+    if (q.scan (event))
+    {
+      std::cout << "# trigger " << event << "\n";
       // TODO Dispatch hooks
+    }
 
     // TODO scan active for timed out work --> requeue.
     // TODO Exit if all queues were empty and exit_on_idle
+
+    // Note: for debugging.
+    break;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,6 +83,7 @@ void handleProcess (
 
   auto exit_on_idle = args.getOption ("exit-on-idle");
 
+/*
   // Create a thread to manage each queue.
   std::vector <std::thread> managers;
   for (const auto& name : getQueueNames (config))
@@ -81,6 +92,11 @@ void handleProcess (
   // Gather loose ends.
   for (auto& manager : managers)
     manager.join ();
+*/
+// Good:
+  std::string name = "q";
+  std::thread t (manageQueue, name, config, exit_on_idle);
+  t.join ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
