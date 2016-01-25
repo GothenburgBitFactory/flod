@@ -53,9 +53,8 @@ private:
   std::vector <std::string> events (const std::string&) const;
 
 private:
-  std::string               _name     {"queue"};
-  std::string               _location {"."};
-  std::vector <std::string> _snapshot {};
+  std::string _name     {"queue"};
+  std::string _location {"."};
 };
 
 #endif

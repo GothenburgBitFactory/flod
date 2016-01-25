@@ -27,6 +27,7 @@
 #include <cmake.h>
 #include <Q.h>
 #include <FS.h>
+#include <text.h>
 #include <iostream> // TODO Remove
 #include <sstream>
 #include <iomanip>
@@ -83,28 +84,19 @@ bool Q::destroy (bool force)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Scans the queue for new events
+// Scans the queue for events to process, that are not listed in Q::structure.
 bool Q::scan (std::string& event)
 {
-  // Record 'before' state, for comparison.
-  auto before = _snapshot;
-
-  // TODO Scan _location
-  Directory events (_location);
-  for (const auto& entry : events.list ())
+  Directory events {_location};
+  for (const auto& item : events.list ())
   {
-    if (! Path (entry).is_directory ())
+    std::cout << "# Q::scan " << item << "\n";
+    if (std::find (Q::structure.begin (),
+                   Q::structure.end (),
+                   Path (item).name ()) == Q::structure.end ())
     {
-      std::cout << "# Q::scan " << entry << "\n";
-
-      // TODO If item is not in _snapshot
-      //   TODO Add item to snapshot
-      //   TODO event <-- item
-      //   TODO return true
-      // TODO If _snapshot contains missing item
-      //   TODO Remove _snapshot item
-
-      event = entry;
+      std::cout << "#   event\n";
+      event = item;
       return true;
     }
   }
@@ -144,8 +136,6 @@ void Q::clear ()
   for (const auto& entry : events.list ())
     if (! Path (entry).is_directory ())
       File (entry).remove ();
-
-  _snapshot.clear ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
