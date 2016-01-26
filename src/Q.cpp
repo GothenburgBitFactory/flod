@@ -130,10 +130,10 @@ void Q::post (const std::string& event) const
 // Move event from queued to active.
 std::string Q::activateEvent (const std::string& event) const
 {
-  File eventFile (event);
-  std::string newLocation = eventFile.parent () + "/" + Q::structure[0] + "/" + eventFile.name ();
-  File::move (eventFile._data, newLocation);
-  return newLocation;
+  File file (event);
+  std::string to = _location + "/" + Q::structure[0] + "/" + file.name ();
+  File::move (file._data, to);
+  return to;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
