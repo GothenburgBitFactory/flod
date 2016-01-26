@@ -45,6 +45,7 @@ void handleCreate (
   args.limitPositionals (3);         // central <name> <location>
   args.addOption ("archive", true);  // [--[no]archive]
   args.addNamed ("timeout", "3600"); // [--timeout N]
+  args.addNamed ("scan", "60");      // [--scan N]
   args.scan (argc, argv);
 
   if (args.getPositionalCount () == 1)
@@ -55,6 +56,7 @@ void handleCreate (
 
   auto archive = args.getOption ("archive");
   auto timeout = args.getNamed ("timeout");
+  auto scan    = args.getNamed ("scan");
   auto command = args.getPositional (0);
   auto name    = args.getPositional (1);
   auto path    = args.getPositional (2);
@@ -75,6 +77,9 @@ void handleCreate (
   if (! setVariableInFile (config.file (), "queue." + name + ".timeout",  timeout))
     throw std::string ("Could not write configuration 'queue." + name + ".timeout'.");
 
+  if (! setVariableInFile (config.file (), "queue." + name + ".scan",  scan))
+    throw std::string ("Could not write configuration 'queue." + name + ".scan'.");
+
   // Create queue.
   Q q;
   q.create (name, path);
@@ -84,8 +89,9 @@ void handleCreate (
             << "' at location "
             << path
             << (archive ? " with " : " without ")
-            << "archiving"
+            << "archiving "
             << (timeout != "" ? " with timeout " + timeout + "s" : "")
+            << "with scan every " << scan << "s"
             << ".\n";
 }
 
