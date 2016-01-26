@@ -28,6 +28,7 @@
 #include <central.h>
 #include <Args.h>
 #include <Q.h>
+#include <text.h>
 #include <map>
 #include <string>
 #include <iostream>
@@ -55,18 +56,14 @@ void handleUnhook (
 
   File hookScript (script);
 
+  // Remove all settings for 'hook.<name>.<hookName>.*'
   for (auto& hookName : getHookScriptNames (config, name))
   {
-    std::string key = "hook." + name + "." + hookName;
-
-    if (config.get (key + ".script") == hookScript._data)
-    {
-      if (! unsetVariableInFile (config.file (), "hook." + name + "." + hookName + ".script"))
-        throw std::string ("Could not remove configuration 'hook." + name + "." + hookName + ".script'.");
-
-      if (! unsetVariableInFile (config.file (), "hook." + name + "." + hookName + ".scan"))
-        throw std::string ("Could not remove configuration 'hook." + name + "." + hookName + ".scan'.");
-    }
+    std::string prefix = "hook." + name + "." + hookName;
+    for (const auto& setting : config.all ())
+      if (closeEnough (setting, prefix))
+        if (! unsetVariableInFile (config.file (), setting))
+          throw std::string ("Could not remove configuration '" + setting + "'.");
   }
 
   std::cout << "Central unhooked queue '"
