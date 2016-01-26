@@ -53,12 +53,27 @@ void handleUnhook (
   auto name    = args.getPositional (1);
   auto script  = args.getPositional (2);
 
-  auto location = getQueueLocation (config, name);
+  File hookScript (script);
 
-  // TODO Assert entry exists.
-  // TODO Remove configuration.
+  for (auto& hookName : getHookScriptNames (config, name))
+  {
+    std::string key = "hook." + name + "." + hookName;
 
-  std::cout << "# unhook unimplemented.\n";
+    if (config.get (key + ".script") == hookScript._data)
+    {
+      if (! unsetVariableInFile (config.file (), "hook." + name + "." + hookName + ".script"))
+        throw std::string ("Could not remove configuration 'hook." + name + "." + hookName + ".script'.");
+
+      if (! unsetVariableInFile (config.file (), "hook." + name + "." + hookName + ".scan"))
+        throw std::string ("Could not remove configuration 'hook." + name + "." + hookName + ".scan'.");
+    }
+  }
+
+  std::cout << "Central unhooked queue '"
+            << name
+            << "' from triggering script '"
+            << script
+            << "'.\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
