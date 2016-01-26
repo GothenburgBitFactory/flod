@@ -89,9 +89,9 @@ void handleCreate (
             << "' at location "
             << path
             << (archive ? " with " : " without ")
-            << "archiving "
-            << (timeout != "" ? " with timeout " + timeout + "s" : "")
-            << "with scan every " << scan << "s"
+            << "archiving, "
+            << (timeout != "" ? "with timeout " + timeout + "s, " : "")
+            << "with a scan every " << scan << "s"
             << ".\n";
 }
 
