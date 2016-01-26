@@ -44,6 +44,7 @@ public:
 
   std::string activateEvent (const std::string&) const;
   void archiveEvent (const std::string&) const;
+  void failEvent (const std::string&) const;
 
   void clear ();
   std::vector <std::string> queue () const;
