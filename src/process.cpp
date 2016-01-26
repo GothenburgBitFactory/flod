@@ -81,17 +81,24 @@ void manageQueue (
 */
       }
 
-      // Move event to either q/archive or q/failed.
+      // Move event to either q/archive or q/failed, based on status.
       if (success)
         q.archiveEvent (event);
       else
         q.failEvent (event);
     }
 
-    // TODO scan active for timed out work --> requeue.
-    // TODO Exit if all queues were empty and exit_on_idle
+    // Cleanup and delays only occur on idle.
+    else
+    {
+      // TODO scan active for timed out work --> requeue.
+      // TODO Exit if all queues were empty and exit_on_idle
 
-    std::this_thread::sleep_for (wait);
+      if (exit_on_idle)
+        return;
+
+      std::this_thread::sleep_for (wait);
+    }
   }
 }
 
