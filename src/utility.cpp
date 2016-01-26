@@ -56,3 +56,20 @@ std::set <std::string> getQueueNames (const Configuration& config)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Obtain a set of hook script names for a given queue.
+std::set <std::string> getHookScriptNames (
+  const Configuration& config,
+  const std::string& name)
+{
+  std::string key = "hook." + name + ".";
+  auto len = key.length ();
+
+  std::set <std::string> names;
+  for (const auto& item : config.all ())
+    if (item.substr (0, len) == key)
+      names.insert (item.substr (len));
+
+  return names;
+}
+
+////////////////////////////////////////////////////////////////////////////////

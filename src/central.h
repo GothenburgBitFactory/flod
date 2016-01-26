@@ -49,6 +49,7 @@ void handleConfig  (int, const char**, Configuration&);
 // Helper functions.
 std::string getQueueLocation (const Configuration&, const std::string&);
 std::set <std::string> getQueueNames (const Configuration&);
+std::set <std::string> getHookScriptNames (const Configuration&, const std::string&);
 
 #endif
 
