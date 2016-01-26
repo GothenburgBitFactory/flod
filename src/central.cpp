@@ -26,7 +26,7 @@
 
 #include <cmake.h>
 #include <central.h>
-#include <text.h>
+#include <common.h>
 #include <iostream>
 #include <map>
 #include <string>

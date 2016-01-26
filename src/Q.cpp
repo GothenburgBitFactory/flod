@@ -27,7 +27,7 @@
 #include <cmake.h>
 #include <Q.h>
 #include <FS.h>
-#include <text.h>
+#include <common.h>
 #include <sstream>
 #include <iomanip>
 #include <ctime>

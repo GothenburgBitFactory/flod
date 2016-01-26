@@ -28,7 +28,7 @@
 #include <central.h>
 #include <Args.h>
 #include <Q.h>
-#include <text.h>
+#include <common.h>
 #include <map>
 #include <string>
 #include <iostream>

@@ -28,7 +28,7 @@
 #include <central.h>
 #include <Args.h>
 #include <Q.h>
-#include <text.h>
+#include <common.h>
 #include <set>
 #include <string>
 #include <stdlib.h>
