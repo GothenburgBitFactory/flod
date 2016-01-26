@@ -31,6 +31,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 ////////////////////////////////////////////////////////////////////////////////
 void handleHook (
@@ -57,11 +58,40 @@ void handleHook (
 
   auto location = getQueueLocation (config, name);
 
-  // TODO Assert script exists.
-  // TODO Generate unique name for hook.
-  // TODO Add configuration.
+  // Assert script is acceptable.
+  File hookScript (script);
+  if (! hookScript.exists ())
+    throw std::string ("Hook script '" + script + "' not found.");
 
-  std::cout << "# hook unimplemented.\n";
+  if (! hookScript.readable ())
+    throw std::string ("Hook script '" + script + "' is not readable.");
+
+  if (! hookScript.executable ())
+    throw std::string ("Hook script '" + script + "' is not executable.");
+
+  // Generate unique name for hook.
+  auto hookNames = getHookScriptNames (config, name);
+  int count = 1;
+  std::string hookName = "h1";
+  while (std::find (hookNames.begin (), hookNames.end (), hookName) != hookNames.end ())
+  {
+    std::stringstream s;
+    s << "h" << ++count;
+    hookName = s.str ();
+  }
+
+  // Add configuration.
+  if (! setVariableInFile (config.file (), "hook." + name + "." + hookName + ".script",  hookScript._data))
+    throw std::string ("Could not write configuration 'hook." + name + "." + hookName + ".script'.");
+
+  if (! setVariableInFile (config.file (), "hook." + name + "." + hookName + ".scan",  hookScript._data))
+    throw std::string ("Could not write configuration 'hook." + name + "." + hookName + ".scan'.");
+
+  std::cout << "Central hooked queue '"
+            << name
+            << "' to trigger script '"
+            << script
+            << "'.\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
