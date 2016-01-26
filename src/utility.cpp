@@ -51,6 +51,8 @@ std::set <std::string> getQueueNames (const Configuration& config)
         names.insert (item.substr (6, period - 6));
     }
   }
+
+  return names;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
