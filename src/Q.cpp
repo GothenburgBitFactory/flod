@@ -148,6 +148,8 @@ void Q::archiveEvent (const std::string& event) const
 // Move event from active to failed.
 void Q::failEvent (const std::string& event) const
 {
+  File file (event);
+  File::move (event, _location + "/" + Q::structure[2] + "/" + file.name ());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
