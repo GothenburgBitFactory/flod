@@ -135,6 +135,12 @@ std::string Q::activateEvent (const std::string& event) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Move event from active to archive.
+void Q::archiveEvent (const std::string& event) const
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void Q::clear ()
 {
   Directory events (_location);

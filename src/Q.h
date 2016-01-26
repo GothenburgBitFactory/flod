@@ -43,6 +43,7 @@ public:
   void post (const std::string&) const;
 
   std::string activateEvent (const std::string&) const;
+  void archiveEvent (const std::string&) const;
 
   void clear ();
   std::vector <std::string> queue () const;
