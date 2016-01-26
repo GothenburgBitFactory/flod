@@ -42,8 +42,6 @@ void manageQueue (
   Configuration config,
   bool exit_on_idle)
 {
-  std::cout << "# thread " << std::this_thread::get_id () << " begin\n";
-
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
   auto timeout  = config.getInteger ("queue." + name + ".timeout");
@@ -68,15 +66,26 @@ void manageQueue (
   while (1)
   {
     std::string event;
-    std::cout << "# scan ...\n";
     if (q.scan (event))
     {
-      // TODO Move event to q/active.
+      // Move event to q/active.
+      event = q.activateEvent (event);
+      bool success = true;
 
       for (const auto& script : hookScripts)
+      {
         std::cout << "# trigger " << script << " " << event << "\n";
+/*
+        if (the script failed)
+          success = false;
+*/
+      }
 
-      // TODO Move event to either q/failed or q/archive.
+      // Move event to either q/archive or q/failed.
+      if (success)
+        q.archiveEvent (event);
+      else
+        q.failEvent (event);
     }
 
     // TODO scan active for timed out work --> requeue.
@@ -84,8 +93,6 @@ void manageQueue (
 
     std::this_thread::sleep_for (wait);
   }
-
-  std::cout << "# thread " << std::this_thread::get_id () << " end\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
