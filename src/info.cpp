@@ -60,6 +60,7 @@ void handleInfo (
             << name << " --> " << location << "\n"
             << "  Archive:  " << config.get ("queue." + name + ".archive") << "\n"
             << "  Timeout:  " << config.get ("queue." + name + ".timeout") << "s\n"
+            << "  Scan:     " << config.get ("queue." + name + ".scan")    << "s\n"
             << "\n";
 
   std::cout << "  Queued:\n";
