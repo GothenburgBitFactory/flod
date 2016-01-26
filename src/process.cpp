@@ -48,15 +48,15 @@ void manageQueue (
   std::chrono::seconds wait (config.getInteger ("queue." + name + ".scan"));
 
   // Get hook names. If no scripts hook this queue, exit.
-  auto names = getHookScriptNames (config, name);
-  if (names.size () == 0)
+  auto hookNames = getHookScriptNames (config, name);
+  if (hookNames.size () == 0)
   {
     std::cout << "# thread " << std::this_thread::get_id () << " terminating because there are no hooks.\n";
     return;
   }
 
   std::vector <std::string> hookScripts;
-  for (const auto& hookName : names)
+  for (const auto& hookName : hookNames)
     hookScripts.push_back (config.get ("hook." + name + "." + hookName + ".script"));
 
   // Instantiate the queue
