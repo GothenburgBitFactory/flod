@@ -43,10 +43,15 @@ void manageQueue (
 {
   std::cout << "# manageQueue\n";
 
-  // TODO If no scripts hook this queue, exit.
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
   auto timeout  = config.getInteger ("queue." + name + ".timeout");
+  auto scan     = config.getInteger ("queue." + name + ".scan");
+
+  // Get hook names. If no scripts hook this queue, exit.
+  auto names = getHookScriptNames (config, name);
+  if (names.size () == 0)
+    return;
 
   // Instantiate the queue
   Q q;
