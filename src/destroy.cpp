@@ -59,7 +59,6 @@ void handleDestroy (
   Q q;
   q.create (name, location);
   q.destroy (force);
-  std::cout << "Removed " << location << "\n";
 
   // Remove all config "queue.<name>.*" entries.
   std::string prefix = "queue." + name + ".";
