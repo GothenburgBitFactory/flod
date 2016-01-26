@@ -68,8 +68,14 @@ std::set <std::string> getHookScriptNames (
 
   std::set <std::string> names;
   for (const auto& item : config.all ())
+  {
     if (item.substr (0, len) == key)
-      names.insert (item.substr (len));
+    {
+      auto period = item.find (".", len);
+      if (period != std::string::npos)
+        names.insert (item.substr (len, period - len));
+    }
+  }
 
   return names;
 }
