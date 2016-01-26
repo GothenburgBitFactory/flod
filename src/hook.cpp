@@ -42,7 +42,6 @@ void handleHook (
   // Process arguments;
   Args args;
   args.limitPositionals (3);         // hook <name> <script>
-  args.addNamed ("scan", "60");      // [--scan N]
   args.scan (argc, argv);
 
   if (args.getPositionalCount () == 1)
@@ -51,7 +50,6 @@ void handleHook (
   if (args.getPositionalCount () == 2)
     throw std::string ("Hook script command required.");
 
-  auto scan    = args.getNamed ("scan");
   auto command = args.getPositional (0);
   auto name    = args.getPositional (1);
   auto script  = args.getPositional (2);
@@ -83,9 +81,6 @@ void handleHook (
   // Add configuration.
   if (! setVariableInFile (config.file (), "hook." + name + "." + hookName + ".script",  hookScript._data))
     throw std::string ("Could not write configuration 'hook." + name + "." + hookName + ".script'.");
-
-  if (! setVariableInFile (config.file (), "hook." + name + "." + hookName + ".scan",  hookScript._data))
-    throw std::string ("Could not write configuration 'hook." + name + "." + hookName + ".scan'.");
 
   std::cout << "Central hooked queue '"
             << name
