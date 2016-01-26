@@ -83,7 +83,6 @@ void handleProcess (
 
   auto exit_on_idle = args.getOption ("exit-on-idle");
 
-/*
   // Create a thread to manage each queue.
   std::vector <std::thread> managers;
   for (const auto& name : getQueueNames (config))
@@ -92,11 +91,6 @@ void handleProcess (
   // Gather loose ends.
   for (auto& manager : managers)
     manager.join ();
-*/
-// Good:
-  std::string name = "q";
-  std::thread t (manageQueue, name, config, exit_on_idle);
-  t.join ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
