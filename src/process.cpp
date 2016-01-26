@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <thread>
+#include <chrono>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Arguments are deliberately by value, not by ref.
@@ -41,17 +42,24 @@ void manageQueue (
   Configuration config,
   bool exit_on_idle)
 {
-  std::cout << "# manageQueue\n";
+  std::cout << "# thread " << std::this_thread::get_id () << " begin\n";
 
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
   auto timeout  = config.getInteger ("queue." + name + ".timeout");
-  auto scan     = config.getInteger ("queue." + name + ".scan");
+  std::chrono::seconds wait (config.getInteger ("queue." + name + ".scan"));
 
   // Get hook names. If no scripts hook this queue, exit.
   auto names = getHookScriptNames (config, name);
   if (names.size () == 0)
+  {
+    std::cout << "# thread " << std::this_thread::get_id () << " terminating because there are no hooks.\n";
     return;
+  }
+
+  std::vector <std::string> hookScripts;
+  for (const auto& hookName : names)
+    hookScripts.push_back (config.get ("hook." + name + "." + hookName + ".script"));
 
   // Instantiate the queue
   Q q;
@@ -60,18 +68,24 @@ void manageQueue (
   while (1)
   {
     std::string event;
+    std::cout << "# scan ...\n";
     if (q.scan (event))
     {
-      std::cout << "# trigger " << event << "\n";
-      // TODO Dispatch hooks
+      // TODO Move event to q/active.
+
+      for (const auto& script : hookScripts)
+        std::cout << "# trigger " << script << " " << event << "\n";
+
+      // TODO Move event to either q/failed or q/archive.
     }
 
     // TODO scan active for timed out work --> requeue.
     // TODO Exit if all queues were empty and exit_on_idle
 
-    // Note: for debugging.
-    break;
+    std::this_thread::sleep_for (wait);
   }
+
+  std::cout << "# thread " << std::this_thread::get_id () << " end\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
