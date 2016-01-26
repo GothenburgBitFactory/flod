@@ -28,6 +28,7 @@
 #include <central.h>
 #include <Args.h>
 #include <Q.h>
+#include <text.h>
 #include <set>
 #include <string>
 #include <stdlib.h>
@@ -74,11 +75,20 @@ void manageQueue (
 
       for (const auto& script : hookScripts)
       {
-        std::cout << "# trigger " << script << " " << event << "\n";
-/*
-        if (the script failed)
+        try
+        {
+          std::cout << "# trigger " << script << " " << event << "\n";
+          std::string output;
+          if (0 != execute (script, {event}, "", output))
+            success = false;
+
+          std::cout << output << "\n";
+        }
+        catch (std::string& e)
+        {
+          std::cout << "# error: " << e << "\n";
           success = false;
-*/
+        }
       }
 
       // Move event to either q/archive or q/failed, based on status.
