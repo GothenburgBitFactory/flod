@@ -38,7 +38,8 @@ std::string getQueueLocation (const Configuration& config, const std::string& na
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Obtain a set of queue names.
+// Obtain a set of queue names, by looking for:
+//   queue.<name>.*
 std::set <std::string> getQueueNames (const Configuration& config)
 {
   std::set <std::string> names;
@@ -56,7 +57,8 @@ std::set <std::string> getQueueNames (const Configuration& config)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Obtain a set of hook script names for a given queue.
+// Obtain a set of hook script names for a given queue, by looking for:
+//   hook.<name>.<hook>.*
 std::set <std::string> getHookScriptNames (
   const Configuration& config,
   const std::string& name)
