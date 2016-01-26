@@ -127,6 +127,14 @@ void Q::post (const std::string& event) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Move event from queued to active.
+std::string Q::activateEvent (const std::string& event) const
+{
+
+  return event;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void Q::clear ()
 {
   Directory events (_location);

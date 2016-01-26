@@ -41,6 +41,9 @@ public:
   bool destroy (bool force = false);
   bool scan (std::string&);
   void post (const std::string&) const;
+
+  std::string activateEvent (const std::string&) const;
+
   void clear ();
   std::vector <std::string> queue () const;
   std::vector <std::string> active () const;
