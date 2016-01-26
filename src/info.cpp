@@ -83,6 +83,10 @@ void handleInfo (
   for (const auto& event : q.archive ())
     std::cout << "    " << event << "\n";
 
+  std::cout << "  Hook Scripts:\n";
+  for (const auto& hook : getHookScriptNames (config, name))
+    std::cout << "    " << config.get ("hook." + name + "." + hook + ".script") << "\n";
+
   std::cout << "\n";
 }
 
