@@ -47,25 +47,29 @@ void handleHelp (int argc, const char** argv)
 
   if (args.getPositionalCount () <= 1 || command == "help")
     std::cout << "\n"
-              << "usage: central <command> [<args>]\n"
-              << "\n"
-              << "Command:\n"
-              << "  help [<command>]                                                Shows usage and command help\n"
-              << "  version                                                         Display program version\n"
-              << "  create [--noarchive] [--timeout N] [--scan N] <name> <path>     Create a queue\n"
-              << "  destroy [--force]                             <name>            Destroy a queue\n"
-              << "  clear                                         <name>            Clears a queue\n"
-              << "  retry                                         <name>            Retries failed events\n"
-              << "  info                                          <name>            Shows queue details\n"
-              << "  hook                                          <name> <path>     Sets up a queue hook\n"
-              << "  unhook                                        <name> <path>     Removes a queue hook\n"
-              << "  post                                          <name> <path>     Posts an event to a queue\n"
-              << "  config [--force]                              <name> [<value>]  Sets, clears and defaults configuration\n"
-              << "  process [--exit-on-idle]                                        Processes all queues\n"
-              << "\n";
+                 "usage: central <command> [<args>]\n"
+                 "\n"
+                 "Command:\n"
+                 "  help [<command>]                                                Shows usage and command help\n"
+                 "  version                                                         Display program version\n"
+                 "  create [--noarchive] [--timeout N] [--scan N] <name> <path>     Create a queue\n"
+                 "  destroy [--force]                             <name>            Destroy a queue\n"
+                 "  clear                                         <name>            Clears a queue\n"
+                 "  retry                                         <name>            Retries failed events\n"
+                 "  info                                          <name>            Shows queue details\n"
+                 "  hook                                          <name> <path>     Sets up a queue hook\n"
+                 "  unhook                                        <name> <path>     Removes a queue hook\n"
+                 "  post                                          <name> <path>     Posts an event to a queue\n"
+                 "  config [--force]                              <name> [<value>]  Sets, clears and defaults configuration\n"
+                 "  process [--exit-on-idle]                                        Processes all queues\n"
+                 "\n";
 
   else if (command == "version")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central version\n"
+                 "\n"
+                 "Displays the Flod version number and copyright information.\n"
+                 "\n";
 
   else if (command == "create")
     std::cout << "\n";
