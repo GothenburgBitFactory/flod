@@ -41,11 +41,10 @@ public:
   void format (const char*, ...);
 
 private:
-  void timestamp ();
+  std::string timestamp ();
 
 private:
   std::string _filename    {"central.log"};
-  char        _now[20]     {};
   FILE*       _fh          {nullptr};
   std::string _prior       {"none"};
   int         _repetition  {0};

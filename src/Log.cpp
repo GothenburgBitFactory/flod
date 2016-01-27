@@ -27,12 +27,15 @@
 
 #include <cmake.h>
 #include <Log.h>
+#include <text.h>
 #include <thread>
 #include <mutex>
+#include <iostream>
+#include <iomanip>
 #include <string.h>
 #include <stdarg.h>
+#include <sys/time.h>
 #include <time.h>
-#include <text.h>
 
 std::mutex logSerializer;
 
@@ -78,15 +81,15 @@ void Log::write (const std::string& line, bool multiline /* = false */)
 
       if (_fh)
       {
-        timestamp ();
+        auto ts = timestamp ();
 
         if (_repetition)
         {
-          fprintf (_fh, "%s (Repeated %d times)\n", _now, _repetition);
+          fprintf (_fh, "%s (Repeated %d times)\n", ts.c_str (), _repetition);
           _repetition = 0;
         }
 
-        fprintf (_fh, "%s %s\n", _now, line.c_str ());
+        fprintf (_fh, "%s %s\n", ts.c_str (), line.c_str ());
       }
 
       fclose (_fh);
@@ -113,21 +116,27 @@ void Log::format (const char* message, ...)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Log::timestamp ()
+std::string Log::timestamp ()
 {
-  // Get time info, UTC.
-  time_t current;
-  time (&current);
-  struct tm* t = gmtime (&current);
+  struct timeval nowus;
+  gettimeofday (&nowus, nullptr);
+  time_t now   = static_cast <time_t> (nowus.tv_sec);
+  time_t usecs = static_cast <time_t> (nowus.tv_usec);
+  struct tm* t = gmtime (&now);
 
-  // Generate timestamp.
-  sprintf (_now, "%04d-%02d-%02d %02d:%02d:%02d",
-                 t->tm_year + 1900,
-                 t->tm_mon + 1,
-                 t->tm_mday,
-                 t->tm_hour,
-                 t->tm_min,
-                 t->tm_sec);
+  std::stringstream ts;
+  ts << std::setw (4) << std::setfill ('0') << t->tm_year + 1900
+     << std::setw (2) << std::setfill ('0') << t->tm_mon + 1
+     << std::setw (2) << std::setfill ('0') << t->tm_mday
+     << 'T'
+     << std::setw (2) << std::setfill ('0') << t->tm_hour
+     << std::setw (2) << std::setfill ('0') << t->tm_min
+     << std::setw (2) << std::setfill ('0') << t->tm_sec
+     << '.'
+     << std::setw (6) << std::setfill ('0') << usecs
+     << 'Z';
+
+  return ts.str ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
