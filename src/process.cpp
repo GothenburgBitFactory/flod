@@ -46,7 +46,7 @@ void manageQueue (
   Configuration config,
   bool exit_on_idle)
 {
-  log->format ("Q %s startup thread 0x%08x", name.c_str (), std::this_thread::get_id ());
+  log->format ("%s Startup thread 0x%08x", name.c_str (), std::this_thread::get_id ());
 
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
@@ -57,7 +57,7 @@ void manageQueue (
   auto hookNames = getHookScriptNames (config, name);
   if (hookNames.size () == 0)
   {
-    log->format ("Q %s No hooks - terminating", name.c_str ());
+    log->format ("%s Exit thread 0x%08x no hooks", name.c_str (), std::this_thread::get_id ());
     return;
   }
 
@@ -84,7 +84,7 @@ void manageQueue (
         {
           // TODO Timeout the execute call.
 
-          log->format ("Q %s --> %s %s", name.c_str (), script.c_str (), event.c_str ());
+          log->format ("%s --> %s %s", name.c_str (), script.c_str (), event.c_str ());
 
           std::string output;
           if (0 != execute (script, {event}, "", output))
@@ -94,7 +94,7 @@ void manageQueue (
         }
         catch (std::string& e)
         {
-          log->format ("Q %s Error %s", name.c_str (), e.c_str ());
+          log->format ("%s Error %s", name.c_str (), e.c_str ());
           success = false;
         }
       }
@@ -120,7 +120,7 @@ void manageQueue (
     }
   }
 
-  log->format ("Q %s exit", name.c_str ());
+  log->format ("%s Exit thread 0x%08x idle", name.c_str (), std::this_thread::get_id ());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ void handleProcess (
     log->setFile (config.get ("log.file"));
 
   log->write (PACKAGE_STRING);
-  log->write ("Q Processing begin");
+  log->write ("Processing begin");
 
   // Create a thread to manage each queue.
   std::vector <std::thread> managers;
@@ -154,7 +154,7 @@ void handleProcess (
   for (auto& manager : managers)
     manager.join ();
 
-  log->write ("Q Processing end");
+  log->write ("Processing end");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
