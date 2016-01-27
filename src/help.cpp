@@ -137,7 +137,25 @@ void handleHelp (int argc, const char** argv)
                  "\n";
 
   else if (command == "hook")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central hook <name> <path>\n"
+                 "\n"
+                 "  Creates a link between the named queue and hook script, such that new events\n"
+                 "  posted to the queue cause the script to be run with the absolute path to the\n"
+                 "  event file as the first (and only) argument. For example:\n"
+                 "\n"
+                 "    $ cat <<EOF >hook_script.sh\n"
+                 "    #!/bin/sh\n"
+                 "    echo Processing event $1\n"
+                 "    EOF\n"
+                 "    $\n"
+                 "    $ chmod +x hook_script.sh\n"
+                 "    $ central hook my_queue hook_script.sh\n"
+                 "    Central hooked queue 'my_queue' to trigger script 'hook_script.sh'.\n"
+                 "\n"
+                 "  If multiple hook scripts are linked to the same queue, they are executed in\n"
+                 "  the order they are configured.\n"
+                 "\n";
 
   else if (command == "unhook")
     std::cout << "\n";
