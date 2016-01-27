@@ -17,11 +17,6 @@ Obtain info about a queue.
 
   $ central info Foo
 
-Obtain queue stats, reset stats.
-
-  $ central stats Foo
-  $ central stats reset Foo
-
 Associate a script with a queue. Will process all outstanding events.
 
   $ central hook Foo /path/to/script [--scan 60]
@@ -72,19 +67,20 @@ A queue is a directory, in which event files are placed.
     my_queue/active/*
     my_queue/archive/*
     my_queue/failed/*
+    my_queue/staging/*
 
-An event file is composed and written in a work directory, then moved into the
-'my_queue' directory. It is not written directly into 'my_queue', which could
-mean it is processed before the write completes. Queues are only writable by
-the owner, which is the user running flod.
+An event file is composed and written in the staging directory, then moved into
+the 'my_queue' directory. It is not written directly into 'my_queue', which
+could mean it is processed before the write completes. Queues are only writable
+by the owner, which is the user running central.
 
 An event will sit in the queue until it is processed, which is dependent on
 whether the queue processor is running and whether the queue is hooked. The
 queue is therefore a spool.
 
-When an event file is processed, it is moved into the 'my_queue/active'
+When an event file begins processing, it is moved into the 'my_queue/active'
 directory. On successful completion, it moves into 'my_queue/archive'. On error
-it moves to 'my_queue/failed'.
+it moves to 'my_queue/failed'. Queues may be configured to not archive events.
 
 
 ## What is an event file?
@@ -94,7 +90,7 @@ headers KV pairs, and a body. Here is an example:
 
     name: value<CRLF>                 | header section
     width: 3<CRLF>                    |
-    <CRLF>
+    <CRLF>                            | separator
     body                              | optional body
 
 The header section is a set of KV pairs that comprise the metadata that is in
@@ -115,7 +111,6 @@ Create and hook a queue:
 
   $ central create Foo /var/queue/foo
   $ central hook Foo /path/to/script
-  $ central stats clear Foo
 
 Launch a queue processor:
 
