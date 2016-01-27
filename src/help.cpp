@@ -70,6 +70,8 @@ void handleHelp (int argc, const char** argv)
                  "\n"
                  "  Running 'central help' will display a list of commands with a brief description.\n"
                  "  Running 'central help <command>' will show more details about the command.\n"
+                 "\n"
+                 "  Alternately, try 'man flod' or 'man central' for full details.\n"
                  "\n";
 
   else if (command == "version")
@@ -93,11 +95,18 @@ void handleHelp (int argc, const char** argv)
                  "central retry\n"
                  "\n"
                  "  For the specified queue, takes all failed events and queues them for processing\n"
-                 "  again\n"
+                 "  again.\n"
                  "\n";
 
   else if (command == "info")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central info [<queue>]\n"
+                 "\n"
+                 "  The command 'central info' will display a list of configured queues.\n"
+                 "\n"
+                 "  The command 'central info <queue>' will display full details of the specified queue\n"
+                 "  which will include all events, configuration options, and hook scripts.\n"
+                 "\n";
 
   else if (command == "hook")
     std::cout << "\n";
