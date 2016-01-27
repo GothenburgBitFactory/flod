@@ -45,7 +45,7 @@ void handleHelp (int argc, const char** argv)
   if (args.getPositionalCount () > 1)
     command = args.getPositional (1);
 
-  if (args.getPositionalCount () <= 1)
+  if (args.getPositionalCount () <= 1 || command == "help")
     std::cout << "\n"
               << "usage: central <command> [<args>]\n"
               << "\n"
@@ -63,30 +63,40 @@ void handleHelp (int argc, const char** argv)
               << "  config [--force]                              <name> [<value>]  Sets, clears and defaults configuration\n"
               << "  process [--exit-on-idle]                                        Processes all queues\n"
               << "\n";
-  else if (command == "help")
-    std::cout << "\n";
+
   else if (command == "version")
     std::cout << "\n";
+
   else if (command == "create")
     std::cout << "\n";
+
   else if (command == "destroy")
     std::cout << "\n";
+
   else if (command == "clear")
     std::cout << "\n";
+
   else if (command == "retry")
     std::cout << "\n";
+
   else if (command == "info")
     std::cout << "\n";
+
   else if (command == "hook")
     std::cout << "\n";
+
   else if (command == "unhook")
     std::cout << "\n";
+
   else if (command == "post")
     std::cout << "\n";
+
   else if (command == "config")
     std::cout << "\n";
+
   else if (command == "process")
     std::cout << "\n";
+
   else
     std::cout << "\n"
               << "Unrecognized help topic '" << command << "'.\n";
