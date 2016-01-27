@@ -158,7 +158,13 @@ void handleHelp (int argc, const char** argv)
                  "\n";
 
   else if (command == "unhook")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central unhook <name> <path>\n"
+                 "\n"
+                 "  Disassociates a hook script from a named queue.\n"
+                 "\n"
+                 "  Use 'central info <name>' to check the hook scripts for a queue.\n"
+                 "\n";
 
   else if (command == "post")
     std::cout << "\n";
