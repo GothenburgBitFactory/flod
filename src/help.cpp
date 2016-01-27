@@ -82,7 +82,24 @@ void handleHelp (int argc, const char** argv)
                  "\n";
 
   else if (command == "create")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central create <name> <location>\n"
+                 "    [--[no]archive]\n"
+                 "    [--timeout <seconds>]\n"
+                 "    [--scan <seconds>]\n"
+                 "\n"
+                 "  Creates a named queue in the specified location. There will be a top-level\n"
+                 "  directory named <name>, and several ѕub-directories.\n"
+                 "\n"
+                 "  If the '--noarchive' option is specified, then event archiving will not be\n"
+                 "  performed, and processed events will be deleted.\n"
+                 "\n"
+                 "  The '--timeout' argument (default: 3600) will cause timeout and retry of jobs\n"
+                 "  that exceed this length.\n"
+                 "\n"
+                 "  The '--scan' argument іs the number of seconds before a queue re-scan is\n"
+                 "  performed, after the queue is depleted.\n"
+                 "\n";
 
   else if (command == "destroy")
     std::cout << "\n"
