@@ -45,7 +45,7 @@ void manageQueue (
 {
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
-  auto timeout  = config.getInteger ("queue." + name + ".timeout");
+  //auto timeout  = config.getInteger ("queue." + name + ".timeout");
   std::chrono::seconds wait (config.getInteger ("queue." + name + ".scan"));
 
   // Get hook names. If no scripts hook this queue, exit.
@@ -77,6 +77,8 @@ void manageQueue (
       {
         try
         {
+          // TODO Timeout the execute call.
+
           std::cout << "# trigger " << script << " " << event << "\n";
           std::string output;
           if (0 != execute (script, {event}, "", output))
@@ -92,9 +94,10 @@ void manageQueue (
       }
 
       // Move event to either q/archive or q/failed, based on status.
-      if (success)
+      if (success && archive)
         q.archiveEvent (event);
-      else
+
+      if (! success)
         q.failEvent (event);
     }
 
