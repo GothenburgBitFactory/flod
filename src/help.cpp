@@ -66,7 +66,7 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "help")
     std::cout << "\n"
-                 "central help\n"
+                 "central help [<command>]\n"
                  "\n"
                  "  Running 'central help' will display a list of commands with a brief description.\n"
                  "  Running 'central help <command>' will show more details about the command.\n"
@@ -85,10 +85,21 @@ void handleHelp (int argc, const char** argv)
     std::cout << "\n";
 
   else if (command == "destroy")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central destroy <name> [--force]\n"
+                 "\n"
+                 "  Destroys the queue, by removing the associated directories and configuration settings.\n"
+                 "\n"
+                 "  If the queue contains any files or unrecognized content, the command will stop safely.\n"
+                 "  To remove a queue that does have contents, use the '--force' option.\n"
+                 "\n";
 
   else if (command == "clear")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central clear <name>\n"
+                 "\n"
+                 "  Simply removes all the events in the queue, in an irreversible way.\n"
+                 "\n";
 
   else if (command == "retry")
     std::cout << "\n"
