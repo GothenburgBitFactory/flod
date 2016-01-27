@@ -28,21 +28,26 @@
 #include <central.h>
 #include <Args.h>
 #include <Q.h>
+#include <Log.h>
 #include <common.h>
 #include <set>
 #include <string>
 #include <stdlib.h>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <chrono>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Arguments are deliberately by value, not by ref.
 void manageQueue (
+  std::shared_ptr <Log> log,
   std::string name,
   Configuration config,
   bool exit_on_idle)
 {
+  log->format ("Q %s startup thread 0x%08x", name.c_str (), std::this_thread::get_id ());
+
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
   auto timeout  = config.getInteger ("queue." + name + ".timeout");
@@ -52,7 +57,7 @@ void manageQueue (
   auto hookNames = getHookScriptNames (config, name);
   if (hookNames.size () == 0)
   {
-    std::cout << "# thread " << std::this_thread::get_id () << " terminating because there are no hooks.\n";
+    log->format ("Q %s No hooks - terminating", name.c_str ());
     return;
   }
 
@@ -79,7 +84,8 @@ void manageQueue (
         {
           // TODO Timeout the execute call.
 
-          std::cout << "# trigger " << script << " " << event << "\n";
+          log->format ("Q %s --> %s %s", name.c_str (), script.c_str (), event.c_str ());
+
           std::string output;
           if (0 != execute (script, {event}, "", output))
             success = false;
@@ -88,7 +94,7 @@ void manageQueue (
         }
         catch (std::string& e)
         {
-          std::cout << "# error: " << e << "\n";
+          log->format ("Q %s Error %s", name.c_str (), e.c_str ());
           success = false;
         }
       }
@@ -108,11 +114,13 @@ void manageQueue (
       // TODO Exit if all queues were empty and exit_on_idle
 
       if (exit_on_idle)
-        return;
+        break;
 
       std::this_thread::sleep_for (wait);
     }
   }
+
+  log->format ("Q %s exit", name.c_str ());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,14 +137,24 @@ void handleProcess (
 
   auto exit_on_idle = args.getOption ("exit-on-idle");
 
+  // Log file override.
+  std::shared_ptr <Log> log = std::make_shared <Log> ();
+  if (config.has ("log.file"))
+    log->setFile (config.get ("log.file"));
+
+  log->write (PACKAGE_STRING);
+  log->write ("Q Processing begin");
+
   // Create a thread to manage each queue.
   std::vector <std::thread> managers;
   for (const auto& name : getQueueNames (config))
-    managers.push_back (std::thread (manageQueue, name, config, exit_on_idle));
+    managers.push_back (std::thread (manageQueue, log, name, config, exit_on_idle));
 
   // Gather loose ends.
   for (auto& manager : managers)
     manager.join ();
+
+  log->write ("Q Processing end");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
