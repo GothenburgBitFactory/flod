@@ -106,7 +106,7 @@ int main (int argc, const char** argv)
       command = matches[0];
 
       // Dispatch commands.
-           if (command == "help")    handleHelp    ();
+           if (command == "help")    handleHelp    (argc, argv);
       else if (command == "version") handleVersion ();
       else if (command == "create")  handleCreate  (argc, argv, config);
       else if (command == "destroy") handleDestroy (argc, argv, config);
@@ -122,7 +122,7 @@ int main (int argc, const char** argv)
     else
     {
       std::cerr << "Urecognized command '" << command << "'\n";
-      handleHelp ();
+      handleHelp (argc, argv);
     }
   }
 

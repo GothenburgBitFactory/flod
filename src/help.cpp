@@ -25,28 +25,71 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cmake.h>
+#include <Args.h>
+#include <Configuration.h>
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////
-void handleHelp ()
+void handleHelp (int argc, const char** argv)
 {
-  std::cout << "\n"
-            << "usage: central <command> [<args>]\n"
-            << "\n"
-            << "Command:\n"
-            << "  help                                                            Shows usage\n"
-            << "  version                                                         Display program version\n"
-            << "  create [--noarchive] [--timeout N] [--scan N] <name> <path>     Create a queue\n"
-            << "  destroy [--force]                             <name>            Destroy a queue\n"
-            << "  clear                                         <name>            Clears a queue\n"
-            << "  retry                                         <name>            Retries failed events\n"
-            << "  info                                          <name>            Shows queue details\n"
-            << "  hook                                          <name> <path>     Sets up a queue hook\n"
-            << "  unhook                                        <name> <path>     Removes a queue hook\n"
-            << "  post                                          <name> <path>     Posts an event to a queue\n"
-            << "  config [--force]                              <name> [<value>]  Sets, clears and defaults configuration\n"
-            << "  process [--exit-on-idle]                                        Processes all queues\n"
-            << "\n";
+  // Process arguments;
+  Args args;
+  args.limitPositionals (2);        // help [<command>]
+  args.scan (argc, argv);
+
+  std::string help;
+  if (args.getPositionalCount () > 0)
+    help = args.getPositional (0);
+
+  std::string command = "";
+  if (args.getPositionalCount () > 1)
+    command = args.getPositional (1);
+
+  if (args.getPositionalCount () <= 1)
+    std::cout << "\n"
+              << "usage: central <command> [<args>]\n"
+              << "\n"
+              << "Command:\n"
+              << "  help [<command>]                                                Shows usage and command help\n"
+              << "  version                                                         Display program version\n"
+              << "  create [--noarchive] [--timeout N] [--scan N] <name> <path>     Create a queue\n"
+              << "  destroy [--force]                             <name>            Destroy a queue\n"
+              << "  clear                                         <name>            Clears a queue\n"
+              << "  retry                                         <name>            Retries failed events\n"
+              << "  info                                          <name>            Shows queue details\n"
+              << "  hook                                          <name> <path>     Sets up a queue hook\n"
+              << "  unhook                                        <name> <path>     Removes a queue hook\n"
+              << "  post                                          <name> <path>     Posts an event to a queue\n"
+              << "  config [--force]                              <name> [<value>]  Sets, clears and defaults configuration\n"
+              << "  process [--exit-on-idle]                                        Processes all queues\n"
+              << "\n";
+  else if (command == "help")
+    std::cout << "\n";
+  else if (command == "version")
+    std::cout << "\n";
+  else if (command == "create")
+    std::cout << "\n";
+  else if (command == "destroy")
+    std::cout << "\n";
+  else if (command == "clear")
+    std::cout << "\n";
+  else if (command == "retry")
+    std::cout << "\n";
+  else if (command == "info")
+    std::cout << "\n";
+  else if (command == "hook")
+    std::cout << "\n";
+  else if (command == "unhook")
+    std::cout << "\n";
+  else if (command == "post")
+    std::cout << "\n";
+  else if (command == "config")
+    std::cout << "\n";
+  else if (command == "process")
+    std::cout << "\n";
+  else
+    std::cout << "\n"
+              << "Unrecognized help topic '" << command << "'.\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////

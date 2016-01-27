@@ -32,7 +32,7 @@
 #include <set>
 
 // Command handlers.
-void handleHelp ();
+void handleHelp    (int, const char**);
 void handleVersion ();
 void handleCreate  (int, const char**, Configuration&);
 void handleDestroy (int, const char**, Configuration&);
