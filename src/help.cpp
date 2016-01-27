@@ -155,6 +155,8 @@ void handleHelp (int argc, const char** argv)
                  "\n"
                  "  If multiple hook scripts are linked to the same queue, they are executed in\n"
                  "  the order they are configured.\n"
+                 "\n"
+                 "  Use 'central info <name>' to check the hook scripts for a queue.\n"
                  "\n";
 
   else if (command == "unhook")
