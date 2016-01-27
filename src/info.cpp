@@ -28,6 +28,7 @@
 #include <central.h>
 #include <Args.h>
 #include <Q.h>
+#include <Table.h>
 #include <map>
 #include <string>
 #include <iostream>
@@ -43,51 +44,74 @@ void handleInfo (
   args.limitPositionals (2);         // info <name>
   args.scan (argc, argv);
 
+  // Display all queue names and locations.
   if (args.getPositionalCount () == 1)
-    throw std::string ("Queue name required.");
+  {
+    Table table;
+    table.leftMargin (2);
+    table.extraPadding (0);
+    table.intraPadding (1);
+    table.add ("Queue");
+    table.add ("Location");
+    table.colorHeader ({"underline"});
 
-  auto command = args.getPositional (0);
-  auto name    = args.getPositional (1);
+    for (const auto& name : getQueueNames (config))
+    {
+      auto row = table.addRow ();
+      table.set (row, 0, name);
+      table.set (row, 1, getQueueLocation (config, name));
+    }
 
-  // Warn if queue already exists.
-  auto location = getQueueLocation (config, name);
+    std::cout << "\n"
+              << table.render ()
+              << "\n";
+  }
 
-  // Create queue.
-  Q q;
-  q.create (name, location);
+  // Dispaly details for a single queue.
+  else
+  {
+    auto name = args.getPositional (1);
 
-  std::cout << "\n"
-            << name << " --> " << location << "\n"
-            << "  Archive:  " << config.get ("queue." + name + ".archive") << "\n"
-            << "  Timeout:  " << config.get ("queue." + name + ".timeout") << "s\n"
-            << "  Scan:     " << config.get ("queue." + name + ".scan")    << "s\n"
-            << "\n";
+    // Warn if queue already exists.
+    auto location = getQueueLocation (config, name);
 
-  std::cout << "  Queued:\n";
-  for (const auto& event : q.queue ())
-    std::cout << "    " << event << "\n";
+    // Create queue.
+    Q q;
+    q.create (name, location);
 
-  std::cout << "  Active:\n";
-  for (const auto& event : q.active ())
-    std::cout << "    " << event << "\n";
+    std::cout << "\n"
+              << name << " --> " << location << "\n"
+              << "  Archive:  " << config.get ("queue." + name + ".archive") << "\n"
+              << "  Timeout:  " << config.get ("queue." + name + ".timeout") << "s\n"
+              << "  Scan:     " << config.get ("queue." + name + ".scan")    << "s\n"
+              << "\n";
 
-  std::cout << "  Failed:\n";
-  for (const auto& event : q.failed ())
-    std::cout << "    " << event << "\n";
+    std::cout << "  Queued:\n";
+    for (const auto& event : q.queue ())
+      std::cout << "    " << event << "\n";
 
-  std::cout << "  Staging:\n";
-  for (const auto& event : q.staging ())
-    std::cout << "    " << event << "\n";
+    std::cout << "  Active:\n";
+    for (const auto& event : q.active ())
+      std::cout << "    " << event << "\n";
 
-  std::cout << "  Archive:\n";
-  for (const auto& event : q.archive ())
-    std::cout << "    " << event << "\n";
+    std::cout << "  Failed:\n";
+    for (const auto& event : q.failed ())
+      std::cout << "    " << event << "\n";
 
-  std::cout << "  Hook Scripts:\n";
-  for (const auto& hook : getHookScriptNames (config, name))
-    std::cout << "    " << config.get ("hook." + name + "." + hook + ".script") << "\n";
+    std::cout << "  Staging:\n";
+    for (const auto& event : q.staging ())
+      std::cout << "    " << event << "\n";
 
-  std::cout << "\n";
+    std::cout << "  Archive:\n";
+    for (const auto& event : q.archive ())
+      std::cout << "    " << event << "\n";
+
+    std::cout << "  Hook Scripts:\n";
+    for (const auto& hook : getHookScriptNames (config, name))
+      std::cout << "    " << config.get ("hook." + name + "." + hook + ".script") << "\n";
+
+    std::cout << "\n";
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
