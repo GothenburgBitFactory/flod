@@ -181,7 +181,26 @@ void handleHelp (int argc, const char** argv)
                  "\n";
 
   else if (command == "config")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central config [--force] <setting> [<value>]\n"
+                 "\n"
+                 "  Create, modify or remove a configuration setting. For example:\n"
+                 "\n"
+                 "    $ central config foo bar     # 1\n"
+                 "    $ central config foo ''      # 2\n"
+                 "    $ central config foo         # 3\n"
+                 "\n"
+                 "  The first example sets the configuration setting 'foo' to a value of 'bar'.\n"
+                 "  This will either create or overwrite a setting. The second eample sets the\n"
+                 "  value of 'foo' to blank, but does not delete the entry. The third example\n"
+                 "  deletes 'foo' from the configuration file.\n"
+                 "\n"
+                 "  Note that the configuration file is by default '~/.flodrc', but a '.flodrc'\n"
+                 "  file may exist in any parent directory. Note that setting the 'FLODRC'\n"
+                 "  environment variable overrides this.\n"
+                 "\n"
+                 "  If the '--force' option is provided, user confirmation is not sought.\n"
+                 "\n";
 
   else if (command == "process")
     std::cout << "\n";
