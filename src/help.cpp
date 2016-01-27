@@ -45,7 +45,7 @@ void handleHelp (int argc, const char** argv)
   if (args.getPositionalCount () > 1)
     command = args.getPositional (1);
 
-  if (args.getPositionalCount () <= 1 || command == "help")
+  if (args.getPositionalCount () <= 1)
     std::cout << "\n"
                  "usage: central <command> [<args>]\n"
                  "\n"
@@ -64,11 +64,19 @@ void handleHelp (int argc, const char** argv)
                  "  process [--exit-on-idle]                                        Processes all queues\n"
                  "\n";
 
+  else if (command == "help")
+    std::cout << "\n"
+                 "central help\n"
+                 "\n"
+                 "  Running 'central help' will display a list of commands with a brief description.\n"
+                 "  Running 'central help <command>' will show more details about the command.\n"
+                 "\n";
+
   else if (command == "version")
     std::cout << "\n"
                  "central version\n"
                  "\n"
-                 "Displays the Flod version number and copyright information.\n"
+                 "  Displays the Flod version number and copyright information.\n"
                  "\n";
 
   else if (command == "create")
@@ -84,8 +92,8 @@ void handleHelp (int argc, const char** argv)
     std::cout << "\n"
                  "central retry\n"
                  "\n"
-                 "For the specified queue, takes all failed events and queues them for processing\n"
-                 "again\n"
+                 "  For the specified queue, takes all failed events and queues them for processing\n"
+                 "  again\n"
                  "\n";
 
   else if (command == "info")
@@ -108,7 +116,8 @@ void handleHelp (int argc, const char** argv)
 
   else
     std::cout << "\n"
-              << "Unrecognized help topic '" << command << "'.\n";
+                 "Unrecognized help topic '" << command << "'.\n"
+                 "\n";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
