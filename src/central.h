@@ -39,7 +39,6 @@ void handleDestroy (int, const char**, Configuration&);
 void handleClear   (int, const char**, Configuration&);
 void handleRetry   (int, const char**, Configuration&);
 void handleInfo    (int, const char**, Configuration&);
-void handleStats   (int, const char**, Configuration&);
 void handleHook    (int, const char**, Configuration&);
 void handleUnhook  (int, const char**, Configuration&);
 void handleProcess (int, const char**, Configuration&);

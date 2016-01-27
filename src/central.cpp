@@ -100,8 +100,7 @@ int main (int argc, const char** argv)
     std::vector <std::string> matches;
     if (autoComplete (command,
                       {"help", "version", "create", "destroy", "clear", "retry",
-                       "info", "stats", "hook", "unhook", "process", "post",
-                       "config"},
+                       "info", "hook", "unhook", "process", "post", "config"},
                       matches) == 1)
     {
       command = matches[0];
@@ -114,7 +113,6 @@ int main (int argc, const char** argv)
       else if (command == "clear")   handleClear   (argc, argv, config);
       else if (command == "retry")   handleRetry   (argc, argv, config);
       else if (command == "info")    handleInfo    (argc, argv, config);
-      else if (command == "stats")   handleStats   (argc, argv, config);
       else if (command == "hook")    handleHook    (argc, argv, config);
       else if (command == "unhook")  handleUnhook  (argc, argv, config);
       else if (command == "process") handleProcess (argc, argv, config);

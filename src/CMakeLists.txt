@@ -14,7 +14,6 @@ set (flod_SRCS Q.cpp             Q.h
                post.cpp
                process.cpp
                retry.cpp
-               stats.cpp
                unhook.cpp
                utility.cpp
                version.cpp)

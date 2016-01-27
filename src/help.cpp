@@ -41,7 +41,6 @@ void handleHelp ()
             << "  clear                                         <name>            Clears a queue\n"
             << "  retry                                         <name>            Retries failed events\n"
             << "  info                                          <name>            Shows queue details\n"
-            << "  stats [reset]                                 <name>            Shows or resets queue statistics\n"
             << "  hook                                          <name> <path>     Sets up a queue hook\n"
             << "  unhook                                        <name> <path>     Removes a queue hook\n"
             << "  post                                          <name> <path>     Posts an event to a queue\n"
