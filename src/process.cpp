@@ -45,7 +45,7 @@ void manageQueue (
 {
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
-  //auto timeout  = config.getInteger ("queue." + name + ".timeout");
+  auto timeout  = config.getInteger ("queue." + name + ".timeout");
   std::chrono::seconds wait (config.getInteger ("queue." + name + ".scan"));
 
   // Get hook names. If no scripts hook this queue, exit.
