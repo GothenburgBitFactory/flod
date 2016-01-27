@@ -29,6 +29,7 @@
 #include <Args.h>
 #include <Q.h>
 #include <Table.h>
+#include <format.h>
 #include <map>
 #include <string>
 #include <iostream>
@@ -52,6 +53,9 @@ void handleInfo (
     table.extraPadding (0);
     table.intraPadding (1);
     table.add ("Queue");
+    table.add ("Arch");
+    table.add ("Timeout");
+    table.add ("Scan");
     table.add ("Location");
     table.colorHeader ({"underline"});
 
@@ -59,7 +63,10 @@ void handleInfo (
     {
       auto row = table.addRow ();
       table.set (row, 0, name);
-      table.set (row, 1, getQueueLocation (config, name));
+      table.set (row, 1, config.getBoolean ("queue." + name + ".archive") ? "Yes" : "No");
+      table.set (row, 2, format ("{1}s", config.getInteger ("queue." + name + ".timeout")));
+      table.set (row, 3, format ("{1}s", config.getInteger ("queue." + name + ".scan")));
+      table.set (row, 4, getQueueLocation (config, name));
     }
 
     std::cout << "\n"
