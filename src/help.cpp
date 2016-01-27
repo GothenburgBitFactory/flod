@@ -203,7 +203,27 @@ void handleHelp (int argc, const char** argv)
                  "\n";
 
   else if (command == "process")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central process [--exit-on-idle]\n"
+                 "\n"
+                 "  Running 'central process' launches a non-interactive queue processor. Every\n"
+                 "  defined queue is scanned, and every time an event is posted, the associated\n"
+                 "  hook scripts are run.\n"
+                 "\n"
+                 "  Each queue is handled by a separate thread. If the queue has no hook scripts\n"
+                 "  associated, the thread terminates. If the '--exit-on-idle' option is specified,\n"
+                 "  and the queue is depleted, the thread terminates. Without '--exit-on-idle', if\n"
+                 "  a queue is depleted processing waits for a number of seconds before re-scanning\n"
+                 "  (see 'create' command).\n"
+                 "\n"
+                 "  When a hook script is called, the event file is first relocated to the 'active'\n"
+                 "  sub-directory. On success, it is moved again to the 'archive' sub-directory,\n"
+                 "  or deleted if no archiving is needed (see 'create' command). On failure, it is\n"
+                 "  moved to the 'failed' sub-directory.\n"
+                 "\n"
+                 "  If the configuration changes (adding a hook script, for example), then the\n"
+                 "  'central process' command must be restarted for it to be referenced.\n"
+                 "\n";
 
   else
     std::cout << "\n"
