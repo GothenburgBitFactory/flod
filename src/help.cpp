@@ -169,7 +169,16 @@ void handleHelp (int argc, const char** argv)
                  "\n";
 
   else if (command == "post")
-    std::cout << "\n";
+    std::cout << "\n"
+                 "central post <queue> <event>\n"
+                 "\n"
+                 "  Posts an event to the named queue. Do not compose event files in the queue.\n"
+                 "  Instead, create the file in a temporary location, and use the 'post' command\n"
+                 "  to move the event into the queue.\n"
+                 "\n"
+                 " The event file is renamed such that the queue name and timestamp are prepended\n"
+                 " to the original name.\n"
+                 "\n";
 
   else if (command == "config")
     std::cout << "\n";
