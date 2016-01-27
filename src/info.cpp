@@ -49,7 +49,6 @@ void handleInfo (
   if (args.getPositionalCount () == 1)
   {
     Table table;
-    table.leftMargin (2);
     table.extraPadding (0);
     table.intraPadding (1);
     table.add ("Queue");
