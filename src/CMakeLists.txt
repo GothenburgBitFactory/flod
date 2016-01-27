@@ -3,7 +3,8 @@ include_directories (${CMAKE_SOURCE_DIR}
                      ${CMAKE_SOURCE_DIR}/src
                      ${FLOD_INCLUDE_DIRS})
 
-set (flod_SRCS Q.cpp             Q.h
+set (flod_SRCS Log.cpp     Log.h
+               Q.cpp       Q.h
                clear.cpp
                config.cpp
                create.cpp
