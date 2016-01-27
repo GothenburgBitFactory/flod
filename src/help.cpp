@@ -50,18 +50,18 @@ void handleHelp (int argc, const char** argv)
                  "usage: central <command> [<args>]\n"
                  "\n"
                  "Command:\n"
-                 "  help [<command>]                                                Shows usage and command help\n"
-                 "  version                                                         Display program version\n"
-                 "  create [--noarchive] [--timeout N] [--scan N] <name> <path>     Create a queue\n"
-                 "  destroy [--force]                             <name>            Destroy a queue\n"
-                 "  clear                                         <name>            Clears a queue\n"
-                 "  retry                                         <name>            Retries failed events\n"
-                 "  info                                          [<name>]          Shows queue configuration summary or detail\n"
-                 "  hook                                          <name> <path>     Sets up a queue hook\n"
-                 "  unhook                                        <name> <path>     Removes a queue hook\n"
-                 "  post                                          <name> <path>     Posts an event to a queue\n"
-                 "  config [--force]                              <name> [<value>]  Sets, clears and defaults configuration\n"
-                 "  process [--exit-on-idle]                                        Processes all queues\n"
+                 "  help [<command>]                                                 Shows usage and command help\n"
+                 "  version                                                          Display program version\n"
+                 "  create [--noarchive] [--timeout N] [--scan N] <queue> <location> Create a queue\n"
+                 "  destroy [--force]                             <queue>            Destroy a queue\n"
+                 "  clear                                         <queue>            Clears a queue\n"
+                 "  retry                                         <queue>            Retries failed events\n"
+                 "  info                                         [<queue>]           Shows queue configuration summary or detail\n"
+                 "  hook                                          <queue> <script>   Sets up a queue hook\n"
+                 "  unhook                                        <queue> <script>   Removes a queue hook\n"
+                 "  post                                          <queue> <event>    Posts an event to a queue\n"
+                 "  config [--force]                              <queue> [<value>]  Sets, clears and defaults configuration\n"
+                 "  process [--exit-on-idle]                                         Processes all queues\n"
                  "\n";
 
   else if (command == "help")
@@ -83,7 +83,7 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "create")
     std::cout << "\n"
-                 "central create <name> <location>\n"
+                 "central create <queue> <location>\n"
                  "    [--[no]archive]\n"
                  "    [--timeout <seconds>]\n"
                  "    [--scan <seconds>]\n"
@@ -103,7 +103,7 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "destroy")
     std::cout << "\n"
-                 "central destroy <name> [--force]\n"
+                 "central destroy <queue> [--force]\n"
                  "\n"
                  "  Destroys the queue, by removing the associated directories and configuration settings.\n"
                  "\n"
@@ -113,7 +113,7 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "clear")
     std::cout << "\n"
-                 "central clear <name>\n"
+                 "central clear <queue>\n"
                  "\n"
                  "  Simply removes all the events in the queue, in an irreversible way.\n"
                  "\n";
@@ -138,7 +138,7 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "hook")
     std::cout << "\n"
-                 "central hook <name> <path>\n"
+                 "central hook <queue> <script>\n"
                  "\n"
                  "  Creates a link between the named queue and hook script, such that new events\n"
                  "  posted to the queue cause the script to be run with the absolute path to the\n"
@@ -161,7 +161,7 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "unhook")
     std::cout << "\n"
-                 "central unhook <name> <path>\n"
+                 "central unhook <queue> <script>\n"
                  "\n"
                  "  Disassociates a hook script from a named queue.\n"
                  "\n"
