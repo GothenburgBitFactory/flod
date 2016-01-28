@@ -58,3 +58,7 @@ git commit -m "commit1"
 make
 make test
 
+# Add the git hooks.
+cp ../../scripts/post-commit .git/hooks/post-commit
+chmod +x .git/hooks/post-commit
+
