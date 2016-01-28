@@ -1,0 +1,5 @@
+#! /bin/sh
+
+cd dev
+echo '// Change' >> zero.c
+git commit -a -m update

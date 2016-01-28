@@ -1,0 +1,60 @@
+#!/bin/sh
+
+mkdir dev
+cd dev
+
+# Create sample project from scratch.
+git init .
+
+cat >Makefile <<EOF
+zero: zero.o
+	gcc -o zero zero.o
+
+zero.o: zero.c
+	gcc -c zero.c
+
+clean:
+	rm zero zero.o
+
+test: zero
+	./run_all
+EOF
+
+cat >zero.c <<EOF
+#include <stdio.h>
+
+int main (int argc, char** argv)
+{
+  printf ("hello, world\n");
+  return 0;
+}
+EOF
+
+cat >zero.t <<EOF
+#! /usr/bin/perl
+
+use Test::More tests => 1;
+
+my \$output = qx{./zero};
+is (\$output, "hello, world\\n", 'Output is as expected');
+sleep 2;
+exit 0;
+EOF
+
+cat >run_all <<EOF
+#!/bin/sh
+
+for i in *.t
+do
+  ./\$i 2>&1
+done
+EOF
+
+chmod +x zero.t run_all
+git add Makefile zero.c zero.t run_all
+git commit -m "commit1"
+
+# Test the project
+make
+make test
+
