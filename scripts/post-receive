@@ -34,6 +34,13 @@ do
   IFS=" "
   set -- $LINE
 
+  REPOSITORY=$(git config --get remote.origin.url)
+  if [[ -z $REPOSITORY ]]
+  then
+    REPOSITORY=$PWD
+  fi
+  PROJECT=$(basename $REPOSITORY)
+
   FROM=$1
   TO=$2
   BRANCH=$3

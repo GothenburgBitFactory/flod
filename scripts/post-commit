@@ -25,6 +25,13 @@
 ##
 ################################################################################
 
+REPOSITORY=$(git config --get remote.origin.url)
+if [[ -z $REPOSITORY ]]
+then
+  REPOSITORY=$PWD
+fi
+PROJECT=$(basename $REPOSITORY)
+
 BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
 BRANCH=${BRANCH:-HEAD}
@@ -38,6 +45,7 @@ TIMESTAMP=`git log -1 --format="%at" HEAD`
 EVENT=`mktemp`
 
 cat <<EOF >$EVENT
+project: $PROJECT
 branch: $BRANCH
 commit: $COMMIT
 author: $AUTHOR
