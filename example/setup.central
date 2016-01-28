@@ -6,7 +6,8 @@ mkdir central
 cd central
 
 # Configure central.
-../../src/central config --force log.file ./central.log
+../../src/central config --force log.file $PWD/central.log
+../../src/central config --force work.dir $PWD/work
 
 # Create queues and hooks.
 ../../src/central create changes ./changes --scan 10
