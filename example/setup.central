@@ -1,4 +1,14 @@
 #!/bin/sh
 
+# Create the central root directory.
 touch .flodrc
+mkdir central
+cd central
+
+# Configure central.
+../../src/central config --force log.file ./central.log
+
+# Create queues and hooks.
+../../src/central create changes ./changes --scan 10
+
 
