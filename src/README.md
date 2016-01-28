@@ -63,7 +63,7 @@ Command line configuration update:
 
 A queue is a directory, in which event files are placed.
 
-    my_queue/*
+    my_queue/queue/*
     my_queue/active/*
     my_queue/archive/*
     my_queue/failed/*
