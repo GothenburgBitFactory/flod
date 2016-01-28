@@ -27,6 +27,7 @@
 #ifndef INCLUDED_Q
 #define INCLUDED_Q
 
+#include <FS.h>
 #include <string>
 #include <vector>
 
@@ -47,11 +48,11 @@ public:
   void failEvent (const std::string&) const;
 
   void clear ();
-  std::vector <std::string> queue () const;
-  std::vector <std::string> active () const;
-  std::vector <std::string> archive () const;
-  std::vector <std::string> failed () const;
-  std::vector <std::string> staging () const;
+  std::vector <std::string> active () const  { return events (Directory (_location + "/" + Q::structure[0])._data); }
+  std::vector <std::string> archive () const { return events (Directory (_location + "/" + Q::structure[1])._data); }
+  std::vector <std::string> failed () const  { return events (Directory (_location + "/" + Q::structure[2])._data); }
+  std::vector <std::string> staging () const { return events (Directory (_location + "/" + Q::structure[3])._data); }
+  std::vector <std::string> queue () const   { return events (Directory (_location + "/" + Q::structure[4])._data); }
 
 private:
   std::string composeEventPrefix () const;

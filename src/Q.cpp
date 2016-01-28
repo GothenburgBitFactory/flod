@@ -26,15 +26,14 @@
 
 #include <cmake.h>
 #include <Q.h>
-#include <FS.h>
 #include <common.h>
 #include <sstream>
 #include <iomanip>
 #include <ctime>
 #include <sys/time.h>
 
-//                                        0         1          2         3
-std::vector <std::string> Q::structure = {"active", "archive", "failed", "staging"};
+//                                        0         1          2         3          4
+std::vector <std::string> Q::structure = {"active", "archive", "failed", "staging", "queue"};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Create the queue directories, if they do not already exist.
@@ -86,7 +85,7 @@ bool Q::destroy (bool force)
 // Scans the queue for events to process, that are not listed in Q::structure.
 bool Q::scan (std::string& event)
 {
-  Directory events {_location};
+  Directory events {_location + "/" + Q::structure[4]};
   for (const auto& item : events.list ())
   {
     if (std::find (Q::structure.begin (),
@@ -107,8 +106,8 @@ void Q::post (const std::string& event) const
   // Compose event prefix string: <name>.YYYYMMDDThhmmss.
   auto prefix = composeEventPrefix ();
   auto name = File (event).name ();
-  std::string staging      = _location + "/staging/" + prefix + name;
-  std::string destination  = _location + "/"         + prefix + name;
+  auto staging      = _location + "/" + Q::structure[3] + "/" + prefix + name;
+  auto destination  = _location + "/" + Q::structure[4] + "/" + prefix + name;
 
   // Detect collision in 'staging'.
   if (File (staging).exists ())
@@ -155,48 +154,10 @@ void Q::failEvent (const std::string& event) const
 ////////////////////////////////////////////////////////////////////////////////
 void Q::clear ()
 {
-  Directory events (_location);
+  Directory events (_location + "/" + Q::structure[4]);
   for (const auto& entry : events.list ())
     if (! Path (entry).is_directory ())
       File (entry).remove ();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-std::vector <std::string> Q::queue () const
-{
-  return events (_location);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-std::vector <std::string> Q::active () const
-{
-  Directory queueDir (_location);
-  queueDir += Q::structure[0];
-  return events (queueDir._data);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-std::vector <std::string> Q::archive () const
-{
-  Directory queueDir (_location);
-  queueDir += Q::structure[1];
-  return events (queueDir._data);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-std::vector <std::string> Q::failed () const
-{
-  Directory queueDir (_location);
-  queueDir += Q::structure[2];
-  return events (queueDir._data);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-std::vector <std::string> Q::staging () const
-{
-  Directory queueDir (_location);
-  queueDir += Q::structure[3];
-  return events (queueDir._data);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
