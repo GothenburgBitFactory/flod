@@ -1,0 +1,4 @@
+#!/bin/sh
+
+../src/central process --exit-on-idle
+
