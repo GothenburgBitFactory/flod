@@ -1,4 +1,5 @@
 #!/bin/sh
 
-../src/central process --exit-on-idle
+cd central
+../../src/central process --exit-on-idle
 
