@@ -29,4 +29,5 @@ EVENT=$1
 
 # TODO Read $EVENT file, and central config, in order to create one build event
 #      for each required platform.
+echo prepare_builds $EVENT
 
