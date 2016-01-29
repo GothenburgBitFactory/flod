@@ -142,7 +142,7 @@ void handleProcess (
   if (config.has ("log.file"))
     log->setFile (config.get ("log.file"));
 
-  log->write (PACKAGE_STRING);
+  log->write (std::string ("=== ") + PACKAGE_STRING + " ===");
   log->write ("Processing begin");
 
   // Create a thread to manage each queue.
