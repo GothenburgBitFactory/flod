@@ -41,5 +41,7 @@ cd central
 ../../src/central config --force platform.freebsd.pkg.python  'python'
 
 # Create queues and hooks.
-../../src/central create changes ./changes --scan 10
+../../src/central create changes        ./changes        --scan 10
+../../src/central create build-debian7  ./build-debian7  --scan 60
+../../src/central create build-freebsd9 ./build-freebsd9 --scan 60
 
