@@ -45,7 +45,11 @@ void handleConfig (
   args.scan (argc, argv);
 
   if (args.getPositionalCount () == 1)
-    throw std::string ("Configuration setting name required.");
+  {
+    for (const auto& key : config.all ())
+      std::cout << key << "=" << config[key] << "\n";
+    return;
+  }
 
   auto force   = args.getOption ("force");
   auto command = args.getPositional (0);

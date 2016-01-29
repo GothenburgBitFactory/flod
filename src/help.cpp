@@ -60,7 +60,7 @@ void handleHelp (int argc, const char** argv)
                  "  hook                                          <queue> <script>   Sets up a queue hook\n"
                  "  unhook                                        <queue> <script>   Removes a queue hook\n"
                  "  post                                          <queue> <event>    Posts an event to a queue\n"
-                 "  config [--force]                              <queue> [<value>]  Sets, clears and defaults configuration\n"
+                 "  config [--force]                             [<queue> [<value>]] Lists, sets, clears and defaults configuration\n"
                  "  process [--exit-on-idle]                                         Processes all queues\n"
                  "\n";
 
@@ -182,18 +182,21 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "config")
     std::cout << "\n"
-                 "central config [--force] <setting> [<value>]\n"
+                 "central config [--force] [<setting> [<value>]]\n"
                  "\n"
-                 "  Create, modify or remove a configuration setting. For example:\n"
+                 "  List, create, modify or remove a configuration setting. For example:\n"
                  "\n"
                  "    $ central config foo bar     # 1\n"
                  "    $ central config foo ''      # 2\n"
                  "    $ central config foo         # 3\n"
+                 "    $ central config             # 4\n"
                  "\n"
                  "  The first example sets the configuration setting 'foo' to a value of 'bar'.\n"
                  "  This will either create or overwrite a setting. The second eample sets the\n"
                  "  value of 'foo' to blank, but does not delete the entry. The third example\n"
                  "  deletes 'foo' from the configuration file.\n"
+                 "\n"
+                 "  The fourth example lists all the configuration settings.\n"
                  "\n"
                  "  Note that the configuration file is by default '~/.flodrc', but a '.flodrc'\n"
                  "  file may exist in any parent directory. Note that setting the 'FLODRC'\n"
