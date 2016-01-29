@@ -31,28 +31,68 @@ EVENT=$1
 #      for each required platform.
 echo prepare_builds $EVENT
 
-# TODO Read project   from $EVENT --> $PROJECT
-# TODO Read branch    from $EVENT
-# TODO Read commit    from $EVENT
-# TODO Read author    from $EVENT
-# TODO Read timestamp from $EVENT
+# TODO Given that $EVENT contains this:
+#      project
+#      branch
+#      commit
+#      author
+#      timestamp
 
-# TODO Read project.task.repository from .flodrc
-# TODO Read project.task.prebuild   from .flodrc
-# TODO Read project.task.build      from .flodrc
-# TODO Read project.task.test       from .flodrc
+# TODO Given that central .flodrc contains this:
+#      project.task.description     'Example repository for demo purposes'
+#      project.task.ignore          'README*,*.md'
+#      project.task.platforms       'debian7,freebsd'
+#      project.task.dependencies    'git,c++,gnutls,uuid,python'
+#      project.task.scm             'git'
+#      project.task.repository      'https://git.tasktools.org/scm/tm/task.git'
+#      project.task.prebuild        'cmake .'
+#      project.task.build           'make'
+#      project.task.test            'make test'
+#      scm.git.obtain               'git clone ${project.${event.project}.repository}'
+#      scm.git.branch               'git checkout ${event.branch}'
+#      scm.git.commit               'git reset —hard ${event.commit}'
+#      platform.debian7.description 'Debian 7 wheezy'
+#      platform.debian7.pkg.git     'git'
+#      platform.debian7.pkg.c++     'build-essential'
+#      platform.debian7.pkg.gnutls  'gnutls-dev'
+#      platform.debian7.pkg.uuid    'uuid-dev'
+#      platform.debian7.pkg.python  'python'
+#      platform.freebsd.description 'FreeBSD 9'
+#      platform.freebsd.pkg.git     'git'
+#      platform.freebsd.pkg.c++     'build-essential'
+#      platform.freebsd.pkg.gnutls  'gnutls-dev'
+#      platform.freebsd.pkg.uuid    ''
+#      platform.freebsd.pkg.python  'python'
 
-# TODO Read project.$PROJECT.scm from .flodrc --> $SCM
-# TODO Given project.$PROJECT.scm read scm.$SCM.obtain from .flodrc
-# TODO Given project.$PROJECT.scm read scm.$SCM.branch from .flodrc
-# TODO Given project.$PROJECT.scm read scm.$SCM.commit from .flodrc
+# TODO Compose these two events:
+#        branch:                2.5.1
+#        commit:                39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
+#        author:                Paul Beckingham <paul@beckingham.net>
+#        timestamp:             Wed Jan 27 13:39:45 2016 -0500
+#        project.scm:           git
+#        project.repository:    https://git.tasktools.org/scm/tm/task.git
+#        project.prebuild:      cmake .
+#        project.build:         make
+#        project.test:          make test
+#        scm.obtain:            git clone https://git.tasktools.org/scm/tm/task.git
+#        scm.branch:            git checkout 2.5.1
+#        scm.commit:            git reset —hard 39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
+#        platform.description:  Debian 7 wheezy
+#        platform.dependencies: git,build-essential,gnutls-dev,uuid-dev,python
 
-# TODO Read project.$PROJECT.platforms from .flodrc --> $PLATFORMS
-# TODO Read project.$PROJECT.dependencies from .flodrc --> $DEPENDENCIES
-# TODO For each PLATFORM in $PLATFORMS
-  # TODO Map $DEPENDENCIES for $PLATFORM
-  # TODO mktemp --> $BUILD_EVENT
-  # TODO Compose build event > $BUILD_EVENT
-  # TODO central post build-$PLATFORM $BUILD_EVENT
-  # TODO rm $BUILD_EVENT
+#        project:               task
+#        branch:                2.5.1
+#        commit:                39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
+#        author:                Paul Beckingham <paul@beckingham.net>
+#        timestamp:             Wed Jan 27 13:39:45 2016 -0500
+#        project.scm:           git
+#        project.repository:    https://git.tasktools.org/scm/tm/task.git
+#        project.prebuild:      cmake .
+#        project.build:         make
+#        project.test:          make test
+#        scm.obtain:            git clone https://git.tasktools.org/scm/tm/task.git
+#        scm.branch:            git checkout 2.5.1
+#        scm.commit:            git reset —hard 39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
+#        platform.description:  FreeBSD 9
+#        platform.dependencies: git,build-essential,gnutls-dev,python
 
