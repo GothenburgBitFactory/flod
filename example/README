@@ -49,4 +49,32 @@ demo is automated, and discussed below.
    This creates a sample 'dev' project, containing a git post-commit hook that
    posts a change event to the 'changes' queue.
 
+
+3. When the configuration and queue structures are in place, run central with
+   this command:
+
+     $ ./run.central
+
+   This command will run continually. Diagnostics will be written to the log
+   file in central/central.log. The system will immediately go to a quiet state
+   because no events are queued.
+
+
+4. To generate some activity, make a change in the 'dev' project and commit it.
+   This is most easily done by running:
+
+     $ ./change.dev
+
+   This commits a change in the 'dev' git repository, the post-commit hook then
+   composes a change event and posts it to the 'changes' queue.
+
+
+5. The 'prepare_builds' script is hooked into the changes queue, and uses the
+   contents of the change event to compose a build event for each of the
+   configured platforms. These get posted to the 'build-debian7' and
+   'build-freebsd9' queues. These build events contain sufficient information
+   to permit an autonomous provision/clone/build/test cycle on the platform.
+
+[more coming]
+
 ---
