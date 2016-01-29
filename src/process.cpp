@@ -87,8 +87,15 @@ void manageQueue (
           log->format ("%s --> %s %s", name.c_str (), script.c_str (), event.c_str ());
 
           std::string output;
-          if (0 != execute (script, {event}, "", output))
+          if (0 == execute (script, {event}, "", output))
+          {
+            log->format ("%s --> %s success", name.c_str (), script.c_str ());
+          }
+          else
+          {
             success = false;
+            log->format ("%s --> %s failed", name.c_str (), script.c_str ());
+          }
 
           std::cout << output << "\n";
         }
