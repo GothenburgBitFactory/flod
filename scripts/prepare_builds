@@ -31,3 +31,28 @@ EVENT=$1
 #      for each required platform.
 echo prepare_builds $EVENT
 
+# TODO Read project   from $EVENT --> $PROJECT
+# TODO Read branch    from $EVENT
+# TODO Read commit    from $EVENT
+# TODO Read author    from $EVENT
+# TODO Read timestamp from $EVENT
+
+# TODO Read project.task.repository from .flodrc
+# TODO Read project.task.prebuild   from .flodrc
+# TODO Read project.task.build      from .flodrc
+# TODO Read project.task.test       from .flodrc
+
+# TODO Read project.$PROJECT.scm from .flodrc --> $SCM
+# TODO Given project.$PROJECT.scm read scm.$SCM.obtain from .flodrc
+# TODO Given project.$PROJECT.scm read scm.$SCM.branch from .flodrc
+# TODO Given project.$PROJECT.scm read scm.$SCM.commit from .flodrc
+
+# TODO Read project.$PROJECT.platforms from .flodrc --> $PLATFORMS
+# TODO Read project.$PROJECT.dependencies from .flodrc --> $DEPENDENCIES
+# TODO For each PLATFORM in $PLATFORMS
+  # TODO Map $DEPENDENCIES for $PLATFORM
+  # TODO mktemp --> $BUILD_EVENT
+  # TODO Compose build event > $BUILD_EVENT
+  # TODO central post build-$PLATFORM $BUILD_EVENT
+  # TODO rm $BUILD_EVENT
+
