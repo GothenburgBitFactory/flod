@@ -24,19 +24,29 @@ demo is automated, and discussed below.
   flod.  Run the following commands.  Some of these you have likely already run,
   but the full set are included for illustration:
 
-    $ cd
-    $ git clone https://git.tasktools.org/scm/ts/flod2.git flod2.git
-    $ cd flod2.git
-    $ cmake .
-    $ make
-    $ sudo make install
+     $ cd
+     $ git clone https://git.tasktools.org/scm/ts/flod2.git flod2.git
+     $ cd flod2.git
+     $ cmake .
+     $ make
+     $ sudo make install
 
 
 2. Once you have an installed copy of Flod2, you can begin to run the demo.
    First go to the example directory (where this file resides):
 
-    $ cd flod.git/example
-    $ ls
-    README change.dev cleanup run.central setup.central setup.dev
+     $ cd flod.git/example
+     $ ls
+     README change.dev cleanup run.central setup.central setup.dev
+
+   Run the 'cleanup' script if you have run this demo before, then the two
+   'setup' scripts.
+
+     $ ./cleanup
+     $ ./setup.dev
+     $ ./setup.central
+
+   This creates a sample 'dev' project, containing a git post-commit hook that
+   posts a change event to the 'changes' queue.
 
 ---
