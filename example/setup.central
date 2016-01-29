@@ -9,6 +9,34 @@ cd central
 ../../src/central config --force log.file $PWD/central.log
 ../../src/central config --force work.dir $PWD/work
 
+# Project-specific.
+../../src/central config --force project.dev.description      'Example repository for demo purposes'
+../../src/central config --force project.dev.ignore           'README*,*.md'
+../../src/central config --force project.dev.platforms        'debian7,freebsd'
+../../src/central config --force project.dev.dependencies     'git,c++,gnutls,uuid,python'
+../../src/central config --force project.dev.obtain           'git clone https://git.tasktools.org/scm/tm/task.git'
+../../src/central config --force project.dev.prebuild         'cmake .'
+../../src/central config --force project.dev.build            'make'
+../../src/central config --force project.dev.test             'make test'
+
+# Platform-specific
+../../src/central config --force platform.debian7.description 'Debian 7 wheezy'
+../../src/central config --force platform.debian7.pkg.git     'git'
+../../src/central config --force platform.debian7.pkg.c++     'build-essential'
+../../src/central config --force platform.debian7.pkg.gnutls  'gnutls-dev'
+../../src/central config --force platform.debian7.pkg.uuid    'uuid-dev'
+../../src/central config --force platform.debian7.pkg.python  'python'
+
+../../src/central config --force platform.freebsd.description 'FreeBSD 9'
+../../src/central config --force platform.freebsd.pkg.git     'git'
+../../src/central config --force platform.freebsd.pkg.c++     'build-essential'
+../../src/central config --force platform.freebsd.pkg.gnutls  'gnutls-dev'
+../../src/central config --force platform.freebsd.pkg.uuid    ''
+../../src/central config --force platform.freebsd.pkg.python  'python'
+
+
+
+
 # Create queues and hooks.
 ../../src/central create changes ./changes --scan 10
 
