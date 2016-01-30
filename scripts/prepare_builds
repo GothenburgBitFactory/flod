@@ -32,7 +32,9 @@ import subprocess
 import re
 import tempfile
 
-
+################################################################################
+# Loads a change event file and verifies that the expected header variables are
+# present. Payload is ignored.
 def load_event(event_file):
   """ Load an event file, and extract only the headers. """
   event = dict()
@@ -49,7 +51,9 @@ def load_event(event_file):
 
   return event
 
-
+################################################################################
+# Uses the 'central config' command to enumerate all settings, which are
+# captured and loaded into a dict.
 def load_central_config():
   """ Load the entire central configuration. """
   config = dict()
@@ -62,7 +66,9 @@ def load_central_config():
     config[line[:sep]] = line[sep + 1:]
   return config
 
-
+################################################################################
+# Combines a change event with central configuration to yield a build event.
+# Uses 'central post build $file' to queue the build event.
 def main(event_file):
   """Reads input change event, emits a build event for each necessary platform."""
   event = load_event(event_file)
@@ -107,6 +113,8 @@ def main(event_file):
     subprocess.Popen(["central", "post", "build", temp_name], stdout=subprocess.PIPE).communicate()[0]
     os.unlink(temp_name)
 
+################################################################################
+# Entry point.  Checks only that there is one command line argument.
 if __name__ == "__main__":
   usage="""Flod2 hook script for issuing build events in response to change events."""
 
@@ -118,76 +126,4 @@ if __name__ == "__main__":
     main(sys.argv[1])
   except Exception as msg:
     print('Error:', msg)
-
-
-
-
-
-
-# TODO Given that $EVENT contains this:
-#      repository
-#      project
-#      branch
-#      commit
-#      author
-#      timestamp
-
-# TODO Given that central .flodrc contains this:
-#      project.task.description     'Example repository for demo purposes'
-#      project.task.ignore          'README*,*.md'
-#      project.task.platforms       'debian7,freebsd'
-#      project.task.dependencies    'git,c++,gnutls,uuid,python'
-#      project.task.scm             'git'
-#      project.task.repository      'https://git.tasktools.org/scm/tm/task.git'
-#      project.task.prebuild        'cmake .'
-#      project.task.build           'make'
-#      project.task.test            'make test'
-#      scm.git.obtain               'git clone ${project.${event.project}.repository}'
-#      scm.git.branch               'git checkout ${event.branch}'
-#      scm.git.commit               'git reset —hard ${event.commit}'
-#      platform.debian7.description 'Debian 7 wheezy'
-#      platform.debian7.pkg.git     'git'
-#      platform.debian7.pkg.c++     'build-essential'
-#      platform.debian7.pkg.gnutls  'gnutls-dev'
-#      platform.debian7.pkg.uuid    'uuid-dev'
-#      platform.debian7.pkg.python  'python'
-#      platform.freebsd.description 'FreeBSD 9'
-#      platform.freebsd.pkg.git     'git'
-#      platform.freebsd.pkg.c++     'build-essential'
-#      platform.freebsd.pkg.gnutls  'gnutls-dev'
-#      platform.freebsd.pkg.uuid    ''
-#      platform.freebsd.pkg.python  'python'
-
-# TODO Compose these two events:
-#        project:               task
-#        branch:                2.5.1
-#        commit:                39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
-#        author:                Paul Beckingham <paul@beckingham.net>
-#        timestamp:             Wed Jan 27 13:39:45 2016 -0500
-#        project.scm:           git
-#        project.repository:    https://git.tasktools.org/scm/tm/task.git
-#        project.prebuild:      cmake .
-#        project.build:         make
-#        project.test:          make test
-#        scm.obtain:            git clone https://git.tasktools.org/scm/tm/task.git
-#        scm.branch:            git checkout 2.5.1
-#        scm.commit:            git reset —hard 39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
-#        platform.description:  Debian 7 wheezy
-#        platform.dependencies: git,build-essential,gnutls-dev,uuid-dev,python
-
-#        project:               task
-#        branch:                2.5.1
-#        commit:                39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
-#        author:                Paul Beckingham <paul@beckingham.net>
-#        timestamp:             Wed Jan 27 13:39:45 2016 -0500
-#        project.scm:           git
-#        project.repository:    https://git.tasktools.org/scm/tm/task.git
-#        project.prebuild:      cmake .
-#        project.build:         make
-#        project.test:          make test
-#        scm.obtain:            git clone https://git.tasktools.org/scm/tm/task.git
-#        scm.branch:            git checkout 2.5.1
-#        scm.commit:            git reset —hard 39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
-#        platform.description:  FreeBSD 9
-#        platform.dependencies: git,build-essential,gnutls-dev,python
 
