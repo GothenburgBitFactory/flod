@@ -58,12 +58,38 @@ def load_central_config():
 def main(event_file):
   """Reads input change event, emits a build event per platform."""
   event = load_event(event_file)
-  for k,v in event.items():
-    print 'EVENT', k, '=', v
+#  for k,v in event.items():
+#    print 'EVENT', k, '=', v
 
   config = load_central_config()
-  for k,v in config.items():
-    print 'CONFIG', k, '=', v
+#  for k,v in config.items():
+#    print 'CONFIG', k, '=', v
+
+  for platform in config["project.%s.platforms" % event['project']].split(','):
+    print 'platform', platform
+    build = dict()
+    for k,v in event.items():
+      build[k] = v
+
+    for detail in ['scm', 'repository', 'prebuild', 'build', 'test']:
+      build['project.%s' % detail] = config['project.%s.%s' % (event['project'], detail)]
+
+#      scm.obtain               'git clone ${project.${event.project}.repository}'
+#      scm.branch               'git checkout ${event.branch}'
+#      scm.commit               'git reset —hard ${event.commit}'
+    for detail in ['obtain', 'branch', 'commit']:
+      build['scm.%s' % detail] = config['scm.%s.%s' % (config['project.%s.scm' % event['project']], detail)]
+
+    build['platform.description'] = config['platform.%s.description' % platform]
+
+#        project.dependencies --> platform.x.pkg
+
+    # TODO Write the build event to tmp file
+    # TODO Post the build event
+    # TODO unlink the tmp file
+
+    for k,v in build.items():
+      print '  ', k, '=', v
 
 
 if __name__ == "__main__":
@@ -117,6 +143,7 @@ if __name__ == "__main__":
 #      platform.freebsd.pkg.python  'python'
 
 # TODO Compose these two events:
+#        project:               task
 #        branch:                2.5.1
 #        commit:                39cc00ce9d34b1253b41ca9dd555106ea98eb9c2
 #        author:                Paul Beckingham <paul@beckingham.net>
