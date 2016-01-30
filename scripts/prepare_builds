@@ -28,6 +28,7 @@
 
 import sys
 import subprocess
+import re
 
 
 def load_event(event_file):
@@ -74,11 +75,13 @@ def main(event_file):
     for detail in ['scm', 'repository', 'prebuild', 'build', 'test']:
       build['project.%s' % detail] = config['project.%s.%s' % (event['project'], detail)]
 
-#      scm.obtain               'git clone ${project.${event.project}.repository}'
-#      scm.branch               'git checkout ${event.branch}'
-#      scm.commit               'git reset —hard ${event.commit}'
+    # scm values need substitutions.
+    scm = build['project.scm']
     for detail in ['obtain', 'branch', 'commit']:
-      build['scm.%s' % detail] = config['scm.%s.%s' % (config['project.%s.scm' % event['project']], detail)]
+      value = config['scm.%s.%s' % (scm, detail)]
+      for match in re.findall (r'\${(\w+)}', value):
+        value = value.replace('${%s}' % match, build[match])
+      build['scm.%s' % detail] = value
 
     build['platform.description'] = config['platform.%s.description' % platform]
 
@@ -88,8 +91,8 @@ def main(event_file):
     # TODO Post the build event
     # TODO unlink the tmp file
 
-    for k,v in build.items():
-      print '  ', k, '=', v
+    for key in sorted(build):
+      print '  ', key, '=', build[key]
 
 
 if __name__ == "__main__":
