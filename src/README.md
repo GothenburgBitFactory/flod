@@ -57,6 +57,7 @@ Command line configuration update:
   $ central config NAME VALUE       # Set NAME to VALUE
   $ central config NAME ''          # Set NAME to no value
   $ central config NAME             # Delete NAME, reverting to default, if any
+  $ central config                  # List all settings
 
 
 ## What is a queue?
