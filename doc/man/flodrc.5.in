@@ -18,33 +18,124 @@ obtains its configuration data from a file called
 $HOME/.flodrc
 .RE
 
-...
+But the .flodrc file may exist in any location from $PWD up to, but not
+including, /. Central will look in all locations, and stop at the first .flodrc
+file it finds.
 
-.SH EDITING
+.SH CHANGING CONFIGURATION
+
+The 'config' command can be used to modify configuration. To set 'name'
+to 'value', use:
+
+    $ central config name value
+
+Use quotes to combined multiple words in a value:
+
+    $ central config name 'one two three'
+
+To give a setting a bank value, use:
+
+    $ central config name ''
+
+To delete a setting, provide no value, like:
+
+    $ central config name
+
+To see a list of all settings:
+
+    $ central config
 
 .SH NESTING CONFIGURATION FILES
 
+Configuration files may be included, using:
+
+    include /path/to/other/file
+
+The included file itself may include other files, but there is a nested file
+limit of ten levels deep, to avoid circular includes.
+
 .SH ENVIRONMENT VARIABLES
 
-.SH CONFIGURATION VARIABLES
-Valid variable names and their default values are:
+The FLODRC environment variable, if defined, bypasses the search for a .flodrc
+file.
 
-.SS FILES
+.SH CONFIGURING A PROJECT
 
-.SS MISCELLANEOUS
+Here is an example project definition:
 
-.TP
-.TP
-.B name=value
-...
+    $ central config project.taskwarrior.description  'Task Management'
+    $ central config project.taskwarrior.ignore       'README*,*.md'
+    $ central config project.taskwarrior.platforms    'debian7,freebsd9'
+    $ central config project.taskwarrior.dependencies 'c++,git,cmake,gnutls,uuid,python'
+    $ central config project.taskwarrior.scm          'git'
+    $ central config project.taskwarrior.repository   'https://git.tasktools.org/scm/tm/task.git'
+    $ central config project.taskwarrior.prebuild     'cmake .'
+    $ central config project.taskwarrior.build        'make'
+    $ central config project.taskwarrior.test         'make test'
 
-.SS DATES
+The project name is in every setting name ('taskwarrior').
 
-.SS HOLIDAYS
+The 'ignore' setting is a comma-separated list of file globs that refer to files
+that, if changed, do not require a build/test.
 
-.SS DEFAULTS
+The 'platforms' setting is a comma-separated list of platforms on which this
+project should be tested. Each platform must be defined.
 
-.SS REPORTS
+The 'dependencies' setting is a comma-separated list of labels referring to
+tools and libraries that the project needs. This includes a compiler and
+interpreter for the tests, as well as libraries used.
+
+The 'scm' setting is a label that refers to an SCM system that must be defined.
+
+The 'repository' setting points to the publicly visible repository location.
+
+The 'prebuild', 'build' and 'test' settings are commands used to configure
+and build the project.
+
+.SH CONFIGURING AN SCM
+
+Here is an example SCM definition:
+
+    $ central config scm.git.obtain                   'git clone ${repository}'
+    $ central config scm.git.branch                   'git checkout ${branch}'
+    $ central config scm.git.commit                   'git reset --hard ${commit}'
+
+An SCM is used by Flod2 to obtain a repository, switch to a branch, and roll
+back to a specific commit.  These three commands are defined, with placeholders
+for the specific repository, branch and commit, which are provided at run time
+by a change event.
+
+The name 'git' in the setting name is just a label, referenced by the project.
+
+.SH CONFIGURING A PLATFORM
+
+Here are two example platform definitions:
+
+    $ central config platform.debian7.description     'Debian 7 wheezy'
+    $ central config platform.debian7.pkg.cmake       'cmake'
+    $ central config platform.debian7.pkg.git         'git'
+    $ central config platform.debian7.pkg.c++         'build-essential'
+    $ central config platform.debian7.pkg.gnutls      'gnutls-dev'
+    $ central config platform.debian7.pkg.uuid        'uuid-dev'
+    $ central config platform.debian7.pkg.python      'python'
+
+    $ central config platform.freebsd9.description    'FreeBSD 9'
+    $ central config platform.freebsd9.pkg.cmake      'cmake'
+    $ central config platform.freebsd9.pkg.git        'git'
+    $ central config platform.freebsd9.pkg.c++        'build-essential'
+    $ central config platform.freebsd9.pkg.gnutls     'gnutls-dev'
+    $ central config platform.freebsd9.pkg.uuid       ''
+    $ central config platform.freebsd9.pkg.python     'python'
+
+The platforms have names, which are in all the setting names ('debian7', 'freebsd9'),
+and the remaining settings are mappings between dependency names and
+platform-specific package names. In the example, freebsd9 defines the 'uuid'
+package as '', which means if a project depends on libuuid, for the FreeBSD9
+platform, that functionality is in libc++, and there is no need for libuuid.
+
+This package mapping allows projects to simply state that they need a C++ compiler
+by stating the dependency 'c++', and the platform definitions are then free to
+interpret that as 'build-essential', 'g++', 'clang' as they wish.
 
 .SH "CREDITS & COPYRIGHTS"
 Copyright (C) 2006 \- 2016 P. Beckingham, F. Hernandez.
