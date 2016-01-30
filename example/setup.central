@@ -10,7 +10,17 @@ cd central
 ../../src/central config --force work.dir $PWD/work
 
 # Project-specific.
-../../src/central config --force project.task.description     'Example repository for demo purposes'
+../../src/central config --force project.dev.description      'Example repository for demo purposes'
+../../src/central config --force project.dev.ignore           'README*,*.md'
+../../src/central config --force project.dev.platforms        'debian7,freebsd'
+../../src/central config --force project.dev.dependencies     'git,c++'
+../../src/central config --force project.dev.scm              'git'
+../../src/central config --force project.dev.repository       "$PWD/dev"
+../../src/central config --force project.dev.prebuild         ''
+../../src/central config --force project.dev.build            'make'
+../../src/central config --force project.dev.test             'make test'
+
+../../src/central config --force project.task.description     'Taskwarrior'
 ../../src/central config --force project.task.ignore          'README*,*.md'
 ../../src/central config --force project.task.platforms       'debian7,freebsd'
 ../../src/central config --force project.task.dependencies    'git,c++,gnutls,uuid,python'
