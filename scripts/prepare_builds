@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 ##
 ## Copyright 2012 - 2016, Göteborg Bit Factory.
@@ -25,11 +26,62 @@
 ##
 ################################################################################
 
-EVENT=$1
+import sys
+import subprocess
 
-# TODO Read $EVENT file, and central config, in order to create one build event
-#      for each required platform.
-echo prepare_builds $EVENT
+
+def load_event(event_file):
+  """ Load an event file, and extract only the headers. """
+  event = dict()
+  with open(event_file) as fh:
+    for line in fh:
+      if line == "\n":
+        break;
+      sep = line.index(': ')
+      event[line[:sep]] = line.strip()[sep + 2:]
+  return event
+
+
+def load_central_config():
+  """ Load the entire central configuration. """
+  config = dict()
+  output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
+  for line in output.split('\n'):
+    if line == "":
+      break;
+
+    sep = line.index('=')
+    config[line[:sep]] = line[sep + 1:]
+  return config
+
+
+def main(event_file):
+  """Reads input change event, emits a build event per platform."""
+  event = load_event(event_file)
+  for k,v in event.items():
+    print 'EVENT', k, '=', v
+
+  config = load_central_config()
+  for k,v in config.items():
+    print 'CONFIG', k, '=', v
+
+
+if __name__ == "__main__":
+  usage="""Flod2 hook script for issuing build events in response to change events."""
+
+  if len(sys.argv) != 2:
+    print "\nUsage: prepare_builds <change-event-file>\n\n"
+    sys.exit(1)
+
+  try:
+    main(sys.argv[1])
+  except Exception as msg:
+    print('Error:', msg)
+
+
+
+
+
 
 # TODO Given that $EVENT contains this:
 #      project
