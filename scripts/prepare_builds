@@ -62,23 +62,19 @@ def load_central_config():
 
 
 def main(event_file):
-  """Reads input change event, emits a build event per platform."""
+  """Reads input change event, emits a build event for each necessary platform."""
   event = load_event(event_file)
-#  for k,v in event.items():
-#    print 'EVENT', k, '=', v
+  project = event['project']
 
   config = load_central_config()
-#  for k,v in config.items():
-#    print 'CONFIG', k, '=', v
 
-  for platform in config["project.%s.platforms" % event['project']].split(','):
-    print 'platform', platform
+  for platform in config["project.%s.platforms" % project].split(','):
     build = dict()
     for k,v in event.items():
       build[k] = v
 
     for detail in ['scm', 'repository', 'prebuild', 'build', 'test']:
-      build['project.%s' % detail] = config['project.%s.%s' % (event['project'], detail)]
+      build['project.%s' % detail] = config['project.%s.%s' % (project, detail)]
 
     # scm values need substitutions.
     scm = build['project.scm']
