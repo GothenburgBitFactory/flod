@@ -57,6 +57,8 @@ do
     EVENT=`mktemp`
 
     cat <<EOF >$EVENT
+repository: $REPOSITORY
+project: $PROJECT
 branch: $BRANCH
 commit: $COMMIT
 author: $AUTHOR
