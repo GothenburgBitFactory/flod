@@ -26,9 +26,11 @@
 ##
 ################################################################################
 
+import os
 import sys
 import subprocess
 import re
+import tempfile
 
 
 def load_event(event_file):
@@ -86,15 +88,24 @@ def main(event_file):
 
     build['platform.description'] = config['platform.%s.description' % platform]
 
-#        project.dependencies --> platform.x.pkg
+    dependencies = list()
+    for dependency in config['project.%s.dependencies' % project].split(','):
+      mapped = config['platform.%s.pkg.%s' % (platform, dependency)]
+      if mapped:
+        dependencies.append(mapped)
+    build['platform.dependencies'] = ','.join(dependencies)
 
-    # TODO Write the build event to tmp file
-    # TODO Post the build event
-    # TODO unlink the tmp file
+    # Write the build event to tmp file.
+    temp_fh, temp_name = tempfile.mkstemp()
+    with open(temp_name, 'w') as fh:
+      for key in sorted(build):
+        fh.write('%s: %s\n' % (key, build[key]))
+      fh.write('\n')
+    os.close(temp_fh)
 
-    for key in sorted(build):
-      print '  ', key, '=', build[key]
-
+    # Post the event to central.
+    subprocess.Popen(["central", "post", "build", temp_name], stdout=subprocess.PIPE).communicate()[0]
+    os.unlink(temp_name)
 
 if __name__ == "__main__":
   usage="""Flod2 hook script for issuing build events in response to change events."""
@@ -114,6 +125,7 @@ if __name__ == "__main__":
 
 
 # TODO Given that $EVENT contains this:
+#      repository
 #      project
 #      branch
 #      commit
