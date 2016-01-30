@@ -40,6 +40,11 @@ def load_event(event_file):
         break;
       sep = line.index(': ')
       event[line[:sep]] = line.strip()[sep + 2:]
+
+  for required in ['project', 'repository', 'author', 'commit', 'timestamp', 'branch']:
+    if required not in event:
+      raise ValueError ("Missing '%s' in %s" % (required, event_file))
+
   return event
 
 
