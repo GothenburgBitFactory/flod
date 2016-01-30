@@ -116,7 +116,7 @@ def main(event_file):
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
 if __name__ == "__main__":
-  usage="""Flod2 hook script for issuing build events in response to change events."""
+  """Flod2 hook script for issuing build events in response to change events."""
 
   if len(sys.argv) != 2:
     print "\nUsage: prepare_builds <change-event-file>\n\n"
