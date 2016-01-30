@@ -47,7 +47,9 @@ demo is automated, and discussed below.
      $ ./setup.central
 
    This creates a sample 'dev' project, containing a git post-commit hook that
-   posts a change event to the 'changes' queue.
+   posts a change event to the 'changes' queue. There is a hook installed for
+   the 'changes' queue that prepares build event files for the 'builds' queue,
+   which creates a build event for each configured build platform.
 
 
 3. When the configuration and queue structures are in place, run central with
@@ -71,9 +73,9 @@ demo is automated, and discussed below.
 
 5. The 'prepare_builds' script is hooked into the changes queue, and uses the
    contents of the change event to compose a build event for each of the
-   configured platforms. These get posted to the 'build-debian7' and
-   'build-freebsd9' queues. These build events contain sufficient information
-   to permit an autonomous provision/clone/build/test cycle on the platform.
+   configured platforms. These get posted to the 'builds' queue. These build
+   events contain sufficient information to permit an autonomous
+   provision/clone/build/test cycle on the platform.
 
 [more coming]
 
