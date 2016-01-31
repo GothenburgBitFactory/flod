@@ -110,7 +110,7 @@ def main(event_file):
     os.close(temp_fh)
 
     # Post the event to central.
-    subprocess.Popen(["central", "post", "build", temp_name], stdout=subprocess.PIPE).communicate()[0]
+    subprocess.Popen(["central", "post", "builds", temp_name], stdout=subprocess.PIPE).communicate()[0]
     os.unlink(temp_name)
 
 ################################################################################
