@@ -58,3 +58,5 @@ cd central
 
 ../../src/central create builds  ./builds  --scan 60
 
+../../src/central create results ./results --scan 10
+
