@@ -53,8 +53,8 @@ cd central
 ../../src/central config --force platform.freebsd9.pkg.python  'python'
 
 # Create queues and hooks.
-../../src/central create changes        ./changes        --scan 10
+../../src/central create changes ./changes --scan 10
 ../../src/central hook   changes $PWD/../../scripts/prepare_builds
 
-../../src/central create build          ./build          --scan 60
+../../src/central create builds  ./builds  --scan 60
 
