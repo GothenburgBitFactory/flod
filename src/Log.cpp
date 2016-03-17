@@ -27,7 +27,7 @@
 
 #include <cmake.h>
 #include <Log.h>
-#include <text.h>
+#include <shared.h>
 #include <thread>
 #include <mutex>
 #include <iostream>

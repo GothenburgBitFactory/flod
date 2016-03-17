@@ -29,7 +29,7 @@
 #include <Args.h>
 #include <Q.h>
 #include <Log.h>
-#include <common.h>
+#include <shared.h>
 #include <set>
 #include <string>
 #include <stdlib.h>

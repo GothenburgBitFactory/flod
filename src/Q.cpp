@@ -26,7 +26,7 @@
 
 #include <cmake.h>
 #include <Q.h>
-#include <common.h>
+#include <shared.h>
 #include <sstream>
 #include <iomanip>
 #include <ctime>

@@ -31,12 +31,6 @@ configure_file (
   ${CMAKE_SOURCE_DIR}/cmake.h.in
   ${CMAKE_SOURCE_DIR}/cmake.h)
 
-ExternalProject_Add (common-1.0
-                     GIT_REPOSITORY      "ssh://git@git.tasktools.org/tm/common.git"
-                     GIT_TAG             "master"
-#                     UPDATE_DISCONNECTED 1 # Needs 3.2
-                     )
-
 add_subdirectory (src)
 add_subdirectory (scripts)
 add_subdirectory (doc)
