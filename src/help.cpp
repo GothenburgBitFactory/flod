@@ -120,10 +120,10 @@ void handleHelp (int argc, const char** argv)
 
   else if (command == "retry")
     std::cout << "\n"
-                 "central retry\n"
+                 "central retry <queue>\n"
                  "\n"
-                 "  For the specified queue, takes all failed events and queues them for processing\n"
-                 "  again.\n"
+                 "  For the specified queue, takes all failed events and re-queues them for\n"
+                 "  processing again.\n"
                  "\n";
 
   else if (command == "info")
