@@ -7,7 +7,7 @@ flod \- Lightweight Continuous Integration
 .B central <command>
 
 .SH DESCRIPTION
-Flod is a lightweight contƣnuous integration system.
+Flod is a lightweight continuous integration system.
 It consists of two major components, and a series of support scripts.
 The first component is central, an event processor and hook dispatcher.
 The second component is xxx, a build instantiation controller.

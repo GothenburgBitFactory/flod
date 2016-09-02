@@ -11,7 +11,8 @@ Flod consists of two main components.
 The first is the flod binary, and is a queue management tool that triggers hook
 scripts when event files appear in a queue, calling the script with a reference
 to the event file and managing that file. The flod binary knows nothing about
-CI.
+CI, it only knows that events appear in queues, which are then processed by
+hook scripts, which succeed or fail.
 
 The second component manages a single VM instance.  It creates it, then can
 install tools and libraries on it, copies a build script to it, and runs that
@@ -25,6 +26,8 @@ The combined effect is that a single commit will launch multiple VMs that test
 that commit, yielding several results events, which contribute to a status
 report. Then the VMs will be shut down and the system returns goes idle,
 thereby using minimal resources.
+
+There may be many scripts involved, using many queues.
 
 
 ## Workflow
