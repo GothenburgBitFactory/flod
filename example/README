@@ -25,7 +25,7 @@ demo is automated, and discussed below.
   but the full set are included for illustration:
 
      $ cd
-     $ git clone https://git.tasktools.org/scm/ts/flod2.git flod2.git
+     $ git clone --recursive https://git.tasktools.org/scm/ts/flod2.git flod2.git
      $ cd flod2.git
      $ cmake .
      $ make
