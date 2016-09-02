@@ -27,6 +27,7 @@
 #include <cmake.h>
 #include <central.h>
 #include <Args.h>
+#include <format.h>
 #include <Q.h>
 #include <map>
 #include <string>
@@ -72,11 +73,7 @@ void handleHook (
   int count = 1;
   std::string hookName = "h1";
   while (std::find (hookNames.begin (), hookNames.end (), hookName) != hookNames.end ())
-  {
-    std::stringstream s;
-    s << "h" << ++count;
-    hookName = s.str ();
-  }
+    hookName = format ("h{1}", ++count);
 
   // Add configuration.
   if (! setVariableInFile (config.file (), "hook." + name + "." + hookName + ".script",  hookScript._data))
