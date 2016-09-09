@@ -114,14 +114,14 @@ with clean builds automatically creating snapshot tarballs. Map reduce.
 
 
               +------+      +------+      +------+      +------+      +------+
-   Commit --> |commit| -+-> |build | -+-> |result| ---> | test | -+-> | tar  |
-              |      |  |   | P1   |  |   |      |      |report|  |   | ball |
-              +------+  |   +------+  |   +------+      +------+  |   +------+
-                        |             |                           |
-                        |   +------+  |                           |   +------+
-                        +-> |build | -+                           +-> | gcov |
-                        |   | P2   |  |                               |report|
-                        |   +------+  |                               +------+
+   Commit --> |commit| -+-> |build | -+-> |result| -+-> | test | -+-> | tar  |
+              |      |  |   | P1   |  |   |      |  |   |report|  |   | ball |
+              +------+  |   +------+  |   +------+  |   +------+  |   +------+
+                        |             |             |             |
+                        |   +------+  |             |   +------+  |   +------+
+                        +-> |build | -+             +-> |summ. |  +-> | gcov |
+                        |   | P2   |  |                 |report|      |report|
+                        |   +------+  |                 +------+      +------+
                         |             |
                         |   +------+  |
                         +-> |build | -+
