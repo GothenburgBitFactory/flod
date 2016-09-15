@@ -37,7 +37,6 @@ public:
   static std::vector <std::string> structure;
 
 public:
-  Q () {};
   void create (const std::string&, const std::string&);
   bool destroy (bool force = false);
   bool scan (std::string&);
