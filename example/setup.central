@@ -31,7 +31,7 @@ cd central
 ../../src/central config --force project.task.test             'make test'
 
 # SCM-specific
-../../src/central config --force scm.git.obtain                'git clone ${repository}'
+../../src/central config --force scm.git.obtain                'git clone --recursive -b ${branch} ${repository}'
 ../../src/central config --force scm.git.branch                'git checkout ${branch}'
 ../../src/central config --force scm.git.commit                'git reset —hard ${commit}'
 
