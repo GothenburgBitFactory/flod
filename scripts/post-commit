@@ -45,12 +45,12 @@ TIMESTAMP=`git log -1 --format="%at" HEAD`
 EVENT=`mktemp`
 
 cat <<EOF >$EVENT
-repository: $REPOSITORY
-project: $PROJECT
-branch: $BRANCH
-commit: $COMMIT
-author: $AUTHOR
-timestamp: $TIMESTAMP
+change.repository: $REPOSITORY
+change.project: $PROJECT
+change.branch: $BRANCH
+change.commit: $COMMIT
+change.author: $AUTHOR
+change.timestamp: $TIMESTAMP
 
 EOF
 
