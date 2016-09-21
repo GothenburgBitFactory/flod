@@ -45,7 +45,7 @@ def load_event(event_file):
       sep = line.index(': ')
       event[line[:sep]] = line.strip()[sep + 2:]
 
-  for required in ['project', 'repository', 'author', 'commit', 'timestamp', 'branch']:
+  for required in ['change.project', 'change.repository', 'change.author', 'change.commit', 'change.timestamp', 'change.branch']:
     if required not in event:
       raise ValueError ("Missing '%s' in %s" % (required, event_file))
 
@@ -72,7 +72,7 @@ def load_central_config():
 def main(event_file):
   """Reads input change event, emits a build event for each necessary platform."""
   event = load_event(event_file)
-  project = event['project']
+  project = event['change.project']
 
   config = load_central_config()
 
