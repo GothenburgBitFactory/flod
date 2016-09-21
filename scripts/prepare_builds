@@ -81,16 +81,8 @@ def main(event_file):
     for k,v in event.items():
       build[k] = v
 
-    for detail in ['scm', 'repository', 'prebuild', 'build', 'test']:
+    for detail in ['repository', 'get', 'build', 'test']:
       build['project.%s' % detail] = config['project.%s.%s' % (project, detail)]
-
-    # scm values need substitutions.
-    scm = build['project.scm']
-    for detail in ['obtain', 'branch', 'commit']:
-      value = config['scm.%s.%s' % (scm, detail)]
-      for match in re.findall (r'\${(\w+)}', value):
-        value = value.replace('${%s}' % match, build[match])
-      build['scm.%s' % detail] = value
 
     build['platform.description'] = config['platform.%s.description' % platform]
 
@@ -105,6 +97,11 @@ def main(event_file):
     temp_fh, temp_name = tempfile.mkstemp()
     with open(temp_name, 'w') as fh:
       for key in sorted(build):
+        # All values need substitutions.
+        value = build[key]
+        for match in re.findall (r'{([^}]+)}', value):
+          value = value.replace('{%s}' % match, build[match])
+        build[key] = value
         fh.write('%s: %s\n' % (key, build[key]))
       fh.write('\n')
     os.close(temp_fh)
