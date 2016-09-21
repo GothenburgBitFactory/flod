@@ -14,26 +14,19 @@ cd central
 ../../src/central config --force project.dev.ignore            'README*,*.md'
 ../../src/central config --force project.dev.platforms         'debian7,freebsd9'
 ../../src/central config --force project.dev.dependencies      'git,c++'
-../../src/central config --force project.dev.scm               'git'
-../../src/central config --force project.dev.repository        "$PWD/dev"
-../../src/central config --force project.dev.prebuild          ''
-../../src/central config --force project.dev.build             'make'
+../../src/central config --force project.dev.repository        "$PWD/../dev"
+../../src/central config --force project.dev.get               'git clone --recursive -b {change.branch} {project.repository} {change.project}.git; cd {change.project}.git; git reset -hard {change.commit}'
+../../src/central config --force project.dev.build             'cd {change.project}.git; make'
 ../../src/central config --force project.dev.test              'make test'
 
 ../../src/central config --force project.task.description      'Taskwarrior'
 ../../src/central config --force project.task.ignore           'README*,*.md'
 ../../src/central config --force project.task.platforms        'debian7,freebsd9'
 ../../src/central config --force project.task.dependencies     'cmake,git,c++,gnutls,uuid,python'
-../../src/central config --force project.task.scm              'git'
 ../../src/central config --force project.task.repository       'https://git.tasktools.org/scm/tm/task.git'
-../../src/central config --force project.task.prebuild         'cmake .'
-../../src/central config --force project.task.build            'make'
+../../src/central config --force project.task.get              'git clone --recursive -b {change.branch} {project.repository} {change.project}.git; cd {change.project}.git; git reset -hard {change.commit}'
+../../src/central config --force project.task.build            'cd {change.project}.git; cmake .; make'
 ../../src/central config --force project.task.test             'make test'
-
-# SCM-specific
-../../src/central config --force scm.git.obtain                'git clone --recursive -b ${branch} ${repository}'
-../../src/central config --force scm.git.branch                'git checkout ${branch}'
-../../src/central config --force scm.git.commit                'git reset —hard ${commit}'
 
 # Platform-specific
 ../../src/central config --force platform.debian7.description  'Debian 7 wheezy'
@@ -53,10 +46,11 @@ cd central
 ../../src/central config --force platform.freebsd9.pkg.python  'python'
 
 # Create queues and hooks.
-../../src/central create changes ./changes --scan 10
+../../src/central create changes ./changes --scan 5
 ../../src/central hook   changes $PWD/../../scripts/prepare_builds
 
-../../src/central create builds  ./builds  --scan 60
+../../src/central create builds  ./builds  --scan 10
+../../src/central hook   builds  $PWD/../../scripts/build_and_test
 
 ../../src/central create results ./results --scan 10
 
