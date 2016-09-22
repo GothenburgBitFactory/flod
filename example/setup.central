@@ -48,11 +48,13 @@ cd central
 ../../src/central config --force platform.freebsd10.pkg.python  'python'
 
 # Create queues and hooks.
-../../src/central create changes ./changes --scan 5
-../../src/central hook   changes $PWD/../../scripts/prepare_builds
+../../src/central create change          ./change          --scan 5
+../../src/central create build_debian8   ./build_debian8   --scan 5
+../../src/central create build_freebsd10 ./build_freebsd10 --scan 5
+../../src/central create result          ./result          --scan 5
 
-../../src/central create builds  ./builds  --scan 10
-../../src/central hook   builds  $PWD/../../scripts/build_and_test
+../../src/central hook   change          $PWD/../../scripts/prepare_builds
+../../src/central hook   build_debian8   $PWD/../../scripts/build_and_test
+../../src/central hook   build_freebsd10 $PWD/../../scripts/build_and_test
 
-../../src/central create results ./results --scan 10
 
