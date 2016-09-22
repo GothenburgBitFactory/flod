@@ -86,6 +86,7 @@ def main(event_file):
       build['project.%s' % detail] = config['project.%s.%s' % (project, detail)]
 
     build['platform.description'] = config['platform.%s.description' % platform]
+    build['platform.details']     = config['platform.%s.details' % platform]
 
     dependencies = list()
     for dependency in config['project.%s.dependencies' % project].split(','):
