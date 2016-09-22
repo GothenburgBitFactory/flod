@@ -54,7 +54,7 @@ change.timestamp: $TIMESTAMP
 
 EOF
 
-central post changes $EVENT
+central post change $EVENT
 rm $EVENT
 
 exit $?
