@@ -119,7 +119,7 @@ if __name__ == "__main__":
   """Flod2 hook script for issuing build events in response to change events."""
 
   if len(sys.argv) != 2:
-    print "\nUsage: prepare_builds <change-event-file>\n\n"
+    print "\nUsage: platforms <change-event-file>\n\n"
     sys.exit(1)
 
   try:
