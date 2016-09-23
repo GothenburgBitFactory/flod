@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+##
+## Copyright 2012 - 2016, Göteborg Bit Factory.
+##
+## Permission is hereby granted, free of charge, to any person obtaining a copy
+## of this software and associated documentation files (the "Software"), to deal
+## in the Software without restriction, including without limitation the rights
+## to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+## copies of the Software, and to permit persons to whom the Software is
+## furnished to do so, subject to the following conditions:
+##
+## The above copyright notice and this permission notice shall be included
+## in all copies or substantial portions of the Software.
+##
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+## OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+## THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+## SOFTWARE.
+##
+## http://www.opensource.org/licenses/mit-license.php
+##
+################################################################################
+
+import os
+import sys
+import subprocess
+import re
+import tempfile
+
+################################################################################
+# Loads a change event file and verifies that the expected header variables are
+# present. Payload is ignored.
+def load_event(event_file):
+  """ Load an event file, and extract only the headers. """
+  event = dict()
+  with open(event_file) as fh:
+    for line in fh:
+      if line == "\n":
+        break;
+      sep = line.index(': ')
+      event[line[:sep]] = line.strip()[sep + 2:]
+
+  for required in ['platform.dependencies', 'platform.description', 'project.get', 'project.build', 'project.test']:
+    if required not in event:
+      raise ValueError ("Missing '%s' in %s" % (required, event_file))
+
+  return event
+
+################################################################################
+# Combines a change event with central configuration to yield a build event.
+# Uses 'central post build $file' to queue the build event.
+def main(event_file):
+  """Reads input change event, emits a build event for each necessary platform."""
+  event = load_event(event_file)
+
+  # TODO Install dependencies.
+  for dependency in event['platform.dependencies'].split():
+    print("pkgadd %s" % dependency)
+    print('send get log to central')
+
+  # TODO Create a temporary work directory and go there.
+  print("mkdir /temp/flod.12345")
+
+  # TODO Run 'project.get', upload results.
+  #temp_fh, temp_name = tempfile.mkstemp()
+  print(event['project.get'])
+  print('send get log to central result queue')
+
+  # TODO Run 'project.build', upload results.
+  print(event['project.build'])
+  print('send build log to central result queue')
+
+  # TODO Run 'project.test', upload results.
+  print(event['project.test'])
+  print('send test log to central result queue')
+
+  # TODO scp temp_name central:/tmp/$file
+  # TODO ssh central 'central post result /tmp/$file'
+  # Post the event to central.
+#  subprocess.Popen(["central", "post", "result", temp_name], stdout=subprocess.PIPE).communicate()[0]
+#  os.unlink(temp_name)
+
+  # TODO Remove temporary work directory#
+  print('rm -rf /tmp/flod.12345')
+
+
+################################################################################
+# Entry point.  Checks only that there is one command line argument.
+if __name__ == "__main__":
+  """Flod2 hook script for building and testing on the local machine."""
+
+  if len(sys.argv) != 2:
+    print "\nUsage: build_local <build-event-file>\n\n"
+    sys.exit(1)
+
+  try:
+    main(sys.argv[1])
+  except Exception as msg:
+    print('Error:', msg)
+
