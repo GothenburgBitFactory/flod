@@ -97,7 +97,7 @@ void manageQueue (
             log->format ("%s --> %s failed", name.c_str (), script.c_str ());
           }
 
-          std::cout << output << "\n";
+          log->format ("%s --> %s: %s", name.c_str (), script.c_str (), output.c_str ());
         }
         catch (std::string& e)
         {
