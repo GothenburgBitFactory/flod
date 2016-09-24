@@ -15,18 +15,14 @@ cd central
 ../../src/central config --force project.dev.platforms         'debian8,macos'
 ../../src/central config --force project.dev.dependencies      'git,c++'
 ../../src/central config --force project.dev.repository        "$PWD/../dev"
-../../src/central config --force project.dev.get               'git clone --recursive -b {change.branch} {project.repository} {change.project}.git; cd {change.project}.git; git reset -hard {change.commit}'
-../../src/central config --force project.dev.build             'cd {change.project}.git; make'
-../../src/central config --force project.dev.test              'make test'
+../../src/central config --force project.dev.job               '{bash}{nl}{nl}set -x{nl}git clone {project.repository} {change.project}.git{nl}cd {change.project}.git{nl}git reset --hard {change.commit}{nl}make{nl}make test{nl}'
 
 ../../src/central config --force project.task.description      'Taskwarrior'
 ../../src/central config --force project.task.ignore           'README*,*.md'
 ../../src/central config --force project.task.platforms        'debian8,macos'
 ../../src/central config --force project.task.dependencies     'cmake,git,c++,gnutls,uuid,python'
 ../../src/central config --force project.task.repository       'https://git.tasktools.org/scm/tm/task.git'
-../../src/central config --force project.task.get              'git clone --recursive -b {change.branch} {project.repository} {change.project}.git; cd {change.project}.git; git reset -hard {change.commit}'
-../../src/central config --force project.task.build            'cd {change.project}.git; cmake .; make'
-../../src/central config --force project.task.test             'make test'
+../../src/central config --force project.task.job              '{bash}{nl}{nl}git clone --recursive -b {change.branch} {project.repository} {change.project}.git{nl}cd {change.project}.git{nl}git reset --hard {change.commit}{nl}cmake .{nl}make{nl}make test{nl}'
 
 # Platform-specific
 ../../src/central config --force platform.debian8.description  'Debian 8 Jessie'
