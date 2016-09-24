@@ -37,7 +37,7 @@ use Test::More tests => 1;
 
 my \$output = qx{./zero};
 is (\$output, "hello, world\\n", 'Output is as expected');
-sleep 2;
+sleep 1;
 exit 0;
 EOF
 
