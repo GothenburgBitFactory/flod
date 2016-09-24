@@ -12,7 +12,7 @@ cd central
 # Project-specific.
 ../../src/central config --force project.dev.description       'Example repository for demo purposes'
 ../../src/central config --force project.dev.ignore            'README*,*.md'
-../../src/central config --force project.dev.platforms         'debian8,freebsd10'
+../../src/central config --force project.dev.platforms         'debian8,macos'
 ../../src/central config --force project.dev.dependencies      'git,c++'
 ../../src/central config --force project.dev.repository        "$PWD/../dev"
 ../../src/central config --force project.dev.get               'git clone --recursive -b {change.branch} {project.repository} {change.project}.git; cd {change.project}.git; git reset -hard {change.commit}'
@@ -21,7 +21,7 @@ cd central
 
 ../../src/central config --force project.task.description      'Taskwarrior'
 ../../src/central config --force project.task.ignore           'README*,*.md'
-../../src/central config --force project.task.platforms        'debian8,freebsd10'
+../../src/central config --force project.task.platforms        'debian8,macos'
 ../../src/central config --force project.task.dependencies     'cmake,git,c++,gnutls,uuid,python'
 ../../src/central config --force project.task.repository       'https://git.tasktools.org/scm/tm/task.git'
 ../../src/central config --force project.task.get              'git clone --recursive -b {change.branch} {project.repository} {change.project}.git; cd {change.project}.git; git reset -hard {change.commit}'
@@ -38,23 +38,26 @@ cd central
 ../../src/central config --force platform.debian8.pkg.uuid     'uuid-dev'
 ../../src/central config --force platform.debian8.pkg.python   'python'
 
-../../src/central config --force platform.freebsd10.description 'FreeBSD 10'
-../../src/central config --force platform.freebsd10.details     '64-bit. Clang 3.3'
-../../src/central config --force platform.freebsd10.pkg.cmake   'cmake'
-../../src/central config --force platform.freebsd10.pkg.git     'git'
-../../src/central config --force platform.freebsd10.pkg.c++     'build-essential'
-../../src/central config --force platform.freebsd10.pkg.gnutls  'gnutls-dev'
-../../src/central config --force platform.freebsd10.pkg.uuid    ''
-../../src/central config --force platform.freebsd10.pkg.python  'python'
+../../src/central config --force platform.macos.description    'macOS Sierra 10.12'
+../../src/central config --force platform.macos.details        '64-bit. Clang 3.x'
+../../src/central config --force platform.macos.pkg.cmake      'cmake'
+../../src/central config --force platform.macos.pkg.git        'git'
+../../src/central config --force platform.macos.pkg.c++        ''                     # Must already be installed
+../../src/central config --force platform.macos.pkg.gnutls     'gnutls'
+../../src/central config --force platform.macos.pkg.uuid       ''                     # Built into libc
+../../src/central config --force platform.macos.pkg.python     ''                     # 2.7 provided by default
 
 # Create queues and hooks.
 ../../src/central create change          ./change          --scan 5
 ../../src/central create build_debian8   ./build_debian8   --scan 5
-../../src/central create build_freebsd10 ./build_freebsd10 --scan 5
+../../src/central create build_macos     ./build_macos     --scan 5
 ../../src/central create result          ./result          --scan 5
+#../../src/central create digest          ./digest          --scan 5
+#../../src/central create good            ./good            --scan 5
+#../../src/central create clean           ./clean           --scan 5
+#../../src/central create publish         ./publish         --scan 5
 
-../../src/central hook   change          $PWD/../../scripts/prepare_builds
-../../src/central hook   build_debian8   $PWD/../../scripts/build_and_test
-../../src/central hook   build_freebsd10 $PWD/../../scripts/build_and_test
-
+../../src/central hook   change          ../../scripts/platforms
+../../src/central hook   build_macos     ../../scripts/build_local
+../../src/central hook   result          ../../scripts/thresher
 

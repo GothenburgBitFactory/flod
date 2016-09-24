@@ -65,13 +65,13 @@ demo is automated, and discussed below.
 4. To generate some activity, make a change in the 'dev' project and commit it.
    This is most easily done by running:
 
-     $ ./change.dev
+     $ ./run.change
 
    This commits a change in the 'dev' git repository, the post-commit hook then
    composes a change event and posts it to the 'changes' queue.
 
 
-5. The 'prepare_builds' script is hooked into the changes queue, and uses the
+5. The 'platforms' script is hooked into the changes queue, and uses the
    contents of the change event to compose a build event for each of the
    configured platforms. These get posted to the 'builds' queue. These build
    events contain sufficient information to permit an autonomous
