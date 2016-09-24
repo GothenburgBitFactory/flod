@@ -47,7 +47,7 @@ def load_event(event_file):
 
   for required in ['change.project', 'change.repository', 'change.author', 'change.commit', 'change.timestamp', 'change.branch']:
     if required not in event:
-      raise ValueError ("Missing '%s' in %s" % (required, event_file))
+      raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
 
   return event
 
@@ -82,15 +82,15 @@ def main(event_file):
     for k,v in event.items():
       build[k] = v
 
-    for detail in ['repository', 'get', 'build', 'test']:
-      build['project.%s' % detail] = config['project.%s.%s' % (project, detail)]
+    for detail in ['repository', 'job']:
+      build['project.{}'.format(detail)] = config['project.{0}.{1}'.format(project, detail)]
 
-    build['platform.description'] = config['platform.%s.description' % platform]
-    build['platform.details']     = config['platform.%s.details' % platform]
+    build['platform.description'] = config['platform.{}.description'.format(platform)]
+    build['platform.details']     = config['platform.{}.details'.format(platform)]
 
     dependencies = list()
-    for dependency in config['project.%s.dependencies' % project].split(','):
-      mapped = config['platform.%s.pkg.%s' % (platform, dependency)]
+    for dependency in config['project.{}.dependencies'.format(project)].split(','):
+      mapped = config['platform.{0}.pkg.{1}'.format(platform, dependency)]
       if mapped:
         dependencies.append(mapped)
     build['platform.dependencies'] = ','.join(dependencies)
@@ -102,15 +102,16 @@ def main(event_file):
         # All values need expansion.
         value = build[key]
         for match in re.findall (r'{([^}]+)}', value):
-          value = value.replace('{%s}' % match, build[match])
+          if match in build:
+            value = value.replace('{%s}' % match, build[match])
         build[key] = value
 
-        fh.write('%s: %s\n' % (key, build[key]))
+        fh.write('{0}: {1}\n'.format(key, build[key]))
       fh.write('\n')
     os.close(temp_fh)
 
     # Post the event to central.
-    subprocess.Popen(["central", "post", ("build_%s" % platform), temp_name], stdout=subprocess.PIPE).communicate()[0]
+    subprocess.Popen(["central", "post", ("build_{}".format(platform)), temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     os.unlink(temp_name)
 
 ################################################################################
