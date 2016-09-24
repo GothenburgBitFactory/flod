@@ -6,125 +6,110 @@ uses minimal resources, yet delivers build status as fast as possible.
 
 ## Design
 
-Flod consists of two main components.
+Flod consists of one main component, and a set of focussed support scripts.
 
-The first is the flod binary, and is a queue management tool that triggers hook
-scripts when event files appear in a queue, calling the script with a reference
-to the event file and managing that file. The flod binary knows nothing about
-CI, it only knows that events appear in queues, which are then processed by
-hook scripts, which succeed or fail.
+The 'central' binary is a queue management tool that triggers hook scripts when
+event files are queued. Central can create, destroy, hook, unhook and process
+queues. Central knows nothing about CI, but does know how to manage workflow.
 
-The second component manages a single VM instance.  It creates it, then can
-install tools and libraries on it, copies a build script to it, and runs that
-build script. It waits for a result event to appear, and then shuts down the
-VM.
+The most important of the scripts is the 'build_vm' script, which instantiates
+a new VM, provisions that VM, then builds and tests the project, queueing the
+results.
 
-Everything else is a small script that is launched based on events triggering
-hooks, each script having a small and well-defined purpose.
-
-The combined effect is that a single commit will launch multiple VMs that test
-that commit, yielding several results events, which contribute to a status
-report. Then the VMs will be shut down and the system returns goes idle,
-thereby using minimal resources.
-
-There may be many scripts involved, using many queues.
+The combined effect of queues and hook scripts is a graph of dependent
+functionality that implements the complex workflow of CI.
 
 
 ## Workflow
 
-1. A repository commit (task.git) triggers a VCS hook (git on-push) that
-   composes and queues a commit-event file. This needs to be a very fast
-   operation. The commit-event file identifies the repository, branch, and a
-   range of commits.
-
-2. A commit-event triggers a portability-build script that uses stored
-   configuration to enumerate supported platforms and composes a build-event
-   file tailored for each platform. The VM instance component is run, with
-   the build-event file.
-
-3. The VM instance component creates a VM, installs software, installs a
-   build/test/report script, then runs that. It then waits for a result event
-   file to appear, shuts down the VM and queues the results event.
-
-4. The result-event triggers a report script that (in an undefined way)
-   creates a status report of the commit.
-
-There are other steps/events/scripts, for example, HTML report aggregation,
-project overview report creation, performance testing on good builds, result
-event archiving, tarball creation and so on.
-
-
-## Data Storage
-
-There needs to be a hierarchy constituting project/branch/commit/platform,
-where result events are stored permanently.
-
-All events should be archived. Archived events may be purged later.
-
-
-## Configuration
-
-There needs to be platform-specific configuration, including:
-
-1. Platform-specific depdendencies, for example the presence of a 'libuuid'
-   library is necessary on Fedora, but not on OSX.
-
-2. Project-specific configuration, for example a sequence of commands to run
-   in order to build and test a project.
-
-3. Permanent queue details, such as a location, and set of triggered scripts.
-
-
-## Example System
-
-Recreating and extending the functionality of Flod 0.x requires creating
-several queues and hook scripts.
-
-   Queue   |  Mechanism
-   --------|---------------------------------------------------------------
-   commit  |  Source:   'git commit' hooks identify project, branch, commit
-           |  Triggers: platform script that forwards the message to the
-           |            build-* queues for each platform
-           |
-   build-P |  Source:   platform script
-           |  Triggers: VM manager for platform P
-           |
-   result  |  Source:   build script on platform P provides results from
-           |            each of the clone/prebuild/build/test steps
-           |  Triggers: aggregator script that composes a tinderbox report
-           |            fragment for the project/branch/commit, and posts a
-           |            message to the 'report' queue
-           |  Triggers: clean build detector, that identified project/branch
-           |            commit that passes 100% tests on all platforms, and
-           |            posts a message to the 'tarball' queue
-           |
-   report  |  Source:   aggregator script
-           |  Triggers: assembly script that combines report fragments into
-           |            an HTML page which is copied to the web server
-           |            docroot
-           |
-   tarball |  Source:   clean build aggregator that identifies builds that
-           |            should be made into snapshot tarballs
-           |  Triggers: tarball creation and release script
-
-This arrangement would permit a git hook to notify Flod of a commit on a branch
-of a project, which would in turn cause multiple VMs to be started to build the
-project on various platforms, the results of which are combined in a report
-with clean builds automatically creating snapshot tarballs. Map reduce.
-
-
-              +------+      +------+      +------+      +------+      +------+
-   Commit --> |commit| -+-> |build | -+-> |result| -+-> | test | -+-> | tar  |
-              |      |  |   | P1   |  |   |      |  |   |report|  |   | ball |
-              +------+  |   +------+  |   +------+  |   +------+  |   +------+
-                        |             |             |             |
-                        |   +------+  |             |   +------+  |   +------+
-                        +-> |build | -+             +-> |summ. |  +-> | gcov |
-                        |   | P2   |  |                 |report|      |report|
-                        |   +------+  |                 +------+      +------+
+   git        +------+      +------+      +------+      +------+      +------+      +-------+
+   commit --> |change| -+-> |build | -+-> |result| ---> |digest| -+-> |clean | -+-> |publish|
+              |      |  |   | P1   |  |   |      |      |      |  |   |      |  |   |       |
+              +------+  |   +------+  |   +------+      +------+  |   +------+  |   +-------+
+                        |             |                           |             |
+                        |   +------+  |                           +-------------+
+                        +-> |build | -+
+                        |   | P2   |  |
+                        |   +------+  |
                         |             |
                         |   +------+  |
                         +-> |build | -+
                             | P3   |
                             +------+
 
+## Git: commit
+
+When a project commit is made, either a 'post-commit' or 'post-receive' git
+hook script composes and posts a change event.
+
+
+## Queue: change
+
+The 'platforms' script is triggered by a change event. Using a combination of
+the change event and central configuration, it determines the set of
+supported platforms, and associated details and commands.
+
+A build event is created for each platform, and queued in the corresponding
+build_{platform} queue.
+
+
+## Queue: build_{platform}
+
+The 'build_local', 'build_remote', or 'build_vm' script is triggered by a build
+event, depending on which script was used to hook build events.
+
+The 'build_local' script is the simplest, and it creates a work directory, then
+clones the project, builds and tests it. The combined log of all this is added
+as the payload in a result event which is queued.
+
+The 'build_remote' script does all this on a remote machine.
+
+The 'build_vm' script does all this but instantiates and provisions a VM, then
+destroys it afterwards.
+
+The three scripts generate identical result events. It is important that a
+complete log of all commands is in the result. This allows an upgraded central
+to re-process results when new capabilities are added. In the case of
+'build_vm', the full log is needed because the VM no longer exists, and
+diagnosis is more difficult.
+
+
+## Queue: result
+
+The 'thresher' script is triggered by a result event, and has the task of
+separating the wheat from the chaff. This means taking a full build log, and
+eliminating all but the essential information, and standardizing what remains.
+
+This means a full build log will be reduced to a set of warnings, errors and
+test results. This result is a digest event.
+
+
+## Queue: digest
+
+A digest event triggers two scripts. The first is a report script, which builds
+the tinderbox report. It creates a small easily read 'cell' file. It then
+combines cell files into a commit file, representing the results for each
+platform for a specific commit. Then it combines commit files into a full
+report. The resulting HTML file is added as payload to a publish event.
+
+The second is the summary script, which creates a simple project-level summary
+report, which is added as payload to a publish event.
+
+If the commit result across all platforms is considered good, then a 'clean'
+event is posted.
+
+
+## Queue: clean
+
+A clean event triggers two scripts. The first is a coverage script, which runs
+a coverage tool, generating a coverage report, which then queued for publishing.
+
+The second script is a snapshot script that creates a snapshot tarball, which
+is added to the payload of a publish event.
+
+
+## Queue: publish
+
+A publish event triggers an rsync/scp to a web server.
+
+---
