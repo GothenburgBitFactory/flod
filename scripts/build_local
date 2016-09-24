@@ -51,41 +51,72 @@ def load_event(event_file):
   return event
 
 ################################################################################
+# Create the temporary work directory, change PWD to it, and compose a log file
+# name.
+def setup(event):
+  tempdir = '/tmp/flod.{}'.format(event['change.commit'])
+  if not os.path.exists (tempdir):
+    os.makedirs(tempdir)
+
+  os.chdir (tempdir)
+  logfile = '{}/result.event'.format(tempdir)
+
+  return tempdir, logfile
+
+################################################################################
+# Remove the temporary work dir and its contents.
+def teardown(dir):
+  shutil.rmtree (dir)
+
+################################################################################
+def createJobScript(tempdir, contents):
+  expanded = contents.replace('{sh}', '#!/bin/sh')
+  expanded = expanded.replace('{bash}', '#!/bin/bash')
+  expanded = expanded.replace('{nl}', '\n')
+
+  script = '{}/job'.format(tempdir)
+  with open(script, 'w') as fh:
+    fh.write(expanded)
+  os.chmod(script, 0o700)
+  return script
+
+################################################################################
+def createResultEvent(result_file, event, log):
+  with open(result_file, 'w') as fh:
+    for key in event:
+      fh.write('{0}: {1}\n'.format(key, event[key]))
+
+    fh.write('\n')
+    fh.write(log)
+
+################################################################################
 # Combines a change event with central configuration to yield a build event.
 # Uses 'central post build $file' to queue the build event.
 def main(event_file):
   """Reads input change event, emits a build event for each necessary platform."""
   event = load_event(event_file)
 
+  original_cwd = os.getcwd()
+  tempdir, result_file = setup(event)
+
   # TODO Install dependencies.
-  for dependency in event['platform.dependencies'].split():
-    print("pkgadd %s" % dependency)
-    print('send get log to central')
+  #for dependency in event['platform.dependencies'].split():
+  #  print("pkgadd {}".format(dependency))
 
-  # TODO Create a temporary work directory and go there.
-  print("mkdir /temp/flod.12345")
+  # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
+  script = createJobScript(tempdir, event['project.job'])
+  output = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate(0)
 
-  # TODO Run 'project.get', upload results.
-  #temp_fh, temp_name = tempfile.mkstemp()
-  print(event['project.get'])
-  print('send get log to central result queue')
+  # Write output to an event file.
+  createResultEvent(result_file, event, output[0])
 
-  # TODO Run 'project.build', upload results.
-  print(event['project.build'])
-  print('send build log to central result queue')
-
-  # TODO Run 'project.test', upload results.
-  print(event['project.test'])
-  print('send test log to central result queue')
-
-  # TODO scp temp_name central:/tmp/$file
-  # TODO ssh central 'central post result /tmp/$file'
   # Post the event to central.
-#  subprocess.Popen(["central", "post", "result", temp_name], stdout=subprocess.PIPE).communicate()[0]
-#  os.unlink(temp_name)
+  # Note: Must be run from original location, so that central can find .flodrc.
+  os.chdir(original_cwd)
+  subprocess.Popen(["central", "post", "result", result_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-  # TODO Remove temporary work directory#
-  print('rm -rf /tmp/flod.12345')
+  # Cleanup.
+  teardown(tempdir)
 
 
 ################################################################################
