@@ -87,7 +87,7 @@ void manageQueue (
           log->format ("%s --> %s %s", name.c_str (), script.c_str (), event.c_str ());
 
           std::string output;
-          if (0 == execute (script, {event}, "", output))
+          if (execute (script, {event}, "", output) == 0)
           {
             log->format ("%s --> %s success", name.c_str (), script.c_str ());
           }
@@ -97,7 +97,9 @@ void manageQueue (
             log->format ("%s --> %s failed", name.c_str (), script.c_str ());
           }
 
-          log->format ("%s --> %s: %s", name.c_str (), script.c_str (), output.c_str ());
+          // Only show non-trivial output.
+          if (output != "")
+            log->format ("%s --> %s: %s", name.c_str (), script.c_str (), output.c_str ());
         }
         catch (std::string& e)
         {
