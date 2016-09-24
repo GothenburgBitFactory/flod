@@ -28,9 +28,8 @@
 
 import os
 import sys
+import shutil
 import subprocess
-import re
-import tempfile
 
 ################################################################################
 # Loads a change event file and verifies that the expected header variables are
@@ -45,9 +44,9 @@ def load_event(event_file):
       sep = line.index(': ')
       event[line[:sep]] = line.strip()[sep + 2:]
 
-  for required in ['platform.dependencies', 'platform.description', 'project.get', 'project.build', 'project.test']:
+  for required in ['platform.dependencies', 'platform.description', 'project.job']:
     if required not in event:
-      raise ValueError ("Missing '%s' in %s" % (required, event_file))
+      raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
 
   return event
 
