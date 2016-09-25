@@ -34,28 +34,31 @@ import tempfile
 
 ################################################################################
 # Loads a change event file and verifies that the expected header variables are
-# present. Payload is ignored.
+# present.
 def load_event(event_file):
-  """ Load an event file, and extract only the headers. """
-  event = dict()
+  headers = dict()
+  body = ''
+  in_headers = True
   with open(event_file) as fh:
     for line in fh:
       if line == "\n":
-        break;
-      sep = line.index(': ')
-      event[line[:sep]] = line.strip()[sep + 2:]
+        in_headers = False
+      elif in_headers:
+        sep = line.index(': ')
+        headers[line[:sep]] = line.strip()[sep + 2:]
+      else:
+        body += line
 
   for required in ['change.project', 'change.repository', 'change.author', 'change.commit', 'change.timestamp', 'change.branch']:
     if required not in event:
       raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
 
-  return event
+  return headers, body
 
 ################################################################################
 # Uses the 'central config' command to enumerate all settings, which are
 # captured and loaded into a dict.
 def load_central_config():
-  """ Load the entire central configuration. """
   config = dict()
   output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
   for line in output.split('\n'):
@@ -69,8 +72,6 @@ def load_central_config():
 ################################################################################
 # Combines a change event with central configuration to yield a build event.
 def main(event_file):
-  """Reads input change event, emits a build event for each necessary platform.
-     The build events got to platform-specific queues."""
   event = load_event(event_file)
   project = event['change.project']
 
