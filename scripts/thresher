@@ -34,9 +34,8 @@ import tempfile
 
 ################################################################################
 # Loads a change event file and verifies that the expected header variables are
-# present. Payload is ignored.
+# present.
 def load_event(event_file):
-  """ Load an event file, and extract only the headers. """
   headers = dict()
   body = ''
   in_headers = True
@@ -55,8 +54,6 @@ def load_event(event_file):
 ################################################################################
 # Reduces a result event to a summarized digest event.
 def main(event_file):
-  """Reads input result event, emits a condense event with a minimal payload
-     that represents build warnings, error and test results."""
   event, payload = load_event(event_file)
 
   # Things that are being looked for in the event file.
@@ -139,7 +136,7 @@ if __name__ == "__main__":
      which are warnings, error and test results."""
 
   if len(sys.argv) != 2:
-    print "\nUsage: thresher <change-event-file>\n\n"
+    print "\nUsage: thresher <result-event-file>\n\n"
     sys.exit(1)
 
   try:
