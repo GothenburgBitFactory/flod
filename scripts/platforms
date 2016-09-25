@@ -68,7 +68,6 @@ def load_central_config():
 
 ################################################################################
 # Combines a change event with central configuration to yield a build event.
-# Uses 'central post build $file' to queue the build event.
 def main(event_file):
   """Reads input change event, emits a build event for each necessary platform.
      The build events got to platform-specific queues."""
@@ -97,21 +96,22 @@ def main(event_file):
 
     # Write the build event to tmp file.
     temp_fh, temp_name = tempfile.mkstemp()
-    with open(temp_name, 'w') as fh:
-      for key in sorted(build):
-        # All values need expansion.
-        value = build[key]
-        for match in re.findall (r'{([^}]+)}', value):
-          if match in build:
-            value = value.replace('{%s}' % match, build[match])
-        build[key] = value
+    for key in sorted(build):
+      # All values need expansion.
+      value = build[key]
+      for match in re.findall (r'{([^}]+)}', value):
+        if match in build:
+          value = value.replace('{%s}' % match, build[match])
+      build[key] = value
 
-        fh.write('{0}: {1}\n'.format(key, build[key]))
-      fh.write('\n')
+      os.write(temp_fh, '{0}: {1}\n'.format(key, build[key]))
+    os.write(temp_fh, '\n')
     os.close(temp_fh)
 
     # Post the event to central.
-    subprocess.Popen(["central", "post", ("build_{}".format(platform)), temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # TODO Do something with errors.
+    out, err = subprocess.Popen(["central", "post", ("build_{}".format(platform)), temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+
     os.unlink(temp_name)
 
 ################################################################################
