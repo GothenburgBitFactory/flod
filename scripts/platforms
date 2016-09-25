@@ -81,7 +81,7 @@ def main(event_file):
     for k,v in event.items():
       build[k] = v
 
-    for detail in ['repository', 'job']:
+    for detail in ['repository', 'job', 'ignore']:
       build['project.{}'.format(detail)] = config['project.{0}.{1}'.format(project, detail)]
 
     build['platform.description'] = config['platform.{}.description'.format(platform)]
