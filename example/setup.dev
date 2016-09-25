@@ -25,6 +25,8 @@ cat >zero.c <<EOF
 
 int main (int argc, char** argv)
 {
+  int unused;
+
   printf ("hello, world\n");
   return 0;
 }
