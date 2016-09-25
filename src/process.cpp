@@ -89,7 +89,8 @@ void manageQueue (
           std::string output;
           if (execute (script, {event}, "", output) == 0)
           {
-            log->format ("%s --> %s success", name.c_str (), script.c_str ());
+            // TODO Debug mode perhaps.
+            //log->format ("%s --> %s success", name.c_str (), script.c_str ());
           }
           else
           {
