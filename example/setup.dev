@@ -11,7 +11,7 @@ zero: zero.o
 	gcc -o zero zero.o
 
 zero.o: zero.c
-	gcc -c zero.c
+	gcc -Wall -Wextra -c zero.c
 
 clean:
 	rm zero zero.o
