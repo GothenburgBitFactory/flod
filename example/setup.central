@@ -44,14 +44,14 @@ cd central
 ../../src/central config --force platform.macos.pkg.python     ''                     # 2.7 provided by default
 
 # Create queues and hooks.
-../../src/central create change          ./change          --scan 5
-../../src/central create build_debian8   ./build_debian8   --scan 5
-../../src/central create build_macos     ./build_macos     --scan 5
-../../src/central create result          ./result          --scan 5
-../../src/central create digest          ./digest          --scan 5
-#../../src/central create good            ./good            --scan 5
-#../../src/central create clean           ./clean           --scan 5
-#../../src/central create publish         ./publish         --scan 5
+../../src/central create change          ./change          --scan 1
+../../src/central create build_debian8   ./build_debian8   --scan 1
+../../src/central create build_macos     ./build_macos     --scan 1
+../../src/central create result          ./result          --scan 1
+../../src/central create digest          ./digest          --scan 1
+#../../src/central create good            ./good            --scan 1
+#../../src/central create clean           ./clean           --scan 1
+#../../src/central create publish         ./publish         --scan 1
 
 ../../src/central hook   change          ../../scripts/platforms
 ../../src/central hook   build_macos     ../../scripts/build_local
