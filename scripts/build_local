@@ -90,8 +90,8 @@ def createResultEvent(result_file, event, log):
     fh.write(log)
 
 ################################################################################
-# Combines a change event with central configuration to yield a build event.
-# Uses 'central post build $file' to queue the build event.
+# Guided by a build event, obtains, builds and tests a project, capturing all
+# the output.
 def main(event_file):
   """Reads input change event, emits a build event for each necessary platform."""
   event = load_event(event_file)
@@ -105,15 +105,16 @@ def main(event_file):
 
   # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
   script = createJobScript(tempdir, event['project.job'])
-  output = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate(0)
+  out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
   # Write output to an event file.
-  createResultEvent(result_file, event, output[0])
+  createResultEvent(result_file, event, out)
 
   # Post the event to central.
   # Note: Must be run from original location, so that central can find .flodrc.
   os.chdir(original_cwd)
-  subprocess.Popen(["central", "post", "result", result_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  # TODO Do something with errors.
+  out, err = subprocess.Popen(["central", "post", "result", result_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
   # Cleanup.
   teardown(tempdir)
