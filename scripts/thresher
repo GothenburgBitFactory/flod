@@ -28,8 +28,8 @@
 
 import os
 import sys
-import subprocess
 import re
+import subprocess
 import tempfile
 
 ################################################################################
@@ -59,23 +59,70 @@ def main(event_file):
      that represents build warnings, error and test results."""
   event, payload = load_event(event_file)
 
+  # Things that are being looked for in the event file.
+  buildWarnings = 0
+  buildErrors   = 0
+  testsPassed   = 0
+  testsFailed   = 0
+  testsSkipped  = 0
+  testsExpected = 0
+
+  # This is simply a list of lines from the build log that contain information
+  # that should be shown in drill-down.  As 'buildWarnings' above might be '2',
+  # this list would contain both of those warnings.
+  interesting = list()
+
+  # Patterns to search for.
+  reWarning  = re.compile ('warning: ', re.IGNORECASE)
+  reError    = re.compile ('error: ', re.IGNORECASE)
+  reExpected = re.compile ('^1\\.\\.(\d+)$')
+  rePassed   = re.compile ('^ok \d+')
+  reFailed   = re.compile ('^not ok \d+')
+  reSkipped  = re.compile ('^skip \d+')
+
+  # Scan for results.
+  for line in payload.split('\n'):
+    m = reWarning.search (line)
+    if m:
+      interesting.append(line)
+      buildWarnings += 1
+
+    m = reError.search (line)
+    if m:
+      interesting.append(line)
+      buildErrors += 1
+
+    m = reExpected.match (line)
+    if m:
+      testsExpected += int(m.group(1))
+
+    m = rePassed.match (line)
+    if m:
+      testsPassed += 1
+
+    m = reFailed.match (line)
+    if m:
+      testsFailed += 1
+
+    m = reSkipped.match (line)
+    if m:
+      testsSkipped += 1
+
+  # Capture the totals.
+  event['digest.buildWarnings'] = buildWarnings
+  event['digest.buildErrors']   = buildErrors
+  event['digest.testsPassed']   = testsPassed
+  event['digest.testsFailed']   = testsFailed
+  event['digest.testsSkipped']  = testsSkipped
+  event['digest.testsExpected'] = testsExpected
+
+  # Write the digest event.
   temp_fh, temp_name = tempfile.mkstemp()
   for key, value in event.items():
     os.write(temp_fh, '{0}: {1}\n'.format(key, value))
 
   os.write(temp_fh, '\n')
-
-  # This is a poor implementation. It enumerates a set of unwanted patterns,
-  # which will likely change over time. This is better implemented as a set
-  # of wanted patterns representing warnings, errors and test results.
-  for line in payload.split('\n'):
-    if line[:1]  == '+':               continue
-    if line[:2]  == './':              continue
-    if line[:4]  == 'gcc ':            continue
-    if line[:8]  == 'Cloning ':        continue
-    if line[:5]  == 'done.':           continue
-    if line[:15] == 'HEAD is now at ': continue
-
+  for line in interesting:
     os.write(temp_fh, '{}\n'.format(line))
 
   os.close(temp_fh)
