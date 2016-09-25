@@ -125,7 +125,8 @@ void manageQueue (
       if (exit_on_idle)
         break;
 
-      log->format ("%s Idle thread 0x%08x", name.c_str (), std::this_thread::get_id ());
+      // TODO Debug mode perhaps?
+      //log->format ("%s Idle thread 0x%08x", name.c_str (), std::this_thread::get_id ());
       std::this_thread::sleep_for (wait);
     }
   }
