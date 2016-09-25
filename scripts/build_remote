@@ -28,42 +28,96 @@
 
 import os
 import sys
+import shutil
 import subprocess
-import re
-import tempfile
 
 ################################################################################
 # Loads a change event file and verifies that the expected header variables are
 # present. Payload is ignored.
 def load_event(event_file):
-  """ Load an event file, and extract only the headers. """
   event = dict()
   with open(event_file) as fh:
     for line in fh:
-      if line == "\n":
+      if line == '\n':
         break;
       sep = line.index(': ')
       event[line[:sep]] = line.strip()[sep + 2:]
 
-  for required in ['platform.dependencies', 'platform.description', 'project.get', 'project.build', 'project.test']:
+  for required in ['platform.dependencies', 'platform.description', 'project.job']:
     if required not in event:
-      raise ValueError ("Missing '%s' in %s" % (required, event_file))
+      raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
 
   return event
 
 ################################################################################
-# Combines a change event with central configuration to yield a build event.
-# Uses 'central post build $file' to queue the build event.
+# Create the temporary work directory, change PWD to it, and compose a log file
+# name.
+def setup(event):
+  tempdir = '/tmp/flod.{}'.format(event['change.commit'])
+  if not os.path.exists (tempdir):
+    os.makedirs(tempdir)
+
+  os.chdir (tempdir)
+  logfile = '{}/result.event'.format(tempdir)
+
+  return tempdir, logfile
+
+################################################################################
+# Remove the temporary work dir and its contents.
+def teardown(dir):
+  shutil.rmtree (dir)
+
+################################################################################
+def createJobScript(tempdir, contents):
+  expanded = contents.replace('{sh}', '#!/bin/sh')
+  expanded = expanded.replace('{bash}', '#!/bin/bash')
+  expanded = expanded.replace('{nl}', '\n')
+
+  script = '{}/job'.format(tempdir)
+  with open(script, 'w') as fh:
+    fh.write(expanded)
+  os.chmod(script, 0o700)
+  return script
+
+################################################################################
+def createResultEvent(result_file, event, log):
+  with open(result_file, 'w') as fh:
+    for key in event:
+      fh.write('{0}: {1}\n'.format(key, event[key]))
+
+    fh.write('\n')
+    fh.write(log)
+
+################################################################################
+# Guided by a build event, obtains, builds and tests a project, capturing all
+# the output.
 def main(event_file):
-  """Reads input change event, emits a build event for each necessary platform."""
   event = load_event(event_file)
 
-  # TODO Run build phases on remote machine.
+  original_cwd = os.getcwd()
+  tempdir, result_file = setup(event)
+
+  # TODO Get remote machine name.
+
+  # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
+  script = createJobScript(tempdir, event['project.job'])
+  # TODO Copy script to remote machine.
+
+  # TODO ssh <machine> <script>
+  out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  createResultEvent(result_file, event, out)
+
+  # Post the event to central.
+  # Note: Must be run from original location, so that central can find .flodrc.
+  os.chdir(original_cwd)
+  out, err = subprocess.Popen(["central", "post", "result", result_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  # TODO Do something with errors.
+  teardown(tempdir)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
 if __name__ == "__main__":
-  """Flod2 hook script for building on a remote extant machine."""
+  """Flod2 hook script for building and testing on the remote machine."""
 
   if len(sys.argv) != 2:
     print "\nUsage: build_remote <build-event-file>\n\n"
