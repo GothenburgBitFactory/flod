@@ -35,11 +35,10 @@ import subprocess
 # Loads a change event file and verifies that the expected header variables are
 # present. Payload is ignored.
 def load_event(event_file):
-  """ Load an event file, and extract only the headers. """
   event = dict()
   with open(event_file) as fh:
     for line in fh:
-      if line == "\n":
+      if line == '\n':
         break;
       sep = line.index(': ')
       event[line[:sep]] = line.strip()[sep + 2:]
@@ -93,7 +92,6 @@ def createResultEvent(result_file, event, log):
 # Guided by a build event, obtains, builds and tests a project, capturing all
 # the output.
 def main(event_file):
-  """Reads input change event, emits a build event for each necessary platform."""
   event = load_event(event_file)
 
   original_cwd = os.getcwd()
@@ -106,19 +104,14 @@ def main(event_file):
   # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
   script = createJobScript(tempdir, event['project.job'])
   out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-
-  # Write output to an event file.
   createResultEvent(result_file, event, out)
 
   # Post the event to central.
   # Note: Must be run from original location, so that central can find .flodrc.
   os.chdir(original_cwd)
-  # TODO Do something with errors.
   out, err = subprocess.Popen(["central", "post", "result", result_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-
-  # Cleanup.
+  # TODO Do something with errors.
   teardown(tempdir)
-
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
