@@ -4,6 +4,7 @@
 touch .flodrc
 mkdir central
 cd central
+mkdir work
 
 # Configure central.
 ../../src/central config --force log.file $PWD/central.log
@@ -59,4 +60,5 @@ cd central
 ../../src/central hook   digest          ../../scripts/summary
 ../../src/central hook   clean           ../../scripts/snapshot
 ../../src/central hook   clean           ../../scripts/coverage
+../../src/central hook   publish         ../../scripts/publish
 
