@@ -50,7 +50,7 @@ def load_event(event_file):
         body += line
 
   for required in ['change.project', 'change.repository', 'change.author', 'change.commit', 'change.timestamp', 'change.branch']:
-    if required not in event:
+    if required not in headers:
       raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
 
   return headers, body

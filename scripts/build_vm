@@ -49,7 +49,7 @@ def load_event(event_file):
         body += line
 
   for required in ['platform.dependencies', 'platform.description', 'project.job']:
-    if required not in event:
+    if required not in headers:
       raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
 
   return headers, body
