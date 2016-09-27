@@ -72,7 +72,7 @@ def load_central_config():
 ################################################################################
 # Combines a change event with central configuration to yield a build event.
 def main(event_file):
-  event = load_event(event_file)
+  event, payload = load_event(event_file)
   project = event['change.project']
 
   config = load_central_config()
@@ -85,6 +85,7 @@ def main(event_file):
     for detail in ['repository', 'job', 'ignore']:
       build['project.{}'.format(detail)] = config['project.{0}.{1}'.format(project, detail)]
 
+    build['platform.name']        = platform
     build['platform.description'] = config['platform.{}.description'.format(platform)]
     build['platform.details']     = config['platform.{}.details'.format(platform)]
 
