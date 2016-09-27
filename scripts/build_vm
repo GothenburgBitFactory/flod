@@ -97,7 +97,7 @@ def createResultEvent(result_file, event, log):
 # Guided by a build event, obtains, builds and tests a project, capturing all
 # the output.
 def main(event_file):
-  event = load_event(event_file)
+  event, payload = load_event(event_file)
 
   original_cwd = os.getcwd()
   tempdir, result_file = setup(event)
