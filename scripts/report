@@ -131,6 +131,10 @@ def main(event_file):
   with open(commit_file, 'w') as fh:
     fh.write(json.dumps(commit_json, sort_keys=True, indent=2, separators=(',', ': ')))
 
+  # TODO Obtain the set of all platforms from configuration. If the commit_json
+  #      dict shows zero failures/warnings from all platforms, post a 'clean'
+  #      event.
+
   # Iterate over all the commit JSON files to create the report.
   all_commits = list()
   branch_path = "{0}/{1}/{2}".format(config['work.dir'], event['change.project'], event['change.branch'])
@@ -184,6 +188,7 @@ def main(event_file):
   ## TODO Do something with errors.
   #out, err = subprocess.Popen(["central", "post", "digest", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
   #os.unlink(temp_name)
+
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
