@@ -1,0 +1,201 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+##
+## Copyright 2012 - 2016, Göteborg Bit Factory.
+##
+## Permission is hereby granted, free of charge, to any person obtaining a copy
+## of this software and associated documentation files (the "Software"), to deal
+## in the Software without restriction, including without limitation the rights
+## to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+## copies of the Software, and to permit persons to whom the Software is
+## furnished to do so, subject to the following conditions:
+##
+## The above copyright notice and this permission notice shall be included
+## in all copies or substantial portions of the Software.
+##
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+## OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+## THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+## SOFTWARE.
+##
+## http://www.opensource.org/licenses/mit-license.php
+##
+################################################################################
+
+import os
+import sys
+import re
+import shutil
+import subprocess
+import tempfile
+import json
+
+################################################################################
+# Loads a change event file and verifies that the expected header variables are
+# present.
+def load_event(event_file):
+  headers = dict()
+  body = ''
+  in_headers = True
+  with open(event_file) as fh:
+    for line in fh:
+      if line == "\n":
+        in_headers = False
+      elif in_headers:
+        sep = line.index(': ')
+        headers[line[:sep]] = line.strip()[sep + 2:]
+      else:
+        body += line
+
+  return headers, body
+
+################################################################################
+def save_event(event_file, headers, payload):
+  with open(event_file, 'w') as fh:
+    for k, v in headers.items():
+      fh.write('{}: {}'.format(k, v))
+
+    fh.write('\n')
+    fh.write(payload)
+
+################################################################################
+# Uses the 'central config' command to enumerate all settings, which are
+# captured and loaded into a dict.
+def load_central_config():
+  config = dict()
+  output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
+  for line in output.split('\n'):
+    if line == "":
+      break;
+
+    sep = line.index('=')
+    config[line[:sep]] = line[sep + 1:]
+  return config
+
+################################################################################
+# Stores the new digest event in the work tree.
+# Combines all digest events into a commit-level JSON file.
+# Combine all the commit-level JSON files into a report.
+# Write the report to the work tree.
+# Publish the report.
+def main(event_file):
+  event, payload = load_event(event_file)
+  config = load_central_config()
+
+  # Create the work path, if necessary, and copy the digest event into the tree.
+  commit_path = "{0}/{1}/{2}/{3}".format(config['work.dir'], event['change.project'], event['change.branch'], event['change.commit'])
+  digest_file = "digest.{}.msg".format(event['platform.name'])
+
+  if not os.path.exists(commit_path):
+    os.makedirs(commit_path)
+
+  shutil.copyfile(event_file, os.path.join(commit_path, digest_file))
+
+  # If the 'commit.json' file exists, load it, else prime the header.
+  commit_file = os.path.join(commit_path, "commit.json")
+  if os.path.exists (commit_file):
+    with open(commit_file) as fh:
+      commit_json = json.load(fh)
+  else:
+    commit_json = {"repository": event["change.repository"],
+                   "commit":     event["change.commit"],
+                   "author":     event["change.author"],
+                   "timestamp":  event["change.timestamp"],
+                   "project":    event["change.project"],
+                   "branch":     event["change.branch"],
+                   "platforms":  {}}
+
+  # Add the platform-specific results from the digest event.
+  commit_json["platforms"][event["platform.name"]] = dict()
+  platform_node = commit_json["platforms"][event["platform.name"]]
+
+  platform_node["description"] = json.JSONEncoder().encode(event["platform.description"])
+  platform_node["details"]     = json.JSONEncoder().encode(event["platform.details"])
+  platform_node["skipped"]     = event["digest.testsSkipped"]
+  platform_node["passed"]      = event["digest.testsPassed"]
+  platform_node["failed"]      = event["digest.testsFailed"]
+  platform_node["expected"]    = event["digest.testsExpected"]
+  platform_node["warnings"]    = event["digest.buildWarnings"]
+  platform_node["errors"]      = event["digest.buildErrors"]
+  platform_node["log"]         = list()
+
+  for line in payload.split('\n'):
+    if len(line):
+      platform_node["log"].append(json.JSONEncoder().encode(line))
+
+  # Save the commit JSON file in the tree.
+  with open(commit_file, 'w') as fh:
+    fh.write(json.dumps(commit_json, sort_keys=True, indent=2, separators=(',', ': ')))
+
+  # Iterate over all the commit JSON files to create the report.
+  all_commits = list()
+  branch_path = "{0}/{1}/{2}".format(config['work.dir'], event['change.project'], event['change.branch'])
+  for commit in os.listdir(branch_path):
+    if len(commit) == 40: # Length of a SHA1.
+      commit_json_file = os.path.join(branch_path, commit, 'commit.json')
+      with open(commit_json_file) as fh:
+        all_commits.append(json.load(fh))
+
+  # Write the report.
+  report_file = "{0}/{1}/{2}/report.html".format(config['work.dir'], event['change.project'], event['change.branch'])
+  with open(report_file, 'w') as report:
+    # Iterate over the commits in reverse timestamp order, and stop after fifty
+    # commits.
+    # TODO The '50' should come from configuration.
+    counter = 0
+    for commit in sorted(all_commits, reverse=True, key=lambda x:x["timestamp"]):
+      counter += 1
+      if counter > 50:
+        break
+
+      if counter == 1:
+        report.write("# project {0} branch {1}\n".format(commit["project"], commit['branch']))
+
+      report.write("# timestamp {0} commit {1} author {2}\n".format(commit["timestamp"], commit["commit"], commit["author"]))
+
+      for platform in commit["platforms"]:
+        report.write("#   platform {0} {1} {2}, {3}/{4}, {5} warnings, {6} errors\n".format(
+                       platform,
+                       commit["platforms"][platform]["description"],
+                       commit["platforms"][platform]["details"],
+                       commit["platforms"][platform]["passed"],
+                       commit["platforms"][platform]["expected"],
+                       commit["platforms"][platform]["warnings"],
+                       commit["platforms"][platform]["errors"]))
+        for error in commit["platforms"][platform]["log"]:
+          report.write("#     error {0}\n".format(error))
+
+  # TODO Publish the report.
+  #temp_fh, temp_name = tempfile.mkstemp()
+  #for key, value in event.items():
+  #  os.write(temp_fh, '{0}: {1}\n'.format(key, value))
+  #
+  #os.write(temp_fh, '\n')
+  #for line in interesting:
+  #  os.write(temp_fh, '{}\n'.format(line))
+  #
+  #os.close(temp_fh)
+  #
+  ## Post the event to central.
+  ## TODO Do something with errors.
+  #out, err = subprocess.Popen(["central", "post", "digest", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  #os.unlink(temp_name)
+
+################################################################################
+# Entry point.  Checks only that there is one command line argument.
+if __name__ == "__main__":
+  """Flod2 hook script for building a tinderbox report from digest events."""
+
+  if len(sys.argv) != 2:
+    print "\nUsage: report <digest-event-file>\n\n"
+    sys.exit(1)
+
+  try:
+    main(sys.argv[1])
+  except Exception as msg:
+    print('Error:', msg)
+
