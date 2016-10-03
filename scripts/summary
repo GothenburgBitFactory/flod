@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+##
+## Copyright 2012 - 2016, Göteborg Bit Factory.
+##
+## Permission is hereby granted, free of charge, to any person obtaining a copy
+## of this software and associated documentation files (the "Software"), to deal
+## in the Software without restriction, including without limitation the rights
+## to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+## copies of the Software, and to permit persons to whom the Software is
+## furnished to do so, subject to the following conditions:
+##
+## The above copyright notice and this permission notice shall be included
+## in all copies or substantial portions of the Software.
+##
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+## OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+## THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+## SOFTWARE.
+##
+## http://www.opensource.org/licenses/mit-license.php
+##
+################################################################################
+
+import os
+import sys
+import re
+import subprocess
+import tempfile
+
+################################################################################
+# Loads a change event file and verifies that the expected header variables are
+# present.
+def load_event(event_file):
+  headers = dict()
+  body = ''
+  in_headers = True
+  with open(event_file) as fh:
+    for line in fh:
+      if line == "\n":
+        in_headers = False
+      elif in_headers:
+        sep = line.index(': ')
+        headers[line[:sep]] = line.strip()[sep + 2:]
+      else:
+        body += line
+
+  return headers, body
+
+################################################################################
+# Uses the 'central config' command to enumerate all settings, which are
+# captured and loaded into a dict.
+def load_central_config():
+  config = dict()
+  output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
+  for line in output.split('\n'):
+    if line == "":
+      break;
+
+    sep = line.index('=')
+    config[line[:sep]] = line[sep + 1:]
+  return config
+
+################################################################################
+# Reduces a result event to a summarized digest event.
+def main(event_file):
+  event, payload = load_event(event_file)
+  config = load_central_config()
+
+#  # Write the publish event.
+#  temp_fh, temp_name = tempfile.mkstemp()
+#  for key, value in event.items():
+#    os.write(temp_fh, '{0}: {1}\n'.format(key, value))
+#
+#  os.write(temp_fh, '\n')
+#  for line in interesting:
+#    os.write(temp_fh, '{}\n'.format(line))
+#
+#  os.close(temp_fh)
+#
+#  # Post the event to central.
+#  # TODO Do something with errors.
+#  out, err = subprocess.Popen(["central", "post", "digest", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+#  #print '# central post out:', out
+#  #print '# central post err:', err
+#  os.unlink(temp_name)
+
+################################################################################
+# Entry point.  Checks only that there is one command line argument.
+if __name__ == "__main__":
+  """Flod2 hook script for creating a summary report from a digest event."""
+
+  if len(sys.argv) != 2:
+    print "\nUsage: summary <digest-event-file>\n\n"
+    sys.exit(1)
+
+  try:
+    main(sys.argv[1])
+  except Exception as msg:
+    print('Error:', msg)
+
