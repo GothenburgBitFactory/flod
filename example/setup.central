@@ -9,6 +9,7 @@ mkdir work
 # Configure central.
 ../../src/central config --force log.file $PWD/central.log
 ../../src/central config --force work.dir $PWD/work
+../../src/central config --force report.length 50
 
 # Project-specific.
 ../../src/central config --force project.dev.description       'Example repository for demo purposes'
