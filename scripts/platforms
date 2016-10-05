@@ -26,11 +26,8 @@
 ##
 ################################################################################
 
-import os
 import sys
-import subprocess
 import re
-import tempfile
 import flod
 
 ################################################################################
@@ -47,43 +44,34 @@ def main(event_file):
   config = flod.Config()
 
   for platform in config.get("project.{0}.platforms".format(project)).split(','):
-    build = dict()
+    build = flod.Event()
     for k,v in event.items():
-      build[k] = v
+      build.header(k, v)
 
     for detail in ['repository', 'job', 'ignore']:
-      build['project.{}'.format(detail)] = config.get('project.{0}.{1}'.format(project, detail))
+      build.header ('project.{}'.format(detail), config.get('project.{0}.{1}'.format(project, detail)))
 
-    build['platform.name']        = platform
-    build['platform.description'] = config.get('platform.{}.description'.format(platform))
-    build['platform.details']     = config.get('platform.{}.details'.format(platform))
+    build.header('platform.name',        platform)
+    build.header('platform.description', config.get('platform.{}.description'.format(platform)))
+    build.header('platform.details',     config.get('platform.{}.details'.format(platform)))
 
     dependencies = list()
     for dependency in config.get('project.{}.dependencies'.format(project)).split(','):
       mapped = config.get('platform.{0}.pkg.{1}'.format(platform, dependency))
       if mapped:
         dependencies.append(mapped)
-    build['platform.dependencies'] = ','.join(dependencies)
+    build.header('platform.dependencies', ','.join(dependencies))
 
     # Write the build event to tmp file.
-    temp_fh, temp_name = tempfile.mkstemp()
-    for key in sorted(build):
+    for key,value in build.items():
       # All values need expansion.
-      value = build[key]
       for match in re.findall (r'{([^}]+)}', value):
-        if match in build:
-          value = value.replace('{%s}' % match, build[match])
-      build[key] = value
+        if build.has(match):
+          value = value.replace('{%s}' % match, build.header(match))
+      build.header(key, value)
 
-      os.write(temp_fh, '{0}: {1}\n'.format(key, build[key]))
-    os.write(temp_fh, '\n')
-    os.close(temp_fh)
-
-    # Post the event to central.
-    # TODO Do something with errors.
-    out, err = subprocess.Popen(["central", "post", ("build_{}".format(platform)), temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-
-    os.unlink(temp_name)
+    central = flod.Central()
+    central.post("build_{}".format(platform), build)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
