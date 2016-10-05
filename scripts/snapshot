@@ -31,6 +31,7 @@ import sys
 import re
 import subprocess
 import tempfile
+import flod
 
 ################################################################################
 # Loads a change event file and verifies that the expected header variables are
@@ -52,24 +53,10 @@ def load_event(event_file):
   return headers, body
 
 ################################################################################
-# Uses the 'central config' command to enumerate all settings, which are
-# captured and loaded into a dict.
-def load_central_config():
-  config = dict()
-  output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
-  for line in output.split('\n'):
-    if line == "":
-      break;
-
-    sep = line.index('=')
-    config[line[:sep]] = line[sep + 1:]
-  return config
-
-################################################################################
 # Reduces a result event to a summarized digest event.
 def main(event_file):
   event, payload = load_event(event_file)
-  config = load_central_config()
+  config = flod.Config()
 
 #  # Write the publish event.
 #  temp_fh, temp_name = tempfile.mkstemp()
