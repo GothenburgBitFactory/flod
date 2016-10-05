@@ -26,6 +26,9 @@
 ##
 ################################################################################
 
+import os
+import tempfile
+
 class Event(object):
   """Reads and writes event files."""
   def __init__(self):
@@ -51,21 +54,27 @@ class Event(object):
     """Write the headers and body to a temp file, and return the file name."""
     temp_fh, temp_name = tempfile.mkstemp()
 
-    for k, v in headers.items():
+    for k, v in self.headers.items():
       os.write(temp_fh, '{}: {}\n'.format(k, v))
 
     os.write(temp_fh, '\n')
-    os.write(temp_fh, payload)
+    os.write(temp_fh, self.body)
     os.close(temp_fh)
     return temp_name
 
-  def header(self, name):
+  def header(self, name, value=None):
     """Return the header named value, or an empty string if it does not exist."""
-    return self.headers[name] if name in self.headers else ''
+    if value:
+      self.headers[name] = value
+    else:
+      return self.headers[name] if name in self.headers else ''
 
-  def body(self):
+  def payload(self, value=None):
     """Return the body as a single string."""
-    return self.body
+    if value:
+      self.body = value
+    else:
+      return self.body
 
   def has(self, name):
     """Indicate whether name is found in the header dict."""
