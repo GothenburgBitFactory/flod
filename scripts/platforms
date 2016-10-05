@@ -31,6 +31,7 @@ import sys
 import subprocess
 import re
 import tempfile
+import flod
 
 ################################################################################
 # Loads a change event file and verifies that the expected header variables are
@@ -56,42 +57,28 @@ def load_event(event_file):
   return headers, body
 
 ################################################################################
-# Uses the 'central config' command to enumerate all settings, which are
-# captured and loaded into a dict.
-def load_central_config():
-  config = dict()
-  output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
-  for line in output.split('\n'):
-    if line == "":
-      break;
-
-    sep = line.index('=')
-    config[line[:sep]] = line[sep + 1:]
-  return config
-
-################################################################################
 # Combines a change event with central configuration to yield a build event.
 def main(event_file):
   event, payload = load_event(event_file)
   project = event['change.project']
 
-  config = load_central_config()
+  config = flod.Config()
 
-  for platform in config["project.%s.platforms" % project].split(','):
+  for platform in config.get("project.{0}.platforms".format(project)).split(','):
     build = dict()
     for k,v in event.items():
       build[k] = v
 
     for detail in ['repository', 'job', 'ignore']:
-      build['project.{}'.format(detail)] = config['project.{0}.{1}'.format(project, detail)]
+      build['project.{}'.format(detail)] = config.get('project.{0}.{1}'.format(project, detail))
 
     build['platform.name']        = platform
-    build['platform.description'] = config['platform.{}.description'.format(platform)]
-    build['platform.details']     = config['platform.{}.details'.format(platform)]
+    build['platform.description'] = config.get('platform.{}.description'.format(platform))
+    build['platform.details']     = config.get('platform.{}.details'.format(platform))
 
     dependencies = list()
-    for dependency in config['project.{}.dependencies'.format(project)].split(','):
-      mapped = config['platform.{0}.pkg.{1}'.format(platform, dependency)]
+    for dependency in config.get('project.{}.dependencies'.format(project)).split(','):
+      mapped = config.get('platform.{0}.pkg.{1}'.format(platform, dependency))
       if mapped:
         dependencies.append(mapped)
     build['platform.dependencies'] = ','.join(dependencies)
