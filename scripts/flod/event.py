@@ -59,6 +59,9 @@ class Event(object):
 
     os.write(temp_fh, '\n')
     os.write(temp_fh, self.body)
+    if self.body != '' and not self.body.endswith('\n'):
+      os.write(temp_fh, '\n')
+
     os.close(temp_fh)
     return temp_name
 
