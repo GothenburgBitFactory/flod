@@ -26,11 +26,8 @@
 ##
 ################################################################################
 
-import os
 import sys
 import re
-import subprocess
-import tempfile
 import flod
 
 ################################################################################
@@ -98,13 +95,9 @@ def main(event_file):
 
   event.payload ('\n'.join(interesting))
 
-  # Write the digest event.
-  temp_name = event.save()
-
   # Post the event to central.
-  # TODO Do something with errors.
-  out, err = subprocess.Popen(["central", "post", "digest", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-  os.unlink(temp_name)
+  central = flod.Central()
+  central.post('digest', event)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
