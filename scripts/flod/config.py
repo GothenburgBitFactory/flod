@@ -26,7 +26,7 @@
 ##
 ################################################################################
 
-import subprocess
+import flod
 
 class Config(object):
   """Uses the 'central config' command to enumerate all settings, which are
@@ -35,8 +35,8 @@ class Config(object):
   def __init__(self):
     self.data = dict()
 
-    output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
-    for line in output.split('\n'):
+    central = flod.Central()
+    for line in central.config().split('\n'):
       if line != "":
         sep = line.index('=')
         self.data[line[:sep]] = line[sep + 1:]
