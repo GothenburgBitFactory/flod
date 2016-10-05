@@ -26,6 +26,20 @@
 ##
 ################################################################################
 
-from .config import Config
-from .event import Event
-from .central import Central
+import os
+import subprocess
+
+class Central(object):
+  """Communicates with central."""
+
+  def post(self, queue, event):
+    """Serialize the event, and post the file to the queue."""
+    temp_name = event.save()
+    out, err = subprocess.Popen(["central", "post", queue, temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+    # TODO Do something with errors.
+    os.unlink(temp_name)
+
+  def config(self):
+    """Generate a list of all configuration settings, return as a single string."""
+    return subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
+
