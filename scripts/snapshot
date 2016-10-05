@@ -26,11 +26,7 @@
 ##
 ################################################################################
 
-import os
 import sys
-import re
-import subprocess
-import tempfile
 import flod
 
 ################################################################################
@@ -40,23 +36,13 @@ def main(event_file):
   event.load(event_file)
   config = flod.Config()
 
-#  # Write the publish event.
-#  temp_fh, temp_name = tempfile.mkstemp()
-#  for key, value in event.items():
-#    os.write(temp_fh, '{0}: {1}\n'.format(key, value))
+#  # Publish the report.
+#  publish_event = flod.Event()
+#  publish_event.header('from', this)
+#  publish_event.header('to', that)
 #
-#  os.write(temp_fh, '\n')
-#  for line in interesting:
-#    os.write(temp_fh, '{}\n'.format(line))
-#
-#  os.close(temp_fh)
-#
-#  # Post the event to central.
-#  # TODO Do something with errors.
-#  out, err = subprocess.Popen(["central", "post", "digest", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-#  #print '# central post out:', out
-#  #print '# central post err:', err
-#  os.unlink(temp_name)
+#  central = flod.Central()
+#  central.post('publish', publish_event)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
