@@ -54,13 +54,16 @@ def load_event(event_file):
   return headers, body
 
 ################################################################################
-def save_event(event_file, headers, payload):
-  with open(event_file, 'w') as fh:
-    for k, v in headers.items():
-      fh.write('{}: {}'.format(k, v))
+def save_event(headers, payload):
+  temp_fh, temp_name = tempfile.mkstemp()
 
-    fh.write('\n')
-    fh.write(payload)
+  for k, v in headers.items():
+    os.write(temp_fh, '{}: {}\n'.format(k, v))
+
+  os.write(temp_fh, '\n')
+  os.write(temp_fh, payload)
+  os.close(temp_fh)
+  return temp_name
 
 ################################################################################
 # Uses the 'central config' command to enumerate all settings, which are
@@ -173,22 +176,14 @@ def main(event_file):
         for error in commit["platforms"][platform]["log"]:
           report.write("#     error {0}\n".format(error))
 
-  # TODO Publish the report.
-  #temp_fh, temp_name = tempfile.mkstemp()
-  #for key, value in event.items():
-  #  os.write(temp_fh, '{0}: {1}\n'.format(key, value))
-  #
-  #os.write(temp_fh, '\n')
-  #for line in interesting:
-  #  os.write(temp_fh, '{}\n'.format(line))
-  #
-  #os.close(temp_fh)
-  #
-  ## Post the event to central.
-  ## TODO Do something with errors.
-  #out, err = subprocess.Popen(["central", "post", "digest", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-  #os.unlink(temp_name)
-
+  # Publish the report.
+  publish_event = dict()
+  publish_event['from'] = report_file
+  publish_event['to'] = os.path.join(config['report.destination'], '{0}.{1}.html'.format(commit["project"], commit["branch"]))
+  publish_event_file = save_event (publish_event, '')
+  # TODO Do something with errors.
+  out, err = subprocess.Popen(['central', 'post', 'publish', publish_event_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  os.unlink(publish_event_file)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
