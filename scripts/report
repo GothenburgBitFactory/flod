@@ -30,8 +30,6 @@ import os
 import sys
 import re
 import shutil
-import subprocess
-import tempfile
 import json
 import flod
 
@@ -137,10 +135,9 @@ def main(event_file):
   publish_event = flod.Event()
   publish_event.header('from', report_file)
   publish_event.header('to', os.path.join(config.get('report.destination'), '{0}.{1}.html'.format(commit["project"], commit["branch"])))
-  publish_event_file = publish_event.save()
-  # TODO Do something with errors.
-  out, err = subprocess.Popen(['central', 'post', 'publish', publish_event_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-  os.unlink(publish_event_file)
+
+  central = flod.Central()
+  central.post('publish', publish_event)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
