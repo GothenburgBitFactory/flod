@@ -30,42 +30,18 @@ import os
 import sys
 import shutil
 import subprocess
-
-################################################################################
-# Loads a change event file and verifies that the expected header variables are
-# present.
-def load_event(event_file):
-  headers = dict()
-  body = ''
-  in_headers = True
-  with open(event_file) as fh:
-    for line in fh:
-      if line == "\n":
-        in_headers = False
-      elif in_headers:
-        sep = line.index(': ')
-        headers[line[:sep]] = line.strip()[sep + 2:]
-      else:
-        body += line
-
-  for required in ['platform.dependencies', 'platform.description', 'project.job']:
-    if required not in headers:
-      raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
-
-  return headers, body
+import flod
 
 ################################################################################
 # Create the temporary work directory, change PWD to it, and compose a log file
 # name.
 def setup(event):
-  tempdir = '/tmp/flod.{}'.format(event['change.commit'])
+  tempdir = '/tmp/flod.{}'.format(event.header('change.commit'))
   if not os.path.exists (tempdir):
     os.makedirs(tempdir)
 
   os.chdir (tempdir)
-  logfile = '{}/result.event'.format(tempdir)
-
-  return tempdir, logfile
+  return tempdir
 
 ################################################################################
 # Remove the temporary work dir and its contents.
@@ -85,37 +61,34 @@ def createJobScript(tempdir, contents):
   return script
 
 ################################################################################
-def createResultEvent(result_file, event, log):
-  with open(result_file, 'w') as fh:
-    for key in event:
-      fh.write('{0}: {1}\n'.format(key, event[key]))
-
-    fh.write('\n')
-    fh.write(log)
-
-################################################################################
 # Guided by a build event, obtains, builds and tests a project, capturing all
 # the output.
 def main(event_file):
-  event, payload = load_event(event_file)
+  event = flod.Event()
+  event.load(event_file)
+  for required in ['platform.dependencies', 'platform.description', 'project.job']:
+    if not event.has(required):
+      raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
 
   original_cwd = os.getcwd()
-  tempdir, result_file = setup(event)
+  tempdir = setup(event)
 
   # TODO Get remote machine name.
 
   # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
-  script = createJobScript(tempdir, event['project.job'])
+  script = createJobScript(tempdir, event.header('project.job'))
   # TODO Copy script to remote machine.
 
   # TODO ssh <machine> <script>
   out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-  createResultEvent(result_file, event, out)
+
+  event.payload(out)
+  result_event = event.save()
 
   # Post the event to central.
   # Note: Must be run from original location, so that central can find .flodrc.
   os.chdir(original_cwd)
-  out, err = subprocess.Popen(["central", "post", "result", result_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  out, err = subprocess.Popen(["central", "post", "result", result_event], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
   # TODO Do something with errors.
   teardown(tempdir)
 
