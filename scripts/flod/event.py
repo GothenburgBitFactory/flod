@@ -26,5 +26,52 @@
 ##
 ################################################################################
 
-from .config import Config
-from .event import Event
+class Event(object):
+  """Reads and writes event files."""
+  def __init__(self):
+    self.headers = dict()
+    self.body = ''
+
+  def load(self, file):
+    """Load an event file and populate the header dict and body string."""
+    self.headers = dict()
+    self.body = ''
+    in_headers = True
+    with open(file) as fh:
+      for line in fh:
+        if line == "\n":
+          in_headers = False
+        elif in_headers:
+          sep = line.index(': ')
+          self.headers[line[:sep]] = line.strip()[sep + 2:]
+        else:
+          self.body += line
+
+  def save(self):
+    """Write the headers and body to a temp file, and return the file name."""
+    temp_fh, temp_name = tempfile.mkstemp()
+
+    for k, v in headers.items():
+      os.write(temp_fh, '{}: {}\n'.format(k, v))
+
+    os.write(temp_fh, '\n')
+    os.write(temp_fh, payload)
+    os.close(temp_fh)
+    return temp_name
+
+  def header(self, name):
+    """Return the header named value, or an empty string if it does not exist."""
+    return self.headers[name] if name in self.headers else ''
+
+  def body(self):
+    """Return the body as a single string."""
+    return self.body
+
+  def has(self, name):
+    """Indicate whether name is found in the header dict."""
+    return name in self.headers
+
+  def items(self):
+    """Return header items, to allow k,v iteration."""
+    return self.headers.items()
+
