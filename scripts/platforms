@@ -34,33 +34,15 @@ import tempfile
 import flod
 
 ################################################################################
-# Loads a change event file and verifies that the expected header variables are
-# present.
-def load_event(event_file):
-  headers = dict()
-  body = ''
-  in_headers = True
-  with open(event_file) as fh:
-    for line in fh:
-      if line == "\n":
-        in_headers = False
-      elif in_headers:
-        sep = line.index(': ')
-        headers[line[:sep]] = line.strip()[sep + 2:]
-      else:
-        body += line
-
-  for required in ['change.project', 'change.repository', 'change.author', 'change.commit', 'change.timestamp', 'change.branch']:
-    if required not in headers:
-      raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
-
-  return headers, body
-
-################################################################################
 # Combines a change event with central configuration to yield a build event.
 def main(event_file):
-  event, payload = load_event(event_file)
-  project = event['change.project']
+  event = flod.Event()
+  event.load(event_file)
+  for required in ['change.project', 'change.repository', 'change.author', 'change.commit', 'change.timestamp', 'change.branch']:
+    if not event.has(required):
+      raise ValueError ("Missing '{0}' in {1}".format(required, event_file))
+
+  project = event.header('change.project')
 
   config = flod.Config()
 
