@@ -63,7 +63,7 @@ void handleRetry (
   {
     auto name = File (event).name ();
     std::cout << "  requeued " << name << "\n";
-    File::move (event, location + "/" + name);
+    File::move (event, location + "/queue/" + name);
   }
 }
 
