@@ -33,6 +33,7 @@ import shutil
 import subprocess
 import tempfile
 import json
+import flod
 
 ################################################################################
 # Loads a change event file and verifies that the expected header variables are
@@ -66,20 +67,6 @@ def save_event(headers, payload):
   return temp_name
 
 ################################################################################
-# Uses the 'central config' command to enumerate all settings, which are
-# captured and loaded into a dict.
-def load_central_config():
-  config = dict()
-  output = subprocess.Popen(["central", "config"], stdout=subprocess.PIPE).communicate()[0]
-  for line in output.split('\n'):
-    if line == "":
-      break;
-
-    sep = line.index('=')
-    config[line[:sep]] = line[sep + 1:]
-  return config
-
-################################################################################
 # Stores the new digest event in the work tree.
 # Combines all digest events into a commit-level JSON file.
 # Combine all the commit-level JSON files into a report.
@@ -87,10 +74,10 @@ def load_central_config():
 # Publish the report.
 def main(event_file):
   event, payload = load_event(event_file)
-  config = load_central_config()
+  config = flod.Config()
 
   # Create the work path, if necessary, and copy the digest event into the tree.
-  commit_path = "{0}/{1}/{2}/{3}".format(config['work.dir'], event['change.project'], event['change.branch'], event['change.commit'])
+  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), event['change.project'], event['change.branch'], event['change.commit'])
   digest_file = "digest.{}.msg".format(event['platform.name'])
 
   if not os.path.exists(commit_path):
@@ -140,7 +127,7 @@ def main(event_file):
 
   # Iterate over all the commit JSON files to create the report.
   all_commits = list()
-  branch_path = "{0}/{1}/{2}".format(config['work.dir'], event['change.project'], event['change.branch'])
+  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), event['change.project'], event['change.branch'])
   for commit in os.listdir(branch_path):
     if len(commit) == 40: # Length of a SHA1.
       commit_json_file = os.path.join(branch_path, commit, 'commit.json')
@@ -148,7 +135,7 @@ def main(event_file):
         all_commits.append(json.load(fh))
 
   # Write the report.
-  report_file = "{0}/{1}/{2}/report.html".format(config['work.dir'], event['change.project'], event['change.branch'])
+  report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), event['change.project'], event['change.branch'])
   with open(report_file, 'w') as report:
     # Iterate over the commits in reverse timestamp order, and stop after fifty
     # commits.
@@ -179,7 +166,7 @@ def main(event_file):
   # Publish the report.
   publish_event = dict()
   publish_event['from'] = report_file
-  publish_event['to'] = os.path.join(config['report.destination'], '{0}.{1}.html'.format(commit["project"], commit["branch"]))
+  publish_event['to'] = os.path.join(config.get('report.destination'), '{0}.{1}.html'.format(commit["project"], commit["branch"]))
   publish_event_file = save_event (publish_event, '')
   # TODO Do something with errors.
   out, err = subprocess.Popen(['central', 'post', 'publish', publish_event_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
