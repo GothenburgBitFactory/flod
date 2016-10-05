@@ -87,14 +87,13 @@ def main(event_file):
   out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
   event.payload(out)
-  result_event = event.save()
 
-  # Post the event to central.
   # Note: Must be run from original location, so that central can find .flodrc.
   os.chdir(original_cwd)
-  out, err = subprocess.Popen(["central", "post", "result", result_event], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-  # TODO Do something with errors.
-  # TODO Destroy VM.
+
+  central = flod.Central()
+  central.post('result', event)
+
   teardown(tempdir)
 
 ################################################################################
