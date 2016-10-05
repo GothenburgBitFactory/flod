@@ -67,14 +67,14 @@ class Event(object):
 
   def header(self, name, value=None):
     """Return the header named value, or an empty string if it does not exist."""
-    if value:
+    if value is not None:
       self.headers[name] = value
     else:
       return self.headers[name] if name in self.headers else ''
 
   def payload(self, value=None):
     """Return the body as a single string."""
-    if value:
+    if value is not None:
       self.body = value
     else:
       return self.body
