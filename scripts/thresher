@@ -31,30 +31,13 @@ import sys
 import re
 import subprocess
 import tempfile
-
-################################################################################
-# Loads a change event file and verifies that the expected header variables are
-# present.
-def load_event(event_file):
-  headers = dict()
-  body = ''
-  in_headers = True
-  with open(event_file) as fh:
-    for line in fh:
-      if line == "\n":
-        in_headers = False
-      elif in_headers:
-        sep = line.index(': ')
-        headers[line[:sep]] = line.strip()[sep + 2:]
-      else:
-        body += line
-
-  return headers, body
+import flod
 
 ################################################################################
 # Reduces a result event to a summarized digest event.
 def main(event_file):
-  event, payload = load_event(event_file)
+  event = flod.Event()
+  event.load(event_file)
 
   # Things that are being looked for in the event file.
   buildWarnings = 0
@@ -78,7 +61,7 @@ def main(event_file):
   reSkipped  = re.compile ('^skip \d+')
 
   # Scan for results.
-  for line in payload.split('\n'):
+  for line in event.payload().split('\n'):
     m = reWarning.search (line)
     if m:
       interesting.append(line)
@@ -106,23 +89,17 @@ def main(event_file):
       testsSkipped += 1
 
   # Capture the totals.
-  event['digest.buildWarnings'] = buildWarnings
-  event['digest.buildErrors']   = buildErrors
-  event['digest.testsPassed']   = testsPassed
-  event['digest.testsFailed']   = testsFailed
-  event['digest.testsSkipped']  = testsSkipped
-  event['digest.testsExpected'] = testsExpected
+  event.header('digest.buildWarnings', buildWarnings)
+  event.header('digest.buildErrors',   buildErrors)
+  event.header('digest.testsPassed',   testsPassed)
+  event.header('digest.testsFailed',   testsFailed)
+  event.header('digest.testsSkipped',  testsSkipped)
+  event.header('digest.testsExpected', testsExpected)
+
+  event.payload ('\n'.join(interesting))
 
   # Write the digest event.
-  temp_fh, temp_name = tempfile.mkstemp()
-  for key, value in event.items():
-    os.write(temp_fh, '{0}: {1}\n'.format(key, value))
-
-  os.write(temp_fh, '\n')
-  for line in interesting:
-    os.write(temp_fh, '{}\n'.format(line))
-
-  os.close(temp_fh)
+  temp_name = event.save()
 
   # Post the event to central.
   # TODO Do something with errors.
