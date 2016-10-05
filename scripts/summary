@@ -34,28 +34,10 @@ import tempfile
 import flod
 
 ################################################################################
-# Loads a change event file and verifies that the expected header variables are
-# present.
-def load_event(event_file):
-  headers = dict()
-  body = ''
-  in_headers = True
-  with open(event_file) as fh:
-    for line in fh:
-      if line == "\n":
-        in_headers = False
-      elif in_headers:
-        sep = line.index(': ')
-        headers[line[:sep]] = line.strip()[sep + 2:]
-      else:
-        body += line
-
-  return headers, body
-
-################################################################################
 # Reduces a result event to a summarized digest event.
 def main(event_file):
-  event, payload = load_event(event_file)
+  event = flod.Event()
+  event.load(event_file)
   config = flod.Config()
 
 #  # Write the publish event.
@@ -71,7 +53,7 @@ def main(event_file):
 #
 #  # Post the event to central.
 #  # TODO Do something with errors.
-#  out, err = subprocess.Popen(["central", "post", "digest", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+#  out, err = subprocess.Popen(["central", "post", "publish", temp_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 #  #print '# central post out:', out
 #  #print '# central post err:', err
 #  os.unlink(temp_name)
