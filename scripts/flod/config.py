@@ -29,8 +29,9 @@
 import subprocess
 
 class Config(object):
-  # Uses the 'central config' command to enumerate all settings, which are
-  # captured and loaded into a dict.
+  """Uses the 'central config' command to enumerate all settings, which are
+     captured and loaded into a dict.
+  """
   def __init__(self):
     self.data = dict()
 
