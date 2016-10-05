@@ -36,49 +36,19 @@ import json
 import flod
 
 ################################################################################
-# Loads a change event file and verifies that the expected header variables are
-# present.
-def load_event(event_file):
-  headers = dict()
-  body = ''
-  in_headers = True
-  with open(event_file) as fh:
-    for line in fh:
-      if line == "\n":
-        in_headers = False
-      elif in_headers:
-        sep = line.index(': ')
-        headers[line[:sep]] = line.strip()[sep + 2:]
-      else:
-        body += line
-
-  return headers, body
-
-################################################################################
-def save_event(headers, payload):
-  temp_fh, temp_name = tempfile.mkstemp()
-
-  for k, v in headers.items():
-    os.write(temp_fh, '{}: {}\n'.format(k, v))
-
-  os.write(temp_fh, '\n')
-  os.write(temp_fh, payload)
-  os.close(temp_fh)
-  return temp_name
-
-################################################################################
 # Stores the new digest event in the work tree.
 # Combines all digest events into a commit-level JSON file.
 # Combine all the commit-level JSON files into a report.
 # Write the report to the work tree.
 # Publish the report.
 def main(event_file):
-  event, payload = load_event(event_file)
+  event = flod.Event()
+  event.load(event_file)
   config = flod.Config()
 
   # Create the work path, if necessary, and copy the digest event into the tree.
-  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), event['change.project'], event['change.branch'], event['change.commit'])
-  digest_file = "digest.{}.msg".format(event['platform.name'])
+  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'), event.header('change.commit'))
+  digest_file = "digest.{}.msg".format(event.header('platform.name'))
 
   if not os.path.exists(commit_path):
     os.makedirs(commit_path)
@@ -91,29 +61,29 @@ def main(event_file):
     with open(commit_file) as fh:
       commit_json = json.load(fh)
   else:
-    commit_json = {"repository": event["change.repository"],
-                   "commit":     event["change.commit"],
-                   "author":     event["change.author"],
-                   "timestamp":  event["change.timestamp"],
-                   "project":    event["change.project"],
-                   "branch":     event["change.branch"],
+    commit_json = {"repository": event.header("change.repository"),
+                   "commit":     event.header("change.commit"),
+                   "author":     event.header("change.author"),
+                   "timestamp":  event.header("change.timestamp"),
+                   "project":    event.header("change.project"),
+                   "branch":     event.header("change.branch"),
                    "platforms":  {}}
 
   # Add the platform-specific results from the digest event.
-  commit_json["platforms"][event["platform.name"]] = dict()
-  platform_node = commit_json["platforms"][event["platform.name"]]
+  commit_json["platforms"][event.header("platform.name")] = dict()
+  platform_node = commit_json["platforms"][event.header("platform.name")]
 
-  platform_node["description"] = json.JSONEncoder().encode(event["platform.description"])
-  platform_node["details"]     = json.JSONEncoder().encode(event["platform.details"])
-  platform_node["skipped"]     = event["digest.testsSkipped"]
-  platform_node["passed"]      = event["digest.testsPassed"]
-  platform_node["failed"]      = event["digest.testsFailed"]
-  platform_node["expected"]    = event["digest.testsExpected"]
-  platform_node["warnings"]    = event["digest.buildWarnings"]
-  platform_node["errors"]      = event["digest.buildErrors"]
+  platform_node["description"] = json.JSONEncoder().encode(event.header("platform.description"))
+  platform_node["details"]     = json.JSONEncoder().encode(event.header("platform.details"))
+  platform_node["skipped"]     = event.header("digest.testsSkipped")
+  platform_node["passed"]      = event.header("digest.testsPassed")
+  platform_node["failed"]      = event.header("digest.testsFailed")
+  platform_node["expected"]    = event.header("digest.testsExpected")
+  platform_node["warnings"]    = event.header("digest.buildWarnings")
+  platform_node["errors"]      = event.header("digest.buildErrors")
   platform_node["log"]         = list()
 
-  for line in payload.split('\n'):
+  for line in event.payload().split('\n'):
     if len(line):
       platform_node["log"].append(json.JSONEncoder().encode(line))
 
@@ -127,7 +97,7 @@ def main(event_file):
 
   # Iterate over all the commit JSON files to create the report.
   all_commits = list()
-  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), event['change.project'], event['change.branch'])
+  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'))
   for commit in os.listdir(branch_path):
     if len(commit) == 40: # Length of a SHA1.
       commit_json_file = os.path.join(branch_path, commit, 'commit.json')
@@ -135,7 +105,7 @@ def main(event_file):
         all_commits.append(json.load(fh))
 
   # Write the report.
-  report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), event['change.project'], event['change.branch'])
+  report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'))
   with open(report_file, 'w') as report:
     # Iterate over the commits in reverse timestamp order, and stop after fifty
     # commits.
@@ -164,10 +134,10 @@ def main(event_file):
           report.write("#     error {0}\n".format(error))
 
   # Publish the report.
-  publish_event = dict()
-  publish_event['from'] = report_file
-  publish_event['to'] = os.path.join(config.get('report.destination'), '{0}.{1}.html'.format(commit["project"], commit["branch"]))
-  publish_event_file = save_event (publish_event, '')
+  publish_event = flod.Event()
+  publish_event.header('from', report_file)
+  publish_event.header('to', os.path.join(config.get('report.destination'), '{0}.{1}.html'.format(commit["project"], commit["branch"])))
+  publish_event_file = publish_event.save()
   # TODO Do something with errors.
   out, err = subprocess.Popen(['central', 'post', 'publish', publish_event_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
   os.unlink(publish_event_file)
