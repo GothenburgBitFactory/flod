@@ -1,0 +1,11 @@
+ubuntu 15.10i, debian 8.2
+apt-get update && apt-get -y install git build-essential cmake gnutls-dev uuid-dev python
+
+Fedora 
+dnf -y groupinstall "C Development Tools and Libraries" && dnf -y install git cmake gnutls-devel libuuid-devel
+
+CentOS
+yum -y groupinstall "Development tools" && yum -y install git cmake gnutls-devel
+
+git clone https://git.tasktools.org/scm/tm/taskd.git; cd taskd && cmake . && make install
+cd; git clone https://git.tasktools.org/scm/tm/task.git; cd task && git checkout 2.5.1 && cmake . && make && cd test && make test
