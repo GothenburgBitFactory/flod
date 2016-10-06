@@ -37,7 +37,7 @@ demo is automated, and discussed below.
 
      $ cd flod.git/example
      $ ls
-     README change.dev cleanup run.central setup.central setup.dev
+     README run.change cleanup run.central setup.central setup.dev
 
    Run the 'cleanup' script if you have run this demo before, then the two
    'setup' scripts.
@@ -55,7 +55,7 @@ demo is automated, and discussed below.
 3. When the configuration and queue structures are in place, run central with
    this command:
 
-     $ ./run.central
+     $ ./run.central &
 
    This command will run continually. Diagnostics will be written to the log
    file in central/central.log. The system will immediately go to a quiet state
@@ -73,8 +73,8 @@ demo is automated, and discussed below.
 
 5. The 'platforms' script is hooked into the changes queue, and uses the
    contents of the change event to compose a build event for each of the
-   configured platforms. These get posted to the 'builds' queue. These build
-   events contain sufficient information to permit an autonomous
+   configured platforms. These get posted to the 'build_<platform>' queue.
+   These build events contain sufficient information to permit an autonomous
    provision/clone/build/test cycle on the platform.
 
 [more coming]
