@@ -217,22 +217,40 @@ def main(event_file):
       if counter > 50:
         break
 
-      if counter == 1:
-        report.write("# project {0} branch {1}\n".format(commit["project"], commit['branch']))
+      report.write("""              <tr>
+                <td class="flod-commit">{0}<br />&nbsp;&nbsp;<small><a href="{1}">{2}</a><br />&nbsp;&nbsp;{3}</small></td>\n""".format(commit["timestamp"], commit["commit"], commit["commit"][:8], commit["author"]))
 
-      report.write("# timestamp {0} commit {1} author {2}\n".format(commit["timestamp"], commit["commit"], commit["author"]))
+#                <td class="flod-commit">2016-09-10T02:27:05Z<br />&nbsp;&nbsp;<small><a href="https://git.tasktools.org/projects/ut/repos/anomaly/commits/c521b3502acf3cf670ce5ee7210d9c20b7641c69">c521b350</a><br />&nbsp;&nbsp;Paul Beckingham</small></td>
 
-      for platform in commit["platforms"]:
-        report.write("#   platform {0} {1} {2}, {3}/{4}, {5} warnings, {6} errors\n".format(
-                       platform,
-                       commit["platforms"][platform]["description"],
-                       commit["platforms"][platform]["details"],
-                       commit["platforms"][platform]["passed"],
-                       commit["platforms"][platform]["expected"],
-                       commit["platforms"][platform]["warnings"],
-                       commit["platforms"][platform]["errors"]))
-        for error in commit["platforms"][platform]["log"]:
-          report.write("#     error {0}\n".format(error))
+      for platform in sorted(config.get('project.{0}.platforms'.format(project)).split(',')):
+        if platform in commit["platforms"]:
+#          report.write("#   platform {0} {1} {2}, {3}/{4}, {5} warnings, {6} errors\n".format(
+#                         platform,
+#                         commit["platforms"][platform]["description"],
+#                         commit["platforms"][platform]["details"],
+#                         commit["platforms"][platform]["passed"],
+#                         commit["platforms"][platform]["expected"],
+#                         commit["platforms"][platform]["warnings"],
+#                         commit["platforms"][platform]["errors"]))
+#          for error in commit["platforms"][platform]["log"]:
+#            report.write("#     error {0}\n".format(error))
+
+          report.write('                <td></td>\n')
+
+
+
+
+        else:
+          report.write('                <td />\n')
+
+      report.write('              </tr>\n')
+
+    # Write summary commit count.
+    if counter == len(all_commits):
+      summary = '{0} commits shown.'.format(counter)
+    else:
+      summary = '{0} commits not shown.'.format(len(all_commits) - counter)
+
     report.write("""
             </tbody>
           </table>
