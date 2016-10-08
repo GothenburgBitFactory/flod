@@ -33,6 +33,83 @@ import shutil
 import json
 import flod
 
+template_header="""<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+
+    <title>Flod - Grid CI</title>
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      /* "foo" element, "#foo ID, ".foo" class */
+      html                   {position:relative; min-height:100%;}
+      body                   {color:#bbb; background-color:#222; margin-top:60px; margin-bottom:80px; z-index:1}
+      th                     {border:3px solid #222; margin:4px; color:#bbb; padding:2px;}
+      td                     {border:3px solid #222; margin:4px;             padding:2px;}
+      a:link, a:visited      {color:#bbb;}
+      a:hover                {color:#ddd;}
+      a:active               {color:#fff;}
+      .flod-commit           {background-color:#444;}
+      .flod-details          {font-weight:100; font-size:75%;}
+      .flod-header           {margins:0px;padding:0px;  background-color:#000; width:100%; position:fixed; top:0;    z-index:2}
+      .flod-footer           {margins:0px;padding:12px; background-color:#000; width:100%; position:fixed; bottom:0; z-index:3; color:#666}
+      .flod-large            {font-size:200%}
+    </style>
+
+    <!--[if lt IE 9]><script src="/bootstrap/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!-- dynamic content start -->
+"""
+
+template_title="""
+    <div class="flod-header flod-large">
+      <a href="https://cen.tasktools.org"><img src="/images/flod-m.png" alt="Flod"></a>
+      <strong>&nbsp;FLOD Testing</strong> | {0} {1}
+    </div>
+"""
+
+template_footer="""
+    <!-- dynamic content end -->
+
+    <div class="flod-footer" style="text-align:right;">
+      Copyright &copy; 2016 Göteborg Bit Factory
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Piwik -->
+    <script type="text/javascript">
+      var _paq = _paq || [];
+      _paq.push(["trackPageView"]);
+      _paq.push(["enableLinkTracking"]);
+
+      (function() {
+        var u=(("https:" == document.location.protocol) ? "https" : "http") + "://see.tasktools.org/piwik/";
+        _paq.push(["setTrackerUrl", u+"piwik.php"]);
+        _paq.push(["setSiteId", "3"]);
+        var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+        g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <!-- End Piwik Code -->
+  </body>
+</html>
+"""
+
 ################################################################################
 # Stores the new digest event in the work tree.
 # Combines all digest events into a commit-level JSON file.
