@@ -121,8 +121,12 @@ def main(event_file):
   event.load(event_file)
   config = flod.Config()
 
+  # Convenience.
+  project = event.header('change.project')
+  branch  = event.header('change.branch')
+
   # Create the work path, if necessary, and copy the digest event into the tree.
-  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'), event.header('change.commit'))
+  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), project, branch, event.header('change.commit'))
   digest_file = "digest.{}.msg".format(event.header('platform.name'))
 
   if not os.path.exists(commit_path):
@@ -140,8 +144,8 @@ def main(event_file):
                    "commit":     event.header("change.commit"),
                    "author":     event.header("change.author"),
                    "timestamp":  event.header("change.timestamp"),
-                   "project":    event.header("change.project"),
-                   "branch":     event.header("change.branch"),
+                   "project":    project,
+                   "branch":     branch,
                    "platforms":  {}}
 
   # Add the platform-specific results from the digest event.
@@ -172,7 +176,7 @@ def main(event_file):
 
   # Iterate over all the commit JSON files to create the report.
   all_commits = list()
-  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'))
+  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), project, branch)
   for commit in os.listdir(branch_path):
     if len(commit) == 40: # Length of a SHA1.
       commit_json_file = os.path.join(branch_path, commit, 'commit.json')
@@ -180,7 +184,7 @@ def main(event_file):
         all_commits.append(json.load(fh))
 
   # Write the report.
-  report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'))
+  report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), project, branch)
   with open(report_file, 'w') as report:
     # Iterate over the commits in reverse timestamp order, and stop after fifty
     # commits.
