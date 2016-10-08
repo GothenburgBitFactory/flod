@@ -186,8 +186,30 @@ def main(event_file):
   # Write the report.
   report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), project, branch)
   with open(report_file, 'w') as report:
-    # Iterate over the commits in reverse timestamp order, and stop after fifty
-    # commits.
+    report.write(template_header)
+    report.write(template_title.format(project, branch))
+
+    report.write("""    <div class="container">
+      <div class="col-md-12 main">
+        <div class="row">
+          <br />
+
+          <table>
+            <thead>
+              <tr>
+                <th />\n""")
+
+    # Write table headers.
+    for platform in sorted(config.get('project.{0}.platforms'.format(project)).split(',')):
+      description = config.get('platform.{0}.description'.format(platform))
+      details     = config.get('platform.{0}.details'.format(platform)).replace(';', '<br />')
+      report.write('<th data-toggle="collapse" data-target="#{0}">{1}<div id="{0}" class="collapse out flod-details">{2}</div></th>\n'.format(platform, description, details))
+
+    report.write("""              </tr>
+            </thead>
+            <tbody>\n""")
+
+    # Only show the first N commits.
     # TODO The '50' should come from configuration.
     counter = 0
     for commit in sorted(all_commits, reverse=True, key=lambda x:x["timestamp"]):
@@ -211,6 +233,17 @@ def main(event_file):
                        commit["platforms"][platform]["errors"]))
         for error in commit["platforms"][platform]["log"]:
           report.write("#     error {0}\n".format(error))
+    report.write("""
+            </tbody>
+          </table>
+
+          <br />
+          <p>{0}</p>
+        </div>
+      </div>
+    </div>""".format(summary))
+
+    report.write(template_footer)
 
   # Publish the report.
   publish_event = flod.Event()
