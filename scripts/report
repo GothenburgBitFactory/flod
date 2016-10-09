@@ -31,6 +31,7 @@ import sys
 import re
 import shutil
 import json
+import datetime
 import flod
 
 template_header="""<!DOCTYPE html>
@@ -243,7 +244,8 @@ def main(event_file):
     for platform in sorted(config.get('project.{0}.platforms'.format(project)).split(',')):
       description = config.get('platform.{0}.description'.format(platform))
       details     = config.get('platform.{0}.details'.format(platform)).replace(';', '<br />')
-      report.write('<th data-toggle="collapse" data-target="#{0}">{1}<div id="{0}" class="collapse out flod-details">{2}</div></th>\n'.format(platform, description, details))
+      report.write('               <th data-toggle="collapse" data-target="#{0}">{1}<div id="{0}" class="collapse out flod-details">{2}</div></th>\n'
+                   .format(platform, description, details))
 
     report.write("""              </tr>
             </thead>
@@ -257,29 +259,78 @@ def main(event_file):
       if counter > 50:
         break
 
-      report.write("""              <tr>
-                <td class="flod-commit">{0}<br />&nbsp;&nbsp;<small><a href="{1}">{2}</a><br />&nbsp;&nbsp;{3}</small></td>\n""".format(commit["timestamp"], commit["commit"], commit["commit"][:8], commit["author"]))
+      utc = datetime.datetime.utcfromtimestamp(int(commit["timestamp"])).isoformat()
 
-#                <td class="flod-commit">2016-09-10T02:27:05Z<br />&nbsp;&nbsp;<small><a href="https://git.tasktools.org/projects/ut/repos/anomaly/commits/c521b3502acf3cf670ce5ee7210d9c20b7641c69">c521b350</a><br />&nbsp;&nbsp;Paul Beckingham</small></td>
+      # TODO Clean build indicator.
+      # TODO Clean BG <-- #A0D8F0
+
+      # TODO Lock  <-- <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>
+
+      """
+    # Convert this:
+    #   https://git.tasktools.org/scm/tm/task.git
+    # To this:
+    #   https://git.tasktools.org/projects/tm/repos/task/commits/4357f9c54574ebac9dd8db004ff85d03131b06f0
+    my $gitbrowser = substr ($commit, 0, 8);
+    my $project_name = $project;
+    $project_name =~ s/\.git//;
+    my $stash = $data{$commit}->{'scm.origin'};
+    $stash =~ s/\/scm\//\/projects\//;
+    $stash =~ s/\/${project_name}\.git$/\/repos\/${project_name}\/commits\/${commit}/;
+    $gitbrowser = "<a href=\"${stash}\">" . $gitbrowser . "</a>";
+      """
+
+      commit_url = "https://git.tasktools.org/projects/ut/repos/{0}/commits/{1}".format(project, commit["commit"])
+      report.write('              <tr>\n')
+      report.write('                <td class="flod-commit">{0}Z<br />&nbsp;&nbsp;<small><a href="{1}">{2}</a><br />&nbsp;&nbsp;{3}</small></td>\n'
+                   .format(utc, commit_url, commit["commit"][:8], commit["author"]))
 
       for platform in sorted(config.get('project.{0}.platforms'.format(project)).split(',')):
         if platform in commit["platforms"]:
-#          report.write("#   platform {0} {1} {2}, {3}/{4}, {5} warnings, {6} errors\n".format(
-#                         platform,
-#                         commit["platforms"][platform]["description"],
-#                         commit["platforms"][platform]["details"],
-#                         commit["platforms"][platform]["passed"],
-#                         commit["platforms"][platform]["expected"],
-#                         commit["platforms"][platform]["warnings"],
-#                         commit["platforms"][platform]["errors"]))
-#          for error in commit["platforms"][platform]["log"]:
-#            report.write("#     error {0}\n".format(error))
 
-          report.write('                <td></td>\n')
+          # percent = 100.0 * (pass + skipped) / expected
+          good = int(commit["platforms"][platform]["passed"]) + int(commit["platforms"][platform]["skipped"])
+          expected = int(commit["platforms"][platform]["expected"])
+          if int(commit["platforms"][platform]["expected"]) > 0:
+            percentage = 100.0 * good / expected
+          else:
+            percentage = 0.0
 
+          # Percentage determines color.
+          fg, bg = which_color (percentage, commit["platforms"][platform])
 
+          control = ''
+          errors = ''
+          warning_indicator = ''
+          error_indicator = ''
+          if int(commit["platforms"][platform]["warnings"]) > 0 or \
+             int(commit["platforms"][platform]["errors"])   > 0:
+            control = ' data-toggle="collapse"; data-target="#log{0}";'.format(commit["commit"][:8])
 
+            if int(commit["platforms"][platform]["warnings"]) > 0:
+              warning_indicator = '<span class="label label-warning">W</span>'
 
+            if int(commit["platforms"][platform]["errors"]) > 0:
+              error_indicator = '<span class="label label-danger">E</span>'
+
+            errors = '<div id="log{0}" class="collapse out">\n                    <small>\n                      {1}\n                    </small>\n                  </div>'.format(commit["commit"][:8], '<br />'.join(commit["platforms"][platform]["log"]))
+
+          report.write('                <td style="color:{0}; background-color:{1};"{2}>\n'.format(fg, bg, control))
+          report.write('                  <div>\n')
+
+          if percentage >= 100.0:
+            report.write('                    <strong>100%</strong>\n')
+          else:
+            report.write('                    <strong>{:.2f}%</strong> {1}/{2}\n'.format(percentage, good, expected))
+
+          report.write('                  </div>\n')
+          if warning_indicator != '':
+            report.write('                  {0}\n'.format(warning_indicator))
+          if error_indicator != '':
+            report.write('                  {0}\n'.format(error_indicator))
+          if errors != '':
+            report.write('                  {0}\n'.format(errors))
+          report.write('                  <small>TIMING</small>\n')
         else:
           report.write('                <td />\n')
 
