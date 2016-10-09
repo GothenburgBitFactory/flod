@@ -111,6 +111,46 @@ template_footer="""
 """
 
 ################################################################################
+def which_color(percentage, data):
+  # Only 100% is green.
+  if percentage >= 100.0:
+    return '#080', '#a0ff00'
+
+  # Yellow
+  #   255 255 000    #99
+  #   187 000 000    #90
+  elif percentage > 90.0:
+    red   = (((percentage - 90.0) / 10.0) * (255 - 187)) + 187
+    green = ((percentage - 90.0) / 10.0) * 256
+    fg = '#000'
+
+  # Red
+  #   187 000 000    #90
+  #   187 094 000    #75
+  elif percentage > 75.0:
+    red = 187
+    green = ((15.0 - (percentage - 75.0)) / 15.0) * 94
+    fg = '#000'
+
+  # Brown
+  #   187 094 000    #75
+  #   095 047 000    #0
+  elif percentage > 0.0:
+    red   = ((percentage / 75.0) * (187 - 95)) + 95
+    green = ((percentage / 75.0) * (94 - 47)) + 47
+    fg = '#fff'
+
+  # Black
+  #   000 000 000    #0
+  else:
+    # Tests did run.
+    red = 0
+    green = 0
+    fg = '#fff'
+
+  return fg, '#{:X}{:X}0'.format(red, green)
+
+################################################################################
 # Stores the new digest event in the work tree.
 # Combines all digest events into a commit-level JSON file.
 # Combine all the commit-level JSON files into a report.
