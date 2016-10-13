@@ -154,30 +154,20 @@ def which_color(percentage, data):
   return fg, '#{:X}{:X}0'.format(red, green)
 
 ################################################################################
-# Stores the new digest event in the work tree.
-# Combines all digest events into a commit-level JSON file.
-# Combine all the commit-level JSON files into a report.
-# Write the report to the work tree.
-# Publish the report.
-def main(event_file):
-  event = flod.Event()
-  event.load(event_file)
-  config = flod.Config()
-
-  # Convenience.
-  project = event.header('change.project')
-  branch  = event.header('change.branch')
-
-  # Create the work path, if necessary, and copy the digest event into the tree.
-  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), project, branch, event.header('change.commit'))
+# Create the work path, if necessary, and copy the digest event into the tree.
+def storeDigestFile(config, event, event_file):
+  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'), event.header('change.commit'))
   digest_file = "digest.{}.msg".format(event.header('platform.name'))
-
   if not os.path.exists(commit_path):
     os.makedirs(commit_path)
 
+  # Store the digest results in the work tree.
   shutil.copyfile(event_file, os.path.join(commit_path, digest_file))
+  return commit_path
 
-  # If the 'commit.json' file exists, load it, else prime the header.
+################################################################################
+# If the 'commit.json' file exists, load it, else prime the header.
+def getCommitData(config, event, commit_path):
   commit_file = os.path.join(commit_path, "commit.json")
   if os.path.exists (commit_file):
     with open(commit_file) as fh:
@@ -187,11 +177,19 @@ def main(event_file):
                    "commit":     event.header("change.commit"),
                    "author":     event.header("change.author"),
                    "timestamp":  event.header("change.timestamp"),
-                   "project":    project,
-                   "branch":     branch,
+                   "project":    event.header("change.project"),
+                   "branch":     event.header("change.branch"),
                    "platforms":  {}}
+  return commit_file, commit_json
 
-  # Add the platform-specific results from the digest event.
+## Save the commit JSON file in the tree.
+def writeCommitData(commit_file, commit_json):
+  with open(commit_file, 'w') as fh:
+    fh.write(json.dumps(commit_json, sort_keys=True, indent=2, separators=(',', ': ')))
+
+################################################################################
+# Transfer the digest data. Set 'clean' if the tests all pass.
+def transferDigestData(commit_json, event):
   commit_json["platforms"][event.header("platform.name")] = dict()
   platform_node = commit_json["platforms"][event.header("platform.name")]
 
@@ -214,25 +212,27 @@ def main(event_file):
   else:
     platform_node["clean"] = "0"
 
-  # Save the commit JSON file in the tree.
-  with open(commit_file, 'w') as fh:
-    fh.write(json.dumps(commit_json, sort_keys=True, indent=2, separators=(',', ': ')))
-
-  # Iterate over all the commit JSON files to create the report.
+################################################################################
+# Iterate over all the commit JSON files and combine them.
+def combineCommits(config, event):
   all_commits = list()
-  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), project, branch)
+  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'))
   for commit in os.listdir(branch_path):
     if len(commit) == 40: # Length of a SHA1.
       commit_json_file = os.path.join(branch_path, commit, 'commit.json')
       with open(commit_json_file) as fh:
         all_commits.append(json.load(fh))
 
-  # Obtain the set of all platforms from configuration. If the commit_json dict
-  # shows zero failures/warnings from all platforms, post a 'clean' event.
+  return all_commits
+
+################################################################################
+# Obtain the set of all platforms from configuration. If the commit_json dict
+# shows zero failures/warnings from all platforms, post a 'clean' event.
+def detectCleanCommit(config, event, all_commits):
   for commit in all_commits:
     if commit == event.header("change.commit"):
       commit["clean"] = "1"
-      for platform in config.get('project.{0}.platforms'.format(project)).split(','):
+      for platform in config.get('project.{0}.platforms'.format(event.header('change.project'))).split(','):
         if platform not in commit["platforms"] or commit["platforms"][platform]["clean"] != "1":
           commit["clean"] = "0"
           break
@@ -241,7 +241,11 @@ def main(event_file):
         central = flod.Central()
         central.post('clean', event)
 
-  # Write the report.
+################################################################################
+# Create the report.html fiŀe.
+def writeReport(config, event, all_commits):
+  project = event.header('change.project')
+  branch = event.header('change.branch')
   report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), project, branch)
   with open(report_file, 'w') as report:
     report.write(template_header)
@@ -368,14 +372,41 @@ def main(event_file):
     </div>""".format(summary))
 
     report.write(template_footer)
+  return report_file
 
-  # Publish the report.
+################################################################################
+# Publish the report file.
+def publishReport(config, event, report_file):
   publish_event = flod.Event()
   publish_event.header('from', report_file)
-  publish_event.header('to', os.path.join(config.get('report.destination'), '{0}.{1}.html'.format(commit["project"], commit["branch"])))
+  publish_event.header('to', os.path.join(config.get('report.destination'), '{0}.{1}.html'.format(event.header('change.project'), event.header('change.branch'))))
 
   central = flod.Central()
   central.post('publish', publish_event)
+
+################################################################################
+# Stores the new digest event in the work tree.
+# Combines all digest events into a commit-level JSON file.
+# Combine all the commit-level JSON files into a report.
+# Write the report to the work tree.
+# Publish the report.
+def main(event_file):
+  event = flod.Event()
+  event.load(event_file)
+  config = flod.Config()
+
+  ## Store the digest results in the work tree.
+  commit_path = storeDigestFile(config, event, event_file)
+
+  # Create/update the commit.json file.
+  commit_file, commit_json = getCommitData(config, event, commit_path)
+  transferDigestData(commit_json, event)
+  writeCommitData(commit_file, commit_json)
+
+  all_commits = combineCommits(config, event)
+  detectCleanCommit(config, event, all_commits)
+  report_file = writeReport(config, event, all_commits)
+  publishReport(config, event, report_file)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
