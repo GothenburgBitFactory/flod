@@ -201,6 +201,7 @@ def transferDigestData(commit_json, event):
   platform_node["expected"]    = event.header("digest.testsExpected")
   platform_node["warnings"]    = event.header("digest.buildWarnings")
   platform_node["errors"]      = event.header("digest.buildErrors")
+  platform_node["duration"]    = event.header("build.duration")
   platform_node["log"]         = list()
 
   for line in event.payload().split('\n'):
@@ -351,7 +352,7 @@ def writeReport(config, event, all_commits):
             report.write('                  {0}\n'.format(error_indicator))
           if errors != '':
             report.write('                  {0}\n'.format(errors))
-          report.write('                  <small>TIMING</small>\n')
+          report.write('                  <small>{:.2f}s</small>\n'.format(float(commit["platforms"][platform]["duration"])))
         else:
           report.write('                <td />\n')
 
