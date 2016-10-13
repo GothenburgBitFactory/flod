@@ -31,6 +31,7 @@ import sys
 import shutil
 import subprocess
 import flod
+import datetime
 
 ################################################################################
 # Create the temporary work directory, change PWD to it, and compose a log file
@@ -73,6 +74,8 @@ def main(event_file):
   original_cwd = os.getcwd()
   tempdir = setup(event)
 
+  start = datetime.datetime.now()
+
   # TODO Create VM.
   # TODO Get remote machine name.
   # TODO Install dependencies.
@@ -86,6 +89,7 @@ def main(event_file):
   # TODO ssh <machine> <script>
   out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
+  event.header('duration', (datetime.datetime.now() - start).microseconds / 1e6)
   event.payload(out)
 
   # Note: Must be run from original location, so that central can find .flodrc.
