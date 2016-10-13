@@ -289,9 +289,9 @@ def writeReport(config, event, all_commits):
         commit_class = 'flod-commit-clean'
 
       # Commits older than 30 days are locked.
-      # TODO The '30' should come from configuration.
+      expiration = int(config.get('commit.locked')) if config.get('commit.locked') != '' else 30
       locked = ''
-      if int(commit["timestamp"]) < (int(time.time()) - 30 * 86400):
+      if int(commit["timestamp"]) < (int(time.time()) - expiration * 86400):
         locked = ' <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>'
 
       if 'git.tasktools.org' in commit["repository"]:

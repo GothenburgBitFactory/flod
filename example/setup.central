@@ -10,6 +10,7 @@ mkdir work
 ../../src/central config --force log.file $PWD/central.log
 ../../src/central config --force work.dir $PWD/work
 ../../src/central config --force report.length 50
+../../src/central config --force commit.locked 30
 ../../src/central config --force report.destination cen.tasktools.org:/path/to/central/reports
 
 # Project-specific.
