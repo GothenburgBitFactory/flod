@@ -78,7 +78,7 @@ def main(event_file):
   start = datetime.datetime.now()
   script = createJobScript(tempdir, event.header('project.job'))
   out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-  event.header('duration', (datetime.datetime.now() - start).microseconds / 1e6)
+  event.header('build.duration', (datetime.datetime.now() - start).microseconds / 1e6)
 
   event.payload(out)
 
