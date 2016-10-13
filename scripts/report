@@ -273,11 +273,12 @@ def writeReport(config, event, all_commits):
             <tbody>\n""")
 
     # Only show the first N commits.
-    # TODO The '50' should come from configuration.
+    limit = int(config.get('report.length')) if config.get('report.length') != '' else 50
+
     counter = 0
     for commit in sorted(all_commits, reverse=True, key=lambda x:x["timestamp"]):
       counter += 1
-      if counter > 50:
+      if counter > limit:
         break
 
       utc = datetime.datetime.utcfromtimestamp(int(commit["timestamp"])).isoformat()
