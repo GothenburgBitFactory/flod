@@ -37,7 +37,7 @@ import datetime
 # Create the temporary work directory, change PWD to it, and compose a log file
 # name.
 def setup(event):
-  tempdir = '/tmp/flod.{}'.format(event.header('change.commit'))
+  tempdir = '/tmp/{0}.{1}.{2}'.format(event.header('change.project'), event.header('change.commit'), event.header('platform.name'))
   if not os.path.exists (tempdir):
     os.makedirs(tempdir)
 
@@ -76,21 +76,31 @@ def main(event_file):
 
   start = datetime.datetime.now()
 
-  # TODO Get remote machine name.
-
-  # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
+  host = event.header('platform.host')
+  scratch = event.header('platform.scratch')
   script = createJobScript(tempdir, event.header('project.job'))
-  # TODO Copy script to remote machine.
+  id = '{0}.{1}'.format(event.header('change.project'), event.header('change.commit'))
 
-  # TODO ssh <machine> <script>
-  out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  log, err = subprocess.Popen(['ssh', host, 'mkdir {0}/{1}'.format(scratch, id)],
+               stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+
+  out, err = subprocess.Popen(['scp', script, '{0}:{1}/{2}/{2}.job'.format(host, scratch, id)],
+               stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  log += out
+
+  out, err = subprocess.Popen(['ssh', host, 'cd {0}/{1} && ./{1}.job'.format(scratch, id)],
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  log += out
+
+  out, err = subprocess.Popen(['ssh', host, 'rm -rf {0}/{1}'.format(scratch, id)],
+               stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  log += out
 
   event.header('build.duration', (datetime.datetime.now() - start).microseconds / 1e6)
-  event.payload(out)
+  event.payload(log)
 
   # Note: Must be run from original location, so that central can find .flodrc.
   os.chdir(original_cwd)
-
   central = flod.Central()
   central.post('result', event)
 
