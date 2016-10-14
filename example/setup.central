@@ -28,9 +28,18 @@ mkdir work
 ../../src/central config --force project.task.dependencies     'cmake,git,c++,gnutls,uuid,python'
 ../../src/central config --force project.task.repository       'https://git.tasktools.org/scm/tm/task.git'
 ../../src/central config --force project.task.job              '{bash}{nl}{nl}git clone --recursive -b {change.branch} {project.repository} {change.project}.git{nl}cd {change.project}.git{nl}git reset --hard {change.commit}{nl}cmake .{nl}make{nl}make test{nl}'
-../../src/central config --force project.task.snapshot          '{bash}{nl}{nl}make package{nl}'
+../../src/central config --force project.task.snapshot         '{bash}{nl}{nl}make package{nl}'
+
+../../src/central config --force project.anomaly.description   'Anomaly'
+../../src/central config --force project.anomaly.ignore        'README*,*.md'
+../../src/central config --force project.anomaly.platforms     'debian8,macos'
+../../src/central config --force project.anomaly.dependencies  'cmake,git,c++,python'
+../../src/central config --force project.anomaly.repository    'https://git.tasktools.org/scm/ut/anomaly.git'
+../../src/central config --force project.anomaly.job           '{bash}{nl}{nl}git clone --recursive -b {change.branch} {project.repository} {change.project}.git{nl}cd {change.project}.git{nl}git reset --hard {change.commit}{nl}cmake .{nl}make{nl}make test{nl}'
+../../src/central config --force project.anomaly.snapshot      '{bash}{nl}{nl}make package{nl}'
 
 # Platform-specific
+# build_remote example
 ../../src/central config --force platform.debian8.description  'Debian 8 Jessie'
 ../../src/central config --force platform.debian8.details      '64-bit;GCC 4.9.2;CMake 3.0.2'
 ../../src/central config --force platform.debian8.pkg.cmake    'cmake'
@@ -40,6 +49,10 @@ mkdir work
 ../../src/central config --force platform.debian8.pkg.uuid     'uuid-dev'
 ../../src/central config --force platform.debian8.pkg.python   'python'
 
+../../src/central config --force platform.debian8.host         'sat008.tasktools.org'
+../../src/central config --force platform.debian8.scratch      '/tmp'
+
+# build_local example
 ../../src/central config --force platform.macos.description    'macOS Sierra 10.12'
 ../../src/central config --force platform.macos.details        '64-bit;Clang 3.x;CMake 3.6.2'
 ../../src/central config --force platform.macos.pkg.cmake      'cmake'
@@ -48,6 +61,8 @@ mkdir work
 ../../src/central config --force platform.macos.pkg.gnutls     'gnutls'
 ../../src/central config --force platform.macos.pkg.uuid       ''                     # Built into libc
 ../../src/central config --force platform.macos.pkg.python     ''                     # 2.7 provided by default
+
+# TODO build_vm example
 
 # Create queues and hooks.
 ../../src/central create change          ./change          --scan 1
@@ -60,6 +75,7 @@ mkdir work
 
 ../../src/central hook   change          ../../scripts/platforms
 ../../src/central hook   build_macos     ../../scripts/build_local
+../../src/central hook   build_debian8   ../../scripts/build_remote
 ../../src/central hook   result          ../../scripts/thresher
 ../../src/central hook   digest          ../../scripts/report
 ../../src/central hook   digest          ../../scripts/summary
