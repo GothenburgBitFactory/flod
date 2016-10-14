@@ -55,6 +55,12 @@ def main(event_file):
     build.header('platform.description', config.get('platform.{}.description'.format(platform)))
     build.header('platform.details',     config.get('platform.{}.details'.format(platform)))
 
+    # A remote platform has a host name entry.
+    host = config.get('platform.{}.host'.format(platform))
+    if host != '':
+      build.header('platform.host',    host)
+      build.header('platform.scratch', config.get('platform.{}.scratch'.format(platform)))
+
     dependencies = list()
     for dependency in config.get('project.{}.dependencies'.format(project)).split(','):
       mapped = config.get('platform.{0}.pkg.{1}'.format(platform, dependency))
