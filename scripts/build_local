@@ -37,7 +37,7 @@ import datetime
 # Create the temporary work directory, change PWD to it, and compose a log file
 # name.
 def setup(event):
-  tempdir = '/tmp/flod.{}'.format(event.header('change.commit'))
+  tempdir = '/tmp/flod.{0}.{1}.{2}'.format(event.header('change.project'), event.header('change.commit'), event.header('platform.name'))
   if not os.path.exists (tempdir):
     os.makedirs(tempdir)
 
@@ -74,12 +74,12 @@ def main(event_file):
   original_cwd = os.getcwd()
   tempdir = setup(event)
 
-  # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
   start = datetime.datetime.now()
   script = createJobScript(tempdir, event.header('project.job'))
+  # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
   out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
-  event.header('build.duration', (datetime.datetime.now() - start).microseconds / 1e6)
 
+  event.header('build.duration', (datetime.datetime.now() - start).microseconds / 1e6)
   event.payload(out)
 
   # Note: Must be run from original location, so that central can find .flodrc.
