@@ -31,6 +31,7 @@ then
   REPOSITORY=$PWD
 fi
 PROJECT=$(basename $REPOSITORY)
+PROJECT=${PROJECT/.git/}
 
 BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
