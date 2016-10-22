@@ -407,6 +407,9 @@ def main(event_file):
 
   all_commits = combineCommits(config, event)
   detectCleanCommit(config, event, all_commits)
+
+  # TODO Detect when the total test count differs across platforms.
+
   report_file = writeReport(config, event, all_commits)
   publishReport(config, event, report_file)
 
