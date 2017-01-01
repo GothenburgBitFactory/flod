@@ -138,7 +138,7 @@ by stating the dependency 'c++', and the platform definitions are then free to
 interpret that as 'build-essential', 'g++', 'clang' as they wish.
 
 .SH "CREDITS & COPYRIGHTS"
-Copyright (C) 2006 \- 2016 P. Beckingham, F. Hernandez.
+Copyright (C) 2006 \- 2017 P. Beckingham, F. Hernandez.
 
 This man page was originally written by Federico Hernandez.
 
