@@ -45,7 +45,7 @@ template_header="""<!DOCTYPE html>
     <meta name="author" content="">
     <link rel="shortcut icon" href="/images/favicon.ico">
 
-    <title>Flod - Grid CI</title>
+    <title>Flod2 - Grid CI</title>
 
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
