@@ -35,7 +35,7 @@ demo is automated, and discussed below.
 2. Once you have an installed copy of Flod2, you can begin to run the demo.
    First go to the example directory (where this file resides):
 
-     $ cd flod.git/example
+     $ cd flod2.git/example
      $ ls
      README run.change cleanup run.central setup.central setup.dev
 
