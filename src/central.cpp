@@ -66,7 +66,7 @@ void processArgs (
   int argc,
   const char** argv,
   std::string& command,
-  Configuration& config)
+  Configuration& /* config */)
 {
   command = "";
 
