@@ -81,6 +81,7 @@ def main(event_file):
 
     m = reFailed.match (line)
     if m:
+      interesting.append(line)
       testsFailed += 1
 
     m = reSkipped.match (line)
