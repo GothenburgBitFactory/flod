@@ -85,6 +85,20 @@ def main(event_file):
     if m:
       testsSkipped += 1
 
+  # Clean is an indicator that the project built and tested with no failures.
+  clean = 0
+  if testsExpected > 0 and \
+     testsFailed == 0 and \
+     buildErrors == 0 and \
+     (testsPassed + testsSkipped) == testsExpected:
+    clean = 1
+
+  # Funky is an indicator that something is wrong.
+  funky = 0
+  if testsExpected == 0 or \
+     (testsPassed + testsFailed + testsSkipped) != testsExpected:
+    funky = 1
+
   # Capture the totals.
   event.header('digest.buildWarnings', buildWarnings)
   event.header('digest.buildErrors',   buildErrors)
@@ -92,6 +106,8 @@ def main(event_file):
   event.header('digest.testsFailed',   testsFailed)
   event.header('digest.testsSkipped',  testsSkipped)
   event.header('digest.testsExpected', testsExpected)
+  event.header('digest.clean',         clean)
+  event.header('digest.funky',         funky)
 
   event.payload ('\n'.join(interesting))
 
