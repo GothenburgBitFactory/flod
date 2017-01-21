@@ -48,7 +48,6 @@ mkdir work
 ../../src/central config --force platform.debian8.pkg.gnutls   'gnutls-dev'
 ../../src/central config --force platform.debian8.pkg.uuid     'uuid-dev'
 ../../src/central config --force platform.debian8.pkg.python   'python'
-
 ../../src/central config --force platform.debian8.host         'sat008.tasktools.org'
 ../../src/central config --force platform.debian8.scratch      '/tmp'
 
@@ -83,3 +82,4 @@ mkdir work
 ../../src/central hook   clean           ../../scripts/coverage
 ../../src/central hook   publish         ../../scripts/publish
 
+# End
