@@ -36,6 +36,16 @@ def main(event_file):
   event = flod.Event()
   event.load(event_file)
 
+  # TODO Capture CMake errors/warnings.
+
+  # Patterns to search for.
+  reWarning  = re.compile ('warning: ', re.IGNORECASE)
+  reError    = re.compile ('error: ', re.IGNORECASE)
+  reExpected = re.compile ('^1\\.\\.(\d+)$')
+  rePassed   = re.compile ('^ok \d+')
+  reFailed   = re.compile ('^not ok \d+')
+  reSkipped  = re.compile ('^skip \d+')
+
   # Things that are being looked for in the event file.
   buildWarnings = 0
   buildErrors   = 0
@@ -50,14 +60,6 @@ def main(event_file):
   # that should be shown in drill-down.  As 'buildWarnings' above might be '2',
   # this list would contain both of those warnings.
   interesting = list()
-
-  # Patterns to search for.
-  reWarning  = re.compile ('warning: ', re.IGNORECASE)
-  reError    = re.compile ('error: ', re.IGNORECASE)
-  reExpected = re.compile ('^1\\.\\.(\d+)$')
-  rePassed   = re.compile ('^ok \d+')
-  reFailed   = re.compile ('^not ok \d+')
-  reSkipped  = re.compile ('^skip \d+')
 
   # Scan for results.
   for line in event.payload().split('\n'):
