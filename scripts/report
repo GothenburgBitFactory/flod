@@ -58,8 +58,8 @@ template_header="""<!DOCTYPE html>
       a:hover                {color:#ddd;}
       a:active               {color:#fff;}
       .flod-commit           {background-color:#444;}
-      .flod-commit-clean     {background-color:#6080a0;}
-      .flod-commit-funky     {background-color:#a06080;}
+      .flod-commit-clean     {background-color:#417dba;}
+      .flod-commit-funky     {background-color:#822453;}
       .flod-details          {font-weight:100; font-size:75%;}
       .flod-header           {margins:0px;padding:0px;  background-color:#000; width:100%; position:fixed; top:0;    z-index:2}
       .flod-footer           {margins:0px;padding:12px; background-color:#000; width:100%; position:fixed; bottom:0; z-index:3; color:#666}
