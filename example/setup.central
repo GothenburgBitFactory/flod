@@ -8,9 +8,9 @@ mkdir work
 
 # Configure central.
 ../../src/central config --force log.file $PWD/central.log
-../../src/central config --force work.dir $PWD/work
-../../src/central config --force report.length 50
-../../src/central config --force commit.locked 30
+../../src/central config --force work.dir $PWD/work            # Report files.
+../../src/central config --force report.length 50              # Report cuts off at 50 commits, default 50
+../../src/central config --force commit.locked 30              # Commits lock after 30 days, default 30
 ../../src/central config --force report.destination cen.tasktools.org:/path/to/central/reports
 
 # Project-specific.
@@ -65,7 +65,7 @@ mkdir work
 # TODO build_vm example
 
 # Create queues and hooks.
-../../src/central create change          ./change          --scan 1
+../../src/central create change          ./change          --scan 1 # 1s scan frequency
 ../../src/central create build_debian8   ./build_debian8   --scan 1
 ../../src/central create build_macos     ./build_macos     --scan 1
 ../../src/central create result          ./result          --scan 1
