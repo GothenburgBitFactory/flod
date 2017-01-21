@@ -232,29 +232,28 @@ def combineCommits(config, event):
 ################################################################################
 # Obtain the set of all platforms from configuration. If the commit_json dict
 # shows zero failures/warnings from all platforms, post a 'clean' event.
-def detectCleanCommit(config, event, all_commits):
+def identifyCleanCommits(config, event, all_commits):
   for commit in all_commits:
-    if commit['commit'] == event.header('change.commit'):
-      commit['clean'] = '1'
-      commit['funky'] = '0'
+    commit['clean'] = '1'
+    commit['funky'] = '0'
 
-      for platform in config.get('project.{}.platforms'.format(event.header('change.project'))).split(','):
-        # Platform is expected to provide results, but has not yet done so.
-        if platform not in commit['platforms']:
-          commit['clean'] = '0'
-          continue
+    for platform in config.get('project.{}.platforms'.format(event.header('change.project'))).split(','):
+      # Platform is expected to provide results, but has not yet done so.
+      if platform not in commit['platforms']:
+        commit['clean'] = '0'
+        continue
 
-        # Platform results are not clean.
-        if 'clean' in commit['platforms'][platform] and commit['platforms'][platform]['clean'] == '0':
-          commit['clean'] = '0'
+      # Platform results are not clean.
+      if 'clean' in commit['platforms'][platform] and commit['platforms'][platform]['clean'] == '0':
+        commit['clean'] = '0'
 
-        # Something is not right.
-        if 'funky' in commit['platforms'][platform] and commit['platforms'][platform]['funky'] == '1':
-          commit['funky'] = '1'
+      # Something is not right.
+      if 'funky' in commit['platforms'][platform] and commit['platforms'][platform]['funky'] == '1':
+        commit['funky'] = '1'
 
-      if commit['clean'] == '1':
-        central = flod.Central()
-        central.post('clean', event)
+    if commit['clean'] == '1':
+      central = flod.Central()
+      central.post('clean', event)
 
 ################################################################################
 # Determine the commit-class-xxx based on aggregated build data.
@@ -435,8 +434,9 @@ def main(event_file):
   transferDigestData(commit_json, event)
   writeCommitData(commit_file, commit_json)
 
+  # Scan and look for clean/funky commits.
   all_commits = combineCommits(config, event)
-  detectCleanCommit(config, event, all_commits)
+  identifyCleanCommits(config, event, all_commits)
 
   report_file = writeReport(config, event, all_commits)
   publishReport(config, event, report_file)
