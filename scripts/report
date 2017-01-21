@@ -306,7 +306,7 @@ def writeReport(config, event, all_commits):
       else:
         link = '{}{}'.format(commit['commit'][:8], locked)
 
-      # TODO Include git tags, branches.
+      # TODO Include git tags?
       report.write('              <tr>\n')
       report.write('                <td class="{}">{}Z<br />&nbsp;&nbsp;<small>{}<br />&nbsp;&nbsp;{}</small></td>\n'
                    .format(commit_class, utc, link, commit['author']))
