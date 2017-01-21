@@ -313,7 +313,7 @@ def writeReport(config, event, all_commits):
           # percent = 100.0 * (pass + skipped) / expected
           good = int(commit["platforms"][platform]["passed"]) + int(commit["platforms"][platform]["skipped"])
           expected = int(commit["platforms"][platform]["expected"])
-          if int(commit["platforms"][platform]["expected"]) > 0:
+          if expected > 0:
             percentage = 100.0 * good / expected
           else:
             percentage = 0.0
