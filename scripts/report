@@ -268,6 +268,76 @@ def determineCommitClass(commit):
   return 'flod-commit'
 
 ################################################################################
+def composeCommitDescription(config, project, commit):
+  commit_class = determineCommitClass(commit)
+  utc = datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()
+
+  # Commits older than 30 days (overridable) are locked.
+  expiration = int(config.get('commit.locked')) if config.get('commit.locked') != '' else 30
+  locked = ''
+  if int(commit['timestamp']) < (int(time.time()) - expiration * 86400):
+    locked = ' <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>'
+
+  if 'git.tasktools.org' in commit['repository']:
+    project_name = project.replace('.git', '')
+    commit_url = commit['repository'].replace('/scm/', '/projects/')
+    commit_url = commit_url.replace('/{}.git'.format(project_name), '/repos/{}/commits/{}/'.format(project_name, commit['commit']))
+    link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
+  else:
+    link = '{}{}'.format(commit['commit'][:8], locked)
+
+  # TODO Include git tags?
+  return '                <td class="{}">{}Z<br />&nbsp;&nbsp;<small>{}<br />&nbsp;&nbsp;{}</small></td>\n'.format(commit_class, utc, link, commit['author'])
+
+################################################################################
+def composePlatformResult(platform, commit):
+  # percent = 100.0 * (pass + skipped) / expected
+  good = int(commit['platforms'][platform]['passed']) + int(commit['platforms'][platform]['skipped'])
+  expected = int(commit['platforms'][platform]['expected'])
+  if expected > 0:
+    percentage = 100.0 * good / expected
+  else:
+    percentage = 0.0
+
+  # Percentage determines color.
+  fg, bg = which_color (percentage, commit['platforms'][platform])
+
+  control = ''
+  errors = ''
+  warning_indicator = ''
+  error_indicator = ''
+  if int(commit['platforms'][platform]['warnings']) > 0 or \
+     int(commit['platforms'][platform]['errors'])   > 0:
+    control = ' data-toggle="collapse"; data-target="#log{}";'.format(commit['commit'][:8])
+
+    if int(commit['platforms'][platform]['warnings']) > 0:
+      warning_indicator = '<span class="label label-warning">W</span>'
+
+    if int(commit['platforms'][platform]['errors']) > 0:
+      error_indicator = '<span class="label label-danger">E</span>'
+
+    errors = '<div id="log{}" class="collapse out">\n                    <small>\n                      {}\n                    </small>\n                  </div>'.format(commit['commit'][:8], '<br />'.join(commit['platforms'][platform]['log']))
+
+  html =  '                <td style="color:{}; background-color:{};"{}>\n'.format(fg, bg, control)
+  html += '                  <div>\n'
+
+  if percentage >= 100.0:
+    html += '                    <strong>100%</strong>\n'
+  else:
+    html += '                    <strong>{:.2f}%</strong> {}/{}\n'.format(percentage, good, expected)
+
+  html += '                  </div>\n'
+  if warning_indicator != '':
+    html += '                  {}\n'.format(warning_indicator)
+  if error_indicator != '':
+    html += '                  {}\n'.format(error_indicator)
+  if errors != '':
+    html += '                  {}\n'.format(errors)
+  html += '                  <small>{:.2f}s</small>\n'.format(float(commit['platforms'][platform]['duration']))
+
+  return html
+
+################################################################################
 # Create the report.html fiŀe.
 def writeReport(config, event, all_commits):
   project = event.header('change.project')
@@ -307,81 +377,13 @@ def writeReport(config, event, all_commits):
       if counter > limit:
         break
 
-      utc = datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()
-
-      # Use appropriate td class.
-      commit_class = determineCommitClass(commit)
-
-      # Commits older than 30 days (overridable) are locked.
-      expiration = int(config.get('commit.locked')) if config.get('commit.locked') != '' else 30
-      locked = ''
-      if int(commit['timestamp']) < (int(time.time()) - expiration * 86400):
-        locked = ' <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>'
-
-      # Describe each commit.
-      if 'git.tasktools.org' in commit['repository']:
-        project_name = project.replace('.git', '')
-        commit_url = commit['repository'].replace('/scm/', '/projects/')
-        commit_url = commit_url.replace('/{}.git'.format(project_name), '/repos/{}/commits/{}/'.format(project_name, commit['commit']))
-        link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
-      else:
-        link = '{}{}'.format(commit['commit'][:8], locked)
-
-      # TODO Include git tags?
       report.write('              <tr>\n')
-      report.write('                <td class="{}">{}Z<br />&nbsp;&nbsp;<small>{}<br />&nbsp;&nbsp;{}</small></td>\n'
-                   .format(commit_class, utc, link, commit['author']))
-
-      # Ѕummarize results per platform.
+      report.write (composeCommitDescription(config, project, commit))
       for platform in sorted(config.get('project.{}.platforms'.format(project)).split(',')):
         if platform in commit['platforms']:
-
-          # percent = 100.0 * (pass + skipped) / expected
-          good = int(commit['platforms'][platform]['passed']) + int(commit['platforms'][platform]['skipped'])
-          expected = int(commit['platforms'][platform]['expected'])
-          if expected > 0:
-            percentage = 100.0 * good / expected
-          else:
-            percentage = 0.0
-
-          # Percentage determines color.
-          fg, bg = which_color (percentage, commit['platforms'][platform])
-
-          control = ''
-          errors = ''
-          warning_indicator = ''
-          error_indicator = ''
-          if int(commit['platforms'][platform]['warnings']) > 0 or \
-             int(commit['platforms'][platform]['errors'])   > 0:
-            control = ' data-toggle="collapse"; data-target="#log{}";'.format(commit['commit'][:8])
-
-            if int(commit['platforms'][platform]['warnings']) > 0:
-              warning_indicator = '<span class="label label-warning">W</span>'
-
-            if int(commit['platforms'][platform]['errors']) > 0:
-              error_indicator = '<span class="label label-danger">E</span>'
-
-            errors = '<div id="log{}" class="collapse out">\n                    <small>\n                      {}\n                    </small>\n                  </div>'.format(commit['commit'][:8], '<br />'.join(commit['platforms'][platform]['log']))
-
-          report.write('                <td style="color:{}; background-color:{};"{}>\n'.format(fg, bg, control))
-          report.write('                  <div>\n')
-
-          if percentage >= 100.0:
-            report.write('                    <strong>100%</strong>\n')
-          else:
-            report.write('                    <strong>{:.2f}%</strong> {}/{}\n'.format(percentage, good, expected))
-
-          report.write('                  </div>\n')
-          if warning_indicator != '':
-            report.write('                  {}\n'.format(warning_indicator))
-          if error_indicator != '':
-            report.write('                  {}\n'.format(error_indicator))
-          if errors != '':
-            report.write('                  {}\n'.format(errors))
-          report.write('                  <small>{:.2f}s</small>\n'.format(float(commit['platforms'][platform]['duration'])))
+          report.write (composePlatformResult(platform, commit))
         else:
           report.write('                <td />\n')
-
       report.write('              </tr>\n')
 
     # Write summary commit count.
@@ -435,8 +437,6 @@ def main(event_file):
 
   all_commits = combineCommits(config, event)
   detectCleanCommit(config, event, all_commits)
-
-  # TODO Detect when the total test count differs across platforms.
 
   report_file = writeReport(config, event, all_commits)
   publishReport(config, event, report_file)
