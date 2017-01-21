@@ -84,13 +84,15 @@ template_title="""
     </div>
 """
 
-template_footer="""
+template_copyright="""
     <!-- dynamic content end -->
 
     <div class="flod-footer" style="text-align:right;">
-      Copyright &copy; 2017 Göteborg Bit Factory
+      Copyright &copy; {0} Göteborg Bit Factory
     </div>
+"""
 
+template_footer="""
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
 
@@ -373,6 +375,7 @@ def writeReport(config, event, all_commits):
       </div>
     </div>""".format(summary))
 
+    report.write(template_copyright.format(datetime.datetime.now().year))
     report.write(template_footer)
   return report_file
 
