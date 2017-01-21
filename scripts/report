@@ -206,17 +206,14 @@ def transferDigestData(commit_json, event):
   platform_node['expected']    = event.header('digest.testsExpected')
   platform_node['warnings']    = event.header('digest.buildWarnings')
   platform_node['errors']      = event.header('digest.buildErrors')
+  platform_node['clean']       = event.header('digest.clean')
+  platform_node['funky']       = event.header('digest.funky')
   platform_node['duration']    = event.header('build.duration')
   platform_node['log']         = list()
 
   for line in event.payload().split('\n'):
     if len(line):
       platform_node['log'].append(json.JSONEncoder().encode(line))
-
-  if int(platform_node['failed']) == 0 and int(platform_node['passed']) + int(platform_node['skipped']) == int(platform_node['expected']):
-    platform_node['clean'] = '1'
-  else:
-    platform_node['clean'] = '0'
 
 ################################################################################
 # Iterate over all the commit JSON files and combine them.
