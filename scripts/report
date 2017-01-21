@@ -233,14 +233,24 @@ def combineCommits(config, event):
 # shows zero failures/warnings from all platforms, post a 'clean' event.
 def detectCleanCommit(config, event, all_commits):
   for commit in all_commits:
-    if commit == event.header('change.commit'):
+    if commit['commit'] == event.header('change.commit'):
       commit['clean'] = '1'
-      for platform in config.get('project.{}.platforms'.format(event.header('change.project'))).split(','):
-        if platform not in commit['platforms'] or commit['platforms'][platform]['clean'] != '1':
-          commit['clean'] = '0'
-          break
+      commit['funky'] = '0'
 
-      if 'clean' in commit and commit['clean'] != '0':
+      for platform in config.get('project.{}.platforms'.format(event.header('change.project'))).split(','):
+        # Platform is expected to provide results, but has not yet done so.
+        if platform not in commit['platforms']:
+          commit['clean'] = '0'
+
+        # Platform results are not clean.
+        if commit['platforms'][platform]['clean'] == '0':
+          commit['clean'] = '0'
+
+        # Something is not right.
+        if commit['platforms'][platform]['funky'] == '1':
+          commit['funky'] = '1'
+
+      if commit['clean'] == '1':
         central = flod.Central()
         central.post('clean', event)
 
