@@ -254,7 +254,11 @@ def identifyCleanCommits(config, event, all_commits):
     if commit['commit'] == event.header('change.commit') and commit['clean'] == '1':
       # Clone the important parts of the event
       clean_event = flod.Event()
-      for k in ['change.project', 'change.commit', 'project.job', 'project.{}.snapshot']:
+
+      k = 'project.{}.snapshot'.format(event.header('change.project'))
+      clean_event.header(k, config.get (k))
+
+      for k in ['change.project', 'change.commit', 'project.job']:
         clean_event.header(k, event.header (k))
 
       central = flod.Central()
