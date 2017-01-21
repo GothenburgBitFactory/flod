@@ -59,6 +59,7 @@ template_header="""<!DOCTYPE html>
       a:active               {color:#fff;}
       .flod-commit           {background-color:#444;}
       .flod-commit-clean     {background-color:#6080a0;}
+      .flod-commit-funky     {background-color:#a06080;}
       .flod-details          {font-weight:100; font-size:75%;}
       .flod-header           {margins:0px;padding:0px;  background-color:#000; width:100%; position:fixed; top:0;    z-index:2}
       .flod-footer           {margins:0px;padding:12px; background-color:#000; width:100%; position:fixed; bottom:0; z-index:3; color:#666}
@@ -255,6 +256,17 @@ def detectCleanCommit(config, event, all_commits):
         central.post('clean', event)
 
 ################################################################################
+# Determine the commit-class-xxx based on aggregated build data.
+def determineCommitClass(commit):
+  if 'funky' in commit and commit['funky'] == '1':
+    return 'flod-commit-funky'
+
+  if 'clean' in commit and commit['clean'] == '1':
+    return 'flod-commit-clean'
+
+  return 'flod-commit'
+
+################################################################################
 # Create the report.html fiŀe.
 def writeReport(config, event, all_commits):
   project = event.header('change.project')
@@ -297,9 +309,7 @@ def writeReport(config, event, all_commits):
       utc = datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()
 
       # Use appropriate td class.
-      commit_class = 'flod-commit'
-      if 'clean' in commit and commit['clean'] == '1':
-        commit_class = 'flod-commit-clean'
+      commit_class = determineCommitClass(commit)
 
       # Commits older than 30 days (overridable) are locked.
       expiration = int(config.get('commit.locked')) if config.get('commit.locked') != '' else 30
