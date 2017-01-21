@@ -80,7 +80,7 @@ template_header="""<!DOCTYPE html>
 template_title="""
     <div class="flod-header flod-large">
       <a href="https://cen.tasktools.org"><img src="/images/flod-m.png" alt="Flod"></a>
-      <strong>&nbsp;FLOD Testing</strong> | {0} {1}
+      <strong>&nbsp;FLOD Testing</strong> | {} {}
     </div>
 """
 
@@ -88,7 +88,7 @@ template_copyright="""
     <!-- dynamic content end -->
 
     <div class="flod-footer" style="text-align:right;">
-      Copyright &copy; {0} Göteborg Bit Factory
+      Copyright &copy; {} Göteborg Bit Factory
     </div>
 """
 
@@ -238,7 +238,7 @@ def detectCleanCommit(config, event, all_commits):
   for commit in all_commits:
     if commit == event.header('change.commit'):
       commit['clean'] = '1'
-      for platform in config.get('project.{0}.platforms'.format(event.header('change.project'))).split(','):
+      for platform in config.get('project.{}.platforms'.format(event.header('change.project'))).split(','):
         if platform not in commit['platforms'] or commit['platforms'][platform]['clean'] != '1':
           commit['clean'] = '0'
           break
@@ -268,9 +268,9 @@ def writeReport(config, event, all_commits):
                 <th />\n""")
 
     # Write table headers.
-    for platform in sorted(config.get('project.{0}.platforms'.format(project)).split(',')):
-      description = config.get('platform.{0}.description'.format(platform))
-      details     = config.get('platform.{0}.details'.format(platform)).replace(';', '<br />')
+    for platform in sorted(config.get('project.{}.platforms'.format(project)).split(',')):
+      description = config.get('platform.{}.description'.format(platform))
+      details     = config.get('platform.{}.details'.format(platform)).replace(';', '<br />')
       report.write('               <th data-toggle="collapse" data-target="#{0}">{1}<div id="{0}" class="collapse out flod-details">{2}</div></th>\n'
                    .format(platform, description, details))
 
@@ -304,10 +304,10 @@ def writeReport(config, event, all_commits):
       if 'git.tasktools.org' in commit['repository']:
         project_name = project.replace('.git', '')
         commit_url = commit['repository'].replace('/scm/', '/projects/')
-        commit_url = commit_url.replace('/{0}.git'.format(project_name), '/repos/{0}/commits/{1}/'.format(project_name, commit['commit']))
-        link = '<a href="{0}">{1}</a>{2}'.format(commit_url, commit['commit'][:8], locked)
+        commit_url = commit_url.replace('/{}.git'.format(project_name), '/repos/{}/commits/{}/'.format(project_name, commit['commit']))
+        link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
       else:
-        link = '{0}{1}'.format(commit['commit'][:8], locked)
+        link = '{}{}'.format(commit['commit'][:8], locked)
 
       # TODO Include git tags, branches.
       report.write('              <tr>\n')
@@ -376,7 +376,7 @@ def writeReport(config, event, all_commits):
           </table>
 
           <br />
-          <p>{0}</p>
+          <p>{}</p>
 
         </div>
       </div>
