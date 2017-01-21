@@ -43,6 +43,8 @@ def main(event_file):
   testsFailed   = 0
   testsSkipped  = 0
   testsExpected = 0
+  clean         = 0
+  funky         = 0
 
   # This is simply a list of lines from the build log that contain information
   # that should be shown in drill-down.  As 'buildWarnings' above might be '2',
@@ -86,7 +88,6 @@ def main(event_file):
       testsSkipped += 1
 
   # Clean is an indicator that the project built and tested with no failures.
-  clean = 0
   if testsExpected > 0 and \
      testsFailed == 0 and \
      buildErrors == 0 and \
@@ -94,7 +95,6 @@ def main(event_file):
     clean = 1
 
   # Funky is an indicator that something is wrong.
-  funky = 0
   if testsExpected == 0 or \
      (testsPassed + testsFailed + testsSkipped) != testsExpected:
     funky = 1
