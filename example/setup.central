@@ -54,7 +54,7 @@ mkdir work
 
 # build_local example
 ../../src/central config --force platform.macos.description    'macOS Sierra 10.12'
-../../src/central config --force platform.macos.details        '64-bit;Clang 3.x;CMake 3.6.2'
+../../src/central config --force platform.macos.details        '64-bit;Clang 3.x;CMake 3.7.2'
 ../../src/central config --force platform.macos.pkg.cmake      'cmake'
 ../../src/central config --force platform.macos.pkg.git        'git'
 ../../src/central config --force platform.macos.pkg.c++        ''                     # Must already be installed
