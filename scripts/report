@@ -158,8 +158,11 @@ def which_color(percentage, data):
 ################################################################################
 # Create the work path, if necessary, and copy the digest event into the tree.
 def storeDigestFile(config, event, event_file):
-  commit_path = "{0}/{1}/{2}/{3}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'), event.header('change.commit'))
-  digest_file = "digest.{}.msg".format(event.header('platform.name'))
+  commit_path = '{}/{}/{}/{}'.format(config.get('work.dir'),
+                                     event.header('change.project'),
+                                     event.header('change.branch'),
+                                     event.header('change.commit'))
+  digest_file = 'digest.{}.msg'.format(event.header('platform.name'))
   if not os.path.exists(commit_path):
     os.makedirs(commit_path)
 
@@ -170,18 +173,18 @@ def storeDigestFile(config, event, event_file):
 ################################################################################
 # If the 'commit.json' file exists, load it, else prime the header.
 def getCommitData(config, event, commit_path):
-  commit_file = os.path.join(commit_path, "commit.json")
+  commit_file = os.path.join(commit_path, 'commit.json')
   if os.path.exists (commit_file):
     with open(commit_file) as fh:
       commit_json = json.load(fh)
   else:
-    commit_json = {"repository": event.header("change.repository"),
-                   "commit":     event.header("change.commit"),
-                   "author":     event.header("change.author"),
-                   "timestamp":  event.header("change.timestamp"),
-                   "project":    event.header("change.project"),
-                   "branch":     event.header("change.branch"),
-                   "platforms":  {}}
+    commit_json = {'repository': event.header('change.repository'),
+                   'commit':     event.header('change.commit'),
+                   'author':     event.header('change.author'),
+                   'timestamp':  event.header('change.timestamp'),
+                   'project':    event.header('change.project'),
+                   'branch':     event.header('change.branch'),
+                   'platforms':  {}}
   return commit_file, commit_json
 
 ## Save the commit JSON file in the tree.
@@ -192,34 +195,34 @@ def writeCommitData(commit_file, commit_json):
 ################################################################################
 # Transfer the digest data. Set 'clean' if the tests all pass.
 def transferDigestData(commit_json, event):
-  commit_json["platforms"][event.header("platform.name")] = dict()
-  platform_node = commit_json["platforms"][event.header("platform.name")]
+  commit_json['platforms'][event.header('platform.name')] = dict()
+  platform_node = commit_json['platforms'][event.header('platform.name')]
 
-  platform_node["description"] = json.JSONEncoder().encode(event.header("platform.description"))
-  platform_node["details"]     = json.JSONEncoder().encode(event.header("platform.details"))
-  platform_node["skipped"]     = event.header("digest.testsSkipped")
-  platform_node["passed"]      = event.header("digest.testsPassed")
-  platform_node["failed"]      = event.header("digest.testsFailed")
-  platform_node["expected"]    = event.header("digest.testsExpected")
-  platform_node["warnings"]    = event.header("digest.buildWarnings")
-  platform_node["errors"]      = event.header("digest.buildErrors")
-  platform_node["duration"]    = event.header("build.duration")
-  platform_node["log"]         = list()
+  platform_node['description'] = json.JSONEncoder().encode(event.header('platform.description'))
+  platform_node['details']     = json.JSONEncoder().encode(event.header('platform.details'))
+  platform_node['skipped']     = event.header('digest.testsSkipped')
+  platform_node['passed']      = event.header('digest.testsPassed')
+  platform_node['failed']      = event.header('digest.testsFailed')
+  platform_node['expected']    = event.header('digest.testsExpected')
+  platform_node['warnings']    = event.header('digest.buildWarnings')
+  platform_node['errors']      = event.header('digest.buildErrors')
+  platform_node['duration']    = event.header('build.duration')
+  platform_node['log']         = list()
 
   for line in event.payload().split('\n'):
     if len(line):
-      platform_node["log"].append(json.JSONEncoder().encode(line))
+      platform_node['log'].append(json.JSONEncoder().encode(line))
 
-  if int(platform_node["failed"]) == 0 and int(platform_node["passed"]) + int(platform_node["skipped"]) == int(platform_node["expected"]):
-    platform_node["clean"] = "1"
+  if int(platform_node['failed']) == 0 and int(platform_node['passed']) + int(platform_node['skipped']) == int(platform_node['expected']):
+    platform_node['clean'] = '1'
   else:
-    platform_node["clean"] = "0"
+    platform_node['clean'] = '0'
 
 ################################################################################
 # Iterate over all the commit JSON files and combine them.
 def combineCommits(config, event):
   all_commits = list()
-  branch_path = "{0}/{1}/{2}".format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'))
+  branch_path = '{}/{}/{}'.format(config.get('work.dir'), event.header('change.project'), event.header('change.branch'))
   for commit in os.listdir(branch_path):
     if len(commit) == 40: # Length of a SHA1.
       commit_json_file = os.path.join(branch_path, commit, 'commit.json')
@@ -233,14 +236,14 @@ def combineCommits(config, event):
 # shows zero failures/warnings from all platforms, post a 'clean' event.
 def detectCleanCommit(config, event, all_commits):
   for commit in all_commits:
-    if commit == event.header("change.commit"):
-      commit["clean"] = "1"
+    if commit == event.header('change.commit'):
+      commit['clean'] = '1'
       for platform in config.get('project.{0}.platforms'.format(event.header('change.project'))).split(','):
-        if platform not in commit["platforms"] or commit["platforms"][platform]["clean"] != "1":
-          commit["clean"] = "0"
+        if platform not in commit['platforms'] or commit['platforms'][platform]['clean'] != '1':
+          commit['clean'] = '0'
           break
 
-      if "clean" in commit and commit["clean"] != "0":
+      if 'clean' in commit and commit['clean'] != '0':
         central = flod.Central()
         central.post('clean', event)
 
@@ -249,7 +252,7 @@ def detectCleanCommit(config, event, all_commits):
 def writeReport(config, event, all_commits):
   project = event.header('change.project')
   branch = event.header('change.branch')
-  report_file = "{0}/{1}/{2}/report.html".format(config.get('work.dir'), project, branch)
+  report_file = '{}/{}/{}/report.html'.format(config.get('work.dir'), project, branch)
   with open(report_file, 'w') as report:
     report.write(template_header)
     report.write(template_title.format(project, branch))
@@ -279,82 +282,85 @@ def writeReport(config, event, all_commits):
     limit = int(config.get('report.length')) if config.get('report.length') != '' else 50
 
     counter = 0
-    for commit in sorted(all_commits, reverse=True, key=lambda x:x["timestamp"]):
+    for commit in sorted(all_commits, reverse=True, key=lambda x:x['timestamp']):
       counter += 1
       if counter > limit:
         break
 
-      utc = datetime.datetime.utcfromtimestamp(int(commit["timestamp"])).isoformat()
+      utc = datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()
 
       # Use appropriate td class.
       commit_class = 'flod-commit'
-      if "clean" in commit and commit["clean"] == "1":
+      if 'clean' in commit and commit['clean'] == '1':
         commit_class = 'flod-commit-clean'
 
-      # Commits older than 30 days are locked.
+      # Commits older than 30 days (overridable) are locked.
       expiration = int(config.get('commit.locked')) if config.get('commit.locked') != '' else 30
       locked = ''
-      if int(commit["timestamp"]) < (int(time.time()) - expiration * 86400):
+      if int(commit['timestamp']) < (int(time.time()) - expiration * 86400):
         locked = ' <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>'
 
-      if 'git.tasktools.org' in commit["repository"]:
+      # Describe each commit.
+      if 'git.tasktools.org' in commit['repository']:
         project_name = project.replace('.git', '')
-        commit_url = commit["repository"].replace('/scm/', '/projects/')
-        commit_url = commit_url.replace('/{0}.git'.format(project_name), '/repos/{0}/commits/{1}/'.format(project_name, commit["commit"]))
-        link = '<a href="{0}">{1}</a>{2}'.format(commit_url, commit["commit"][:8], locked)
+        commit_url = commit['repository'].replace('/scm/', '/projects/')
+        commit_url = commit_url.replace('/{0}.git'.format(project_name), '/repos/{0}/commits/{1}/'.format(project_name, commit['commit']))
+        link = '<a href="{0}">{1}</a>{2}'.format(commit_url, commit['commit'][:8], locked)
       else:
-        link = '{0}{1}'.format(commit["commit"][:8], locked)
+        link = '{0}{1}'.format(commit['commit'][:8], locked)
 
+      # TODO Include git tags, branches.
       report.write('              <tr>\n')
-      report.write('                <td class="{0}">{1}Z<br />&nbsp;&nbsp;<small>{2}<br />&nbsp;&nbsp;{3}</small></td>\n'
-                   .format(commit_class, utc, link, commit["author"]))
+      report.write('                <td class="{}">{}Z<br />&nbsp;&nbsp;<small>{}<br />&nbsp;&nbsp;{}</small></td>\n'
+                   .format(commit_class, utc, link, commit['author']))
 
-      for platform in sorted(config.get('project.{0}.platforms'.format(project)).split(',')):
-        if platform in commit["platforms"]:
+      # Ѕummarize results per platform.
+      for platform in sorted(config.get('project.{}.platforms'.format(project)).split(',')):
+        if platform in commit['platforms']:
 
           # percent = 100.0 * (pass + skipped) / expected
-          good = int(commit["platforms"][platform]["passed"]) + int(commit["platforms"][platform]["skipped"])
-          expected = int(commit["platforms"][platform]["expected"])
+          good = int(commit['platforms'][platform]['passed']) + int(commit['platforms'][platform]['skipped'])
+          expected = int(commit['platforms'][platform]['expected'])
           if expected > 0:
             percentage = 100.0 * good / expected
           else:
             percentage = 0.0
 
           # Percentage determines color.
-          fg, bg = which_color (percentage, commit["platforms"][platform])
+          fg, bg = which_color (percentage, commit['platforms'][platform])
 
           control = ''
           errors = ''
           warning_indicator = ''
           error_indicator = ''
-          if int(commit["platforms"][platform]["warnings"]) > 0 or \
-             int(commit["platforms"][platform]["errors"])   > 0:
-            control = ' data-toggle="collapse"; data-target="#log{0}";'.format(commit["commit"][:8])
+          if int(commit['platforms'][platform]['warnings']) > 0 or \
+             int(commit['platforms'][platform]['errors'])   > 0:
+            control = ' data-toggle="collapse"; data-target="#log{}";'.format(commit['commit'][:8])
 
-            if int(commit["platforms"][platform]["warnings"]) > 0:
+            if int(commit['platforms'][platform]['warnings']) > 0:
               warning_indicator = '<span class="label label-warning">W</span>'
 
-            if int(commit["platforms"][platform]["errors"]) > 0:
+            if int(commit['platforms'][platform]['errors']) > 0:
               error_indicator = '<span class="label label-danger">E</span>'
 
-            errors = '<div id="log{0}" class="collapse out">\n                    <small>\n                      {1}\n                    </small>\n                  </div>'.format(commit["commit"][:8], '<br />'.join(commit["platforms"][platform]["log"]))
+            errors = '<div id="log{}" class="collapse out">\n                    <small>\n                      {}\n                    </small>\n                  </div>'.format(commit['commit'][:8], '<br />'.join(commit['platforms'][platform]['log']))
 
-          report.write('                <td style="color:{0}; background-color:{1};"{2}>\n'.format(fg, bg, control))
+          report.write('                <td style="color:{}; background-color:{};"{}>\n'.format(fg, bg, control))
           report.write('                  <div>\n')
 
           if percentage >= 100.0:
             report.write('                    <strong>100%</strong>\n')
           else:
-            report.write('                    <strong>{0:.2f}%</strong> {1}/{2}\n'.format(percentage, good, expected))
+            report.write('                    <strong>{:.2f}%</strong> {}/{}\n'.format(percentage, good, expected))
 
           report.write('                  </div>\n')
           if warning_indicator != '':
-            report.write('                  {0}\n'.format(warning_indicator))
+            report.write('                  {}\n'.format(warning_indicator))
           if error_indicator != '':
-            report.write('                  {0}\n'.format(error_indicator))
+            report.write('                  {}\n'.format(error_indicator))
           if errors != '':
-            report.write('                  {0}\n'.format(errors))
-          report.write('                  <small>{:.2f}s</small>\n'.format(float(commit["platforms"][platform]["duration"])))
+            report.write('                  {}\n'.format(errors))
+          report.write('                  <small>{:.2f}s</small>\n'.format(float(commit['platforms'][platform]['duration'])))
         else:
           report.write('                <td />\n')
 
@@ -362,15 +368,16 @@ def writeReport(config, event, all_commits):
 
     # Write summary commit count.
     if counter == len(all_commits):
-      summary = '{0} commits shown.'.format(counter)
+      summary = '{} commits shown.'.format(counter)
     else:
-      summary = '{0} commits not shown.'.format(len(all_commits) - counter)
+      summary = '{} commits not shown.'.format(len(all_commits) - counter)
 
     report.write("""            </tbody>
           </table>
 
           <br />
           <p>{0}</p>
+
         </div>
       </div>
     </div>""".format(summary))
@@ -384,7 +391,7 @@ def writeReport(config, event, all_commits):
 def publishReport(config, event, report_file):
   publish_event = flod.Event()
   publish_event.header('from', report_file)
-  publish_event.header('to', os.path.join(config.get('report.destination'), '{0}.{1}.html'.format(event.header('change.project'), event.header('change.branch'))))
+  publish_event.header('to', os.path.join(config.get('report.destination'), '{}.{}.html'.format(event.header('change.project'), event.header('change.branch'))))
 
   central = flod.Central()
   central.post('publish', publish_event)
