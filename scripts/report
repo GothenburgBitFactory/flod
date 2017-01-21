@@ -251,9 +251,14 @@ def identifyCleanCommits(config, event, all_commits):
       if 'funky' in commit['platforms'][platform] and commit['platforms'][platform]['funky'] == '1':
         commit['funky'] = '1'
 
-    if commit['clean'] == '1':
+    if commit['commit'] == event.header('change.commit') and commit['clean'] == '1':
+      # Clone the important parts of the event
+      clean_event = flod.Event()
+      for k in ['change.project', 'change.commit', 'project.job', 'project.{}.snapshot']:
+        clean_event.header(k, event.header (k))
+
       central = flod.Central()
-      central.post('clean', event)
+      central.post('clean', clean_event)
 
 ################################################################################
 # Determine the commit-class-xxx based on aggregated build data.
