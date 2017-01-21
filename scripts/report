@@ -345,7 +345,7 @@ def writeReport(config, event, all_commits):
           if percentage >= 100.0:
             report.write('                    <strong>100%</strong>\n')
           else:
-            report.write('                    <strong>{:.2f}%</strong> {1}/{2}\n'.format(percentage, good, expected))
+            report.write('                    <strong>{0:.2f}%</strong> {1}/{2}\n'.format(percentage, good, expected))
 
           report.write('                  </div>\n')
           if warning_indicator != '':
