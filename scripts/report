@@ -242,13 +242,14 @@ def detectCleanCommit(config, event, all_commits):
         # Platform is expected to provide results, but has not yet done so.
         if platform not in commit['platforms']:
           commit['clean'] = '0'
+          continue
 
         # Platform results are not clean.
-        if commit['platforms'][platform]['clean'] == '0':
+        if 'clean' in commit['platforms'][platform] and commit['platforms'][platform]['clean'] == '0':
           commit['clean'] = '0'
 
         # Something is not right.
-        if commit['platforms'][platform]['funky'] == '1':
+        if 'funky' in commit['platforms'][platform] and commit['platforms'][platform]['funky'] == '1':
           commit['funky'] = '1'
 
       if commit['clean'] == '1':
