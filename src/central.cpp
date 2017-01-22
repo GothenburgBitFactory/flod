@@ -62,13 +62,12 @@ std::string getConfigFile ()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void processArgs (
+std::string processArgs (
   int argc,
   const char** argv,
-  std::string& command,
   Configuration& /* config */)
 {
-  command = "";
+  std::string command = "";
 
   // Simply scan argv, looking for the first non-binary, non-option arg, and
   // assume what it finds is a command.
@@ -82,6 +81,8 @@ void processArgs (
 
   if (command == "")
     command = "help";
+
+  return command;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,8 +95,7 @@ int main (int argc, const char** argv)
     Configuration config;
     config.load (getConfigFile ());
 
-    std::string command;
-    processArgs (argc, argv, command, config);
+    auto command = processArgs (argc, argv, config);
 
     std::vector <std::string> matches;
     if (autoComplete (command,
