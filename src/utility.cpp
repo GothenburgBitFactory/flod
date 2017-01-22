@@ -63,7 +63,7 @@ std::set <std::string> getHookScriptNames (
   const Configuration& config,
   const std::string& name)
 {
-  std::string key = "hook." + name + ".";
+  auto key = "hook." + name + ".";
   auto len = key.length ();
 
   std::set <std::string> names;
