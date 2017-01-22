@@ -45,7 +45,7 @@ void handleDestroy (
   args.limitPositionals (2);        // destroy <name>
   args.addOption ("force", false);  // [--[no]force]
   args.scan (argc, argv);
- 
+
   if (args.getPositionalCount () == 1)
     throw std::string ("Queue name required.");
 
