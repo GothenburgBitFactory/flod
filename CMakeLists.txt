@@ -26,6 +26,16 @@ SET (FLOD_MAN5DIR share/man/man5 CACHE STRING "Installation directory for man pa
 endif (FREEBSD)
 SET (FLOD_DOCDIR  share/doc/flod CACHE STRING "Installation directory for doc files")
 
+message ("-- Looking for pthread")
+find_path (PTHREAD_INCLUDE_DIR pthread.h)
+find_library (PTHREAD_LIBRARY NAMES pthread)
+if (PTHREAD_INCLUDE_DIR AND PTHREAD_LIBRARY)
+  message ("-- Found pthread: ${PTHREAD_LIBRARY}")
+  set (HAVE_LIBPTHREAD true)
+  set (FLOD2_INCLUDE_DIRS ${FLOD2_INCLUDE_DIRS} ${PTHREAD_INCLUDE_DIR})
+  set (FLOD2_LIBRARIES    ${FLOD2_LIBRARIES}    ${PTHREAD_LIBRARIES})
+endif (PTHREAD_INCLUDE_DIR AND PTHREAD_LIBRARY)
+
 message ("-- Configuring cmake.h")
 configure_file (
   ${CMAKE_SOURCE_DIR}/cmake.h.in
