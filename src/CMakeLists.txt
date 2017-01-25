@@ -37,7 +37,7 @@ add_library (central   STATIC ${flod_SRCS})
 add_library (libshared STATIC ${libshared_SRCS})
 add_executable (central_executable central.cpp central.h)
 
-target_link_libraries (central_executable central libshared ${FLOD_LIBRARIES})
+target_link_libraries (central_executable central libshared pthread ${FLOD_LIBRARIES})
 
 set_property (TARGET central_executable PROPERTY OUTPUT_NAME "central")
 
