@@ -154,7 +154,7 @@ def which_color(percentage, data):
     green = 0
     fg = '#fff'
 
-  return fg, '#{:X}{:X}0'.format(int(red), int(green))
+  return fg, '#{:02X}{:02X}00'.format(int(red), int(green))
 
 ################################################################################
 # Create the work path, if necessary, and copy the digest event into the tree.
