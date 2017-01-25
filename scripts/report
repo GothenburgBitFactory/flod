@@ -154,7 +154,7 @@ def which_color(percentage, data):
     green = 0
     fg = '#fff'
 
-  return fg, '#{:X}{:X}0'.format(red, green)
+  return fg, '#{:x}{:x}0'.format(red, green)
 
 ################################################################################
 # Create the work path, if necessary, and copy the digest event into the tree.
@@ -369,7 +369,7 @@ def writeReport(config, event, all_commits):
     for platform in sorted(config.get('project.{}.platforms'.format(project)).split(',')):
       description = config.get('platform.{}.description'.format(platform))
       details     = config.get('platform.{}.details'.format(platform)).replace(';', '<br />')
-      report.write('               <th data-toggle="collapse" data-target="#{0}">{1}<div id="{0}" class="collapse out flod-details">{2}</div></th>\n'
+      report.write('                <th data-toggle="collapse" data-target="#{0}">{1}<div id="{0}" class="collapse out flod-details">{2}</div></th>\n'
                    .format(platform, description, details))
 
     report.write("""              </tr>
