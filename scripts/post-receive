@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ################################################################################
 ##
 ## Copyright 2012 - 2017, Göteborg Bit Factory.
@@ -67,8 +67,8 @@ change.timestamp: $TIMESTAMP
 
 EOF
 
-    central post change $EVENT
+    scp $EVENT tyu:/tmp
+    ssh tyu "cd /opt/flod2 && /usr/local/bin/central post change $EVENT && rm $EVENT"
     rm $EVENT
   done
 done
-
