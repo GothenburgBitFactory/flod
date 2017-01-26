@@ -6,6 +6,7 @@
 - TW-1845 Cygwin build fails, missing get_current_dir_name
           (thanks to hosaka).
 - Added libshared.git as a submodule.
+- Rewritten to address performance, security and functionality.
 
 ------ current release ---------------------------
 ------ old releases ------------------------------

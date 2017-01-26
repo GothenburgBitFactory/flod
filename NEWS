@@ -1,0 +1,41 @@
+
+New Features in Flod 2.0.0
+
+  - 
+
+New Commands in Flod 2.0.0
+
+  - 
+
+New Configuration Options in Flod 2.0.0
+
+  - 
+
+Newly Deprecated Features in Flod 2.0.0
+
+  - 
+
+Removed Features in 2.0.0
+
+Known Issues
+
+  - https://bug.tasktools.org/
+
+Taskwarrior has been built and tested on the following configurations:
+
+  * OS X
+  * Fedora
+  * Ubuntu
+
+---
+
+While Taskwarrior has undergone testing, bugs are sure to remain.  If you
+encounter a bug, please enter a new issue at:
+
+  https://bug.tasktools.org
+
+Or just send a message to:
+
+  support@taskwarrior.org
+
+Thank you.
