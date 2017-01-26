@@ -315,7 +315,8 @@ def composePlatformResult(platform, commit):
   warning_indicator = ''
   error_indicator = ''
   if int(commit['platforms'][platform]['warnings']) > 0 or \
-     int(commit['platforms'][platform]['errors'])   > 0:
+     int(commit['platforms'][platform]['errors'])   > 0 or \
+     int(commit['platforms'][platform]['failed'])   > 0:
     control = ' data-toggle="collapse"; data-target="#log{}";'.format(commit['commit'][:8])
 
     if int(commit['platforms'][platform]['warnings']) > 0:
@@ -323,6 +324,9 @@ def composePlatformResult(platform, commit):
 
     if int(commit['platforms'][platform]['errors']) > 0:
       error_indicator = '<span class="label label-danger">E</span>'
+
+    if int(commit['platforms'][platform]['failed']) > 0:
+      error_indicator = '<span class="label label-danger">T</span>'
 
     errors = '<div id="log{}" class="collapse out">\n                    <small>\n                      {}\n                    </small>\n                  </div>'.format(commit['commit'][:8], '<br />'.join(commit['platforms'][platform]['log']))
 
