@@ -79,7 +79,8 @@ def main(event_file):
   # Note: Python 2.x specific. For 3.x change to 'stderr=sys.stdout.buffer'
   out, err = subprocess.Popen([script], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
 
-  event.header('build.duration', (datetime.datetime.now() - start).microseconds / 1e6)
+  end = datetime.datetime.now()
+  event.header('build.duration', (end - start).total_seconds())
   event.payload(out)
 
   # Note: Must be run from original location, so that central can find .flodrc.
