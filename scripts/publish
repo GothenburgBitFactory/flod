@@ -26,9 +26,25 @@
 ################################################################################
 
 event_file=$1
+from=
+to=
 
-# TODO Extract the 'from' path from $event_file.
-# TODO Extract the 'to' machine/path from $event_file.
-# TODO rsync -avz $from $to
+# Parse the 'from:' and 'to:' paths from the event file.
+while read line
+do
+  if [[ $line =~ ^from: ]]
+  then
+    from=${line#from: }
+  fi
 
+  if [[ $line =~ ^to: ]]
+  then
+    to=${line#to: }
+  fi
+
+done < $event_file
+
+# TODO Extract a 'transport' setting do switch between rsync, scp, cp.
+
+/bin/cp -f $from $to
 exit 0
