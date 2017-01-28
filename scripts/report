@@ -179,7 +179,7 @@ def getCommitData(config, event, commit_path):
     with open(commit_file) as fh:
       commit_json = json.load(fh)
   else:
-    commit_json = {'repository': event.header('change.repository'),
+    commit_json = {'repository': event.header('project.repository'),
                    'commit':     event.header('change.commit'),
                    'author':     event.header('change.author'),
                    'timestamp':  event.header('change.timestamp'),
