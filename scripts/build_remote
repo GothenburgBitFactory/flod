@@ -88,7 +88,13 @@ def main(event_file):
                stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
   log += out
 
-  out, err = subprocess.Popen(['ssh', host, 'cd {0}/{1} && ./{1}.job && cd {0} && rm -rf {0}/{1}'.format(scratch, id)],
+  out, err = subprocess.Popen(['ssh', host, 'cd {0}/{1} && ./{1}.job'.format(scratch, id)],
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+  log += out
+
+  # This is a separate cleanup command because the previous command may fail,
+  # therefore it is a bad idea to chain together the cleanup.
+  out, err = subprocess.Popen(['ssh', host, 'cd {0} && rm -rf {1}'.format(scratch, id)],
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
   log += out
 
