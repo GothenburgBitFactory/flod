@@ -232,7 +232,7 @@ def combineCommits(config, event):
 ################################################################################
 # Obtain the set of all platforms from configuration. If the commit_json dict
 # shows zero failures/warnings from all platforms, post a 'clean' event.
-def identifyCleanCommits(config, event, all_commits):
+def categorizeCommits(config, event, all_commits):
   for commit in all_commits:
     commit['clean'] = '1'
     commit['funky'] = '0'
@@ -286,11 +286,21 @@ def composeCommitDescription(config, project, commit):
   if int(commit['timestamp']) < (int(time.time()) - expiration * 86400):
     locked = ' <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>'
 
-  if 'git.tasktools.org' in commit['repository']:
+  # Gitea: https://vostok.tasktools.org/TM/task/commit/1c1d9428c52250bc244edd509e9316e6c24fdd47
+  #        https://vostok.tasktools.org/TM/task.git
+  if 'vostok.tasktools.org' in commit['repository']:
+    project_name = project.replace('.git', '')
+    commit_url = commit['repository'].replace('.git', '')
+    commit_url += '/commit/{}'.format(commit['commit'])
+    link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
+
+  # BitBucket: https://git.tasktools.org/projects/tm/repos/task/commits/00a4cbf906901a13a10e1e5459db42813e3595ca
+  elif 'git.tasktools.org' in commit['repository']:
     project_name = project.replace('.git', '')
     commit_url = commit['repository'].replace('/scm/', '/projects/')
     commit_url = commit_url.replace('/{}.git'.format(project_name), '/repos/{}/commits/{}/'.format(project_name, commit['commit']))
     link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
+
   else:
     link = '{}{}'.format(commit['commit'][:8], locked)
 
@@ -449,7 +459,7 @@ def main(event_file):
 
   # Scan and look for clean/funky commits.
   all_commits = combineCommits(config, event)
-  identifyCleanCommits(config, event, all_commits)
+  categorizeCommits(config, event, all_commits)
 
   report_file = writeReport(config, event, all_commits)
   publishReport(config, event, report_file)
