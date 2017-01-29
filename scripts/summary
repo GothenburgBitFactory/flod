@@ -138,7 +138,7 @@ def writeReport(base_dir):
 
       branch_dir = os.path.join(base_dir, project)
       for branch in sorted(os.listdir(branch_dir)):
-        report.write("                <a href=\"/{0}/{1}/report.html\">{1}</a><br />\n".format(project, branch))
+        report.write("                <a href=\"/{0}-{1}.html\">{1}</a><br />\n".format(project, branch))
       report.write("              </td>\n")
       report.write("            </tr>\n")
 
