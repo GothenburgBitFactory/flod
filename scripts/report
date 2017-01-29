@@ -295,7 +295,6 @@ def composeCommitDescription(config, project, commit):
     locked = ' <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>'
 
   # Gitea: https://vostok.tasktools.org/TM/task/commit/1c1d9428c52250bc244edd509e9316e6c24fdd47
-  #        https://vostok.tasktools.org/TM/task.git
   if 'vostok.tasktools.org' in commit['repository']:
     project_name = project.replace('.git', '')
     commit_url = commit['repository'].replace('.git', '')
@@ -417,10 +416,10 @@ def writeReport(config, event, all_commits):
       report.write('              </tr>\n')
 
     # Write summary commit count.
-    if counter == len(all_commits):
+    if counter <= limit:
       summary = '{} commits shown.'.format(counter)
     else:
-      summary = '{} commits not shown.'.format(len(all_commits) - counter)
+      summary = '{} commits not shown.'.format(len(all_commits) - limit`)
 
     report.write("""            </tbody>
           </table>
