@@ -27,34 +27,161 @@
 ################################################################################
 
 import sys
+import os
+import datetime
 import flod
+
+template_header="""<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+
+    <title>Flod2 - Grid CI</title>
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      /* "foo" element, "#foo ID, ".foo" class */
+      html                   {position:relative; min-height:100%;}
+      body                   {color:#bbb; background-color:#222; margin-top:60px; margin-bottom:80px; z-index:1}
+      th                     {border:3px solid #222; margin:4px; color:#bbb; padding:2px;}
+      td                     {border:3px solid #222; margin:4px;             padding:2px;}
+      a:link, a:visited      {color:#bbb;}
+      a:hover                {color:#ddd;}
+      a:active               {color:#fff;}
+      .flod-commit           {color:#bbb; background-color:#444;}
+      .flod-commit-clean     {color:#c6e2ff; background-color:#417dba;}
+      .flod-commit-funky     {color:#ffafd7; background-color:#822453;}
+      .flod-details          {font-weight:100; font-size:75%;}
+      .flod-header           {margins:0px;padding:0px;  background-color:#000; width:100%; position:fixed; top:0;    z-index:2}
+      .flod-footer           {margins:0px;padding:12px; background-color:#000; width:100%; position:fixed; bottom:0; z-index:3; color:#666}
+      .flod-large            {font-size:200%}
+    </style>
+
+    <!--[if lt IE 9]><script src="/bootstrap/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="flod-header flod-large">
+      <a href="https://cen.tasktools.org"><img src="/images/flod-m.png" alt="Flod"></a>
+      <strong>&nbsp;FLOD Testing</strong> | All projects
+    </div>
+
+    <!-- dynamic content start -->
+
+    <div class="container">
+      <div class="col-md-8 main">
+        <div class="row">
+          <h2>Test Reports</h2>
+          <table class="table">
+"""
+
+template_copyright="""
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- dynamic content end -->
+
+    <div class="flod-footer" style="text-align:right;">
+      Copyright &copy; {} Göteborg Bit Factory
+    </div>
+"""
+
+template_footer="""
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Piwik -->
+    <script type="text/javascript">
+      var _paq = _paq || [];
+      _paq.push(["trackPageView"]);
+      _paq.push(["enableLinkTracking"]);
+
+      (function() {
+        var u=(("https:" == document.location.protocol) ? "https" : "http") + "://see.tasktools.org/piwik/";
+        _paq.push(["setTrackerUrl", u+"piwik.php"]);
+        _paq.push(["setSiteId", "3"]);
+        var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+        g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <!-- End Piwik Code -->
+  </body>
+</html>
+"""
+
+################################################################################
+# Create the index.html fiŀe.
+def writeReport(base_dir):
+  report_file = '{}/index.html'.format(base_dir)
+  with open(report_file, 'w') as report:
+    report.write(template_header)
+
+    for project in sorted(os.listdir(base_dir)):
+      if project.endswith('.html'):
+        continue
+
+      report.write("            <tr>\n")
+      report.write("              <td>{}</td>\n".format(project))
+      report.write("              <td>\n")
+
+      branch_dir = os.path.join(base_dir, project)
+      for branch in sorted(os.listdir(branch_dir)):
+        report.write("                <a href=\"/{0}/{1}/report.html\">{1}</a><br />\n".format(project, branch))
+      report.write("              </td>\n")
+      report.write("            </tr>\n")
+
+    report.write(template_copyright.format(datetime.datetime.now().year))
+    report.write(template_footer)
+  return report_file
+
+################################################################################
+# Publish the report file.
+def publishReport(config, report_file):
+  publish_event = flod.Event()
+  publish_event.header('from', report_file)
+  publish_event.header('to', os.path.join(config.get('report.destination'), 'index.html'))
+
+  central = flod.Central()
+  central.post('publish', publish_event)
 
 ################################################################################
 # Reduces a result event to a summarized digest event.
-def main(event_file):
-  event = flod.Event()
-  event.load(event_file)
+def main():
   config = flod.Config()
 
-#  # Publish the report.
-#  publish_event = flod.Event()
-#  publish_event.header('from', this)
-#  publish_event.header('to', that)
-#
-#  central = flod.Central()
-#  central.post('publish', publish_event)
+  # Obtain platform names.
+#  platforms = [name[0][9:-12] for name in config.items() if name[0].startswith('platform.') and name[0].endswith('description')]
+#  print '# platforms', platforms
+
+  # Scan and look for clean/funky commits.
+  report_file = writeReport(config.get('work.dir'))
+  publishReport(config, report_file)
 
 ################################################################################
 # Entry point.  Checks only that there is one command line argument.
 if __name__ == "__main__":
-  """Flod2 hook script for creating a summary report from a digest event."""
+  """Flod2 hook script for creating a summary report from a digest event.
+     Note: The event file is irrelevant - the whole sumamry is updated.
+  """
 
   if len(sys.argv) != 2:
-    print "\nUsage: summary <digest-event-file>\n\n"
+    print "\nUsage: summary\n\n"
     sys.exit(1)
 
   try:
-    main(sys.argv[1])
+    main()
   except Exception as msg:
     print('Error:', msg)
 
