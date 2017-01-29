@@ -256,7 +256,7 @@ def categorizeCommits(config, event, all_commits):
       # something is wrong.
       if tests == 0:
         tests = commit['platforms'][platform]['expected']
-      elif tests != commit['platforms'][platform]['expected']
+      elif tests != commit['platforms'][platform]['expected']:
         commit['funky'] = '1'
 
     if commit['commit'] == event.header('change.commit') and commit['clean'] == '1':
