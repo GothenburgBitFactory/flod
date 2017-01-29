@@ -44,7 +44,7 @@ do
 
 done < $event_file
 
-# TODO Extract a 'transport' setting do switch between rsync, scp, cp.
+# TODO Extract a 'transport' setting to switch between rsync, scp, cp.
 
 /bin/cp -f $from $to
 exit 0
