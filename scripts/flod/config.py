@@ -42,5 +42,10 @@ class Config(object):
         self.data[line[:sep]] = line[sep + 1:]
 
   def get(self, name):
+    """Return value given name."""
     return self.data[name] if name in self.data else ''
+
+  def items(self):
+    """Return header items, to allow k,v iteration."""
+    return self.data.items()
 
