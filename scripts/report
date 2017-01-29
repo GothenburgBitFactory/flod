@@ -236,7 +236,7 @@ def categorizeCommits(config, event, all_commits):
   for commit in all_commits:
     commit['clean'] = '1'
     commit['funky'] = '0'
-
+    tests = 0
     for platform in config.get('project.{}.platforms'.format(event.header('change.project'))).split(','):
       # Platform is expected to provide results, but has not yet done so.
       if platform not in commit['platforms']:
@@ -249,6 +249,14 @@ def categorizeCommits(config, event, all_commits):
 
       # Something is not right.
       if 'funky' in commit['platforms'][platform] and commit['platforms'][platform]['funky'] == '1':
+        commit['funky'] = '1'
+
+
+      # If the platforms do not all agree on the expected number of tests, then
+      # something is wrong.
+      if tests == 0:
+        tests = commit['platforms'][platform]['expected']
+      elif tests != commit['platforms'][platform]['expected']
         commit['funky'] = '1'
 
     if commit['commit'] == event.header('change.commit') and commit['clean'] == '1':
