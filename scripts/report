@@ -419,7 +419,7 @@ def writeReport(config, event, all_commits):
     if counter <= limit:
       summary = '{} commits shown.'.format(counter)
     else:
-      summary = '{} commits not shown.'.format(len(all_commits) - limit`)
+      summary = '{} commits not shown.'.format(len(all_commits) - limit)
 
     report.write("""            </tbody>
           </table>
