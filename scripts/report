@@ -117,7 +117,7 @@ template_footer="""
 """
 
 ################################################################################
-def which_color(percentage, data):
+def which_color(percentage):
   # Only 100% is green.
   if percentage >= 100.0:
     return '#080', '#a0ff00'
@@ -325,7 +325,7 @@ def composePlatformResult(platform, commit):
     percentage = 0.0
 
   # Percentage determines color.
-  fg, bg = which_color (percentage, commit['platforms'][platform])
+  fg, bg = which_color (percentage)
 
   control = ''
   errors = ''
