@@ -120,41 +120,45 @@ template_footer="""
 def which_color(percentage):
   # Only 100% is green.
   if percentage >= 100.0:
-    return '#080', '#a0ff00'
+    return '#080', '#d2ffa2'
 
   # Yellow
-  #   255 255 000    #99
-  #   187 000 000    #90
+  #   255 255 153    #99
+  #   216 178 178    #90
   elif percentage > 90.0:
-    red   = (((percentage - 90.0) / 10.0) * (255 - 187)) + 187
-    green = ((percentage - 90.0) / 10.0) * 256
+    red   = (((percentage - 90.0) / 10.0) * (255 - 216) + 216)
+    green = (((percentage - 90.0) / 10.0) * (255 - 178) + 178)
+    blue  = (((percentage - 90.0) / 10.0) * (153 - 178) + 178)
     fg = '#000'
 
   # Red
-  #   187 000 000    #90
-  #   187 094 000    #75
+  #   216 178 178    #90
+  #   216  76  76    #75
   elif percentage > 75.0:
-    red = 187
-    green = ((15.0 - (percentage - 75.0)) / 15.0) * 94
+    red = 216
+    green = (((percentage - 75.0) / 15.0) * (178 - 76) + 76)
+    blue  = (((percentage - 75.0) / 15.0) * (178 - 76) + 76)
     fg = '#000'
 
   # Brown
-  #   187 094 000    #75
-  #   095 047 000    #0
+  #   216 76 76      #75
+  #   64  22 22      #0
   elif percentage > 0.0:
-    red   = ((percentage / 75.0) * (187 - 95)) + 95
-    green = ((percentage / 75.0) * (94 - 47)) + 47
+    red   = ((percentage / 75.0) * (216 - 64)) + 64
+    green = ((percentage / 75.0) * (76 - 22)) + 22
+    blue = ((percentage / 75.0) * (76 - 22)) + 22
     fg = '#fff'
 
   # Black
   #   000 000 000    #0
   else:
     # Tests did run.
-    red = 0
+    red   = 0
     green = 0
+    blue  = 0
     fg = '#fff'
 
-  return fg, '#{:02X}{:02X}00'.format(int(red), int(green))
+  return fg, '#{:02X}{:02X}{:02X}'.format(int(red), int(green), int(blue))
 
 ################################################################################
 # Create the work path, if necessary, and copy the digest event into the tree.
