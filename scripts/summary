@@ -29,6 +29,7 @@
 import sys
 import os
 import datetime
+import json
 import flod
 
 template_header="""<!DOCTYPE html>
@@ -122,6 +123,106 @@ template_footer="""
 """
 
 ################################################################################
+def which_color(percentage):
+  # Only 100% is green.
+  if percentage >= 100.0:
+    return '#080', '#d2ffa2'
+
+  # Yellow
+  #   255 255 153    #99
+  #   216 178 178    #90
+  elif percentage > 90.0:
+    red   = (((percentage - 90.0) / 10.0) * (255 - 216) + 216)
+    green = (((percentage - 90.0) / 10.0) * (255 - 178) + 178)
+    blue  = (((percentage - 90.0) / 10.0) * (153 - 178) + 178)
+    fg = '#000'
+
+  # Red
+  #   216 178 178    #90
+  #   216  76  76    #75
+  elif percentage > 75.0:
+    red = 216
+    green = (((percentage - 75.0) / 15.0) * (178 - 76) + 76)
+    blue  = (((percentage - 75.0) / 15.0) * (178 - 76) + 76)
+    fg = '#000'
+
+  # Brown
+  #   216 76 76      #75
+  #   64  22 22      #0
+  elif percentage > 0.0:
+    red   = ((percentage / 75.0) * (216 - 64)) + 64
+    green = ((percentage / 75.0) * (76 - 22)) + 22
+    blue = ((percentage / 75.0) * (76 - 22)) + 22
+    fg = '#fff'
+
+  # Black
+  #   000 000 000    #0
+  else:
+    # Tests did run.
+    red   = 0
+    green = 0
+    blue  = 0
+    fg = '#fff'
+
+  return fg, '#{:02X}{:02X}{:02X}'.format(int(red), int(green), int(blue))
+
+################################################################################
+def findLatestCommit(commit_dir):
+  latest_commit = None
+  for commit in os.listdir(commit_dir):
+    if len(commit) == 40: # Length of a SHA1.
+      commit_json_file = os.path.join(commit_dir, commit, 'commit.json')
+      with open(commit_json_file) as fh:
+        commit_json = json.load(fh)
+
+      if latest_commit == None or int(commit_json['timestamp']) > int(latest_commit['timestamp']):
+        latest_commit = commit_json
+
+  return latest_commit
+
+################################################################################
+# Summarize from the platform results we have, not the set of platforms we
+# expect. This is subtly different from the report script.
+def summarizeCommit(commit):
+  warnings = 0
+  errors   = 0
+  expected = 0
+  failed   = 0
+  skipped  = 0
+  passed   = 0
+  funky    = 0
+  clean    = 0
+  for platform in commit['platforms']:
+    warnings += int(commit['platforms'][platform]['warnings'])
+    errors   += int(commit['platforms'][platform]['errors'])
+    expected += int(commit['platforms'][platform]['expected'])
+    failed   += int(commit['platforms'][platform]['failed'])
+    skipped  += int(commit['platforms'][platform]['skipped'])
+    passed   += int(commit['platforms'][platform]['passed'])
+    funky    += int(commit['platforms'][platform]['funky'])
+    clean    += int(commit['platforms'][platform]['clean'])
+
+  if funky:
+    return '<span class="flod-commit-funky">Funky</span>'
+
+  if clean:
+    return '<span class="flod-commit-clean">Clean</span>'
+
+  message = '&nbsp;'
+  if errors:
+    message += 'E'
+
+  if warnings:
+    message += 'W'
+
+  percentage = 0
+  if expected > 0:
+    percentage = (100.0 * (passed + skipped)) / expected
+
+  fg, bg = which_color(percentage);
+  return '<span style="color:{}; background-color:{};">{}</span>'.format (fg, bg, message)
+
+################################################################################
 # Create the index.html fiŀe.
 def writeReport(base_dir):
   report_file = '{}/index.html'.format(base_dir)
@@ -132,15 +233,18 @@ def writeReport(base_dir):
       if project.endswith('.html'):
         continue
 
-      report.write("            <tr>\n")
-      report.write("              <td>{}</td>\n".format(project))
-      report.write("              <td>\n")
-
       branch_dir = os.path.join(base_dir, project)
       for branch in sorted(os.listdir(branch_dir)):
-        report.write("                <a href=\"/{0}.{1}.html\">{1}</a><br />\n".format(project, branch))
-      report.write("              </td>\n")
-      report.write("            </tr>\n")
+        report.write("            <tr>\n")
+        report.write("              <td>{}</td>\n".format(project))
+        report.write("              <td><a href=\"/{0}.{1}.html\">{1}</a></td>\n".format(project, branch))
+
+        # Write latest commit summary.
+        summary = summarizeCommit(findLatestCommit(os.path.join(branch_dir, branch)))
+        report.write("              <td>{}</td>\n".format(summary))
+        report.write("            </tr>\n")
+
+        # TODO Offer tarball link
 
     report.write(template_copyright.format(datetime.datetime.now().year))
     report.write(template_footer)
@@ -160,10 +264,6 @@ def publishReport(config, report_file):
 # Reduces a result event to a summarized digest event.
 def main():
   config = flod.Config()
-
-  # Obtain platform names.
-#  platforms = [name[0][9:-12] for name in config.items() if name[0].startswith('platform.') and name[0].endswith('description')]
-#  print '# platforms', platforms
 
   # Scan and look for clean/funky commits.
   report_file = writeReport(config.get('work.dir'))
