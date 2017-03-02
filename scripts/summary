@@ -218,7 +218,7 @@ def summarizeCommit(commit):
   percentage = 0
   if expected > 0:
     percentage = (100.0 * (passed + skipped)) / expected
-    message += ' {}% '.format(percentage)
+    message += ' {:.2%} '.format(percentage)
   else:
     message += ' Failed '
 
