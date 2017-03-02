@@ -205,19 +205,22 @@ def summarizeCommit(commit):
   if funky:
     return '<span class="flod-commit-funky">Funky</span>'
 
-  if clean:
+  if clean == len(commit['platforms']):
     return '<span class="flod-commit-clean">Clean</span>'
 
   message = '&nbsp;'
   if errors:
-    message += 'E'
+    message += ' E'
 
   if warnings:
-    message += 'W'
+    message += ' W'
 
   percentage = 0
   if expected > 0:
     percentage = (100.0 * (passed + skipped)) / expected
+    message += ' {}% '.format(percentage)
+  else:
+    message += ' Failed '
 
   fg, bg = which_color(percentage);
   return '<span style="color:{}; background-color:{};">{}</span>'.format (fg, bg, message)
