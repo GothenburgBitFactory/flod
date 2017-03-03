@@ -29,6 +29,7 @@
 #include <Args.h>
 #include <Q.h>
 #include <Log.h>
+#include <format.h>
 #include <shared.h>
 #include <set>
 #include <string>
@@ -46,7 +47,7 @@ void manageQueue (
   Configuration config,
   bool exit_on_idle)
 {
-  log->format ("%s Startup thread 0x%08x", name.c_str (), std::this_thread::get_id ());
+  log->write (format ("{1} Startup thread {2}", name, std::this_thread::get_id ()));
 
   auto location = getQueueLocation (config, name);
   auto archive  = config.getBoolean ("queue." + name + ".archive");
@@ -57,7 +58,7 @@ void manageQueue (
   auto hookNames = getHookScriptNames (config, name);
   if (hookNames.size () == 0)
   {
-    log->format ("%s Exit thread 0x%08x no hooks", name.c_str (), std::this_thread::get_id ());
+    log->write (format ("{1} Exit thread {2} no hooks", name, std::this_thread::get_id ()));
     return;
   }
 
@@ -84,27 +85,27 @@ void manageQueue (
         {
           // TODO Timeout the execute call.
 
-          log->format ("%s --> %s %s", name.c_str (), script.c_str (), event.c_str ());
+          log->write (format ("{1} --> {2} {3}", name, script, event));
 
           std::string output;
           if (execute (script, {event}, "", output) == 0)
           {
             // TODO Debug mode perhaps.
-            //log->format ("%s --> %s success", name.c_str (), script.c_str ());
+            //log->write (format ("{1} --> {2} success", name, script));
           }
           else
           {
             success = false;
-            log->format ("%s --> %s failed", name.c_str (), script.c_str ());
+            log->write (format ("{1} --> {2} failed", name, script));
           }
 
           // Only show non-trivial output.
           if (output != "")
-            log->format ("%s --> %s: %s", name.c_str (), script.c_str (), output.c_str ());
+            log->write (format ("{1} --> {2}: {3}", name, script, output), true);
         }
         catch (std::string& e)
         {
-          log->format ("%s Error %s", name.c_str (), e.c_str ());
+          log->write (format ("{1} Error {2}", name, e));
           success = false;
         }
       }
@@ -127,12 +128,12 @@ void manageQueue (
         break;
 
       // TODO Debug mode perhaps?
-      //log->format ("%s Idle thread 0x%08x", name.c_str (), std::this_thread::get_id ());
+      //log->write (format ("{1} Idle thread {2}", name, std::this_thread::get_id ()));
       std::this_thread::sleep_for (wait);
     }
   }
 
-  log->format ("%s Exit thread 0x%08x idle", name.c_str (), std::this_thread::get_id ());
+  log->write (format ("{1} Exit thread {2} idle", name, std::this_thread::get_id ()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

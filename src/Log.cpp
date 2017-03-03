@@ -99,23 +99,6 @@ void Log::write (const std::string& line, bool multiline /* = false */)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Log::format (const char* message, ...)
-{
-  // Crude and mostly ineffective check for buffer overrun.
-  if (::strlen (message) >= 65536)
-    throw std::string ("ERROR: Data exceeds 65,536 bytes.  Break data into smaller chunks.");
-
-  char buffer[65536];
-  va_list args;
-  va_start (args, message);
-  vsnprintf (buffer, 65536, message, args);
-  va_end (args);
-
-  std::string copy = buffer;
-  write (copy);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 std::string Log::timestamp ()
 {
   struct timeval nowus;

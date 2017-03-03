@@ -38,7 +38,6 @@ public:
   ~Log ();
   void setFile (const std::string&);
   void write (const std::string&, bool multiline = false);
-  void format (const char*, ...);
 
 private:
   std::string timestamp ();
