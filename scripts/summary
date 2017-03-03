@@ -83,7 +83,7 @@ template_header="""<!DOCTYPE html>
       <div class="col-md-8 main">
         <div class="row">
           <h2></h2>
-          <table class="table">
+          <table class="table table-condensed">
 """
 
 template_copyright="""
@@ -215,10 +215,12 @@ def summarizeCommit(commit):
   if warnings:
     message += ' W'
 
+  fraction = 0
   percentage = 0
   if expected > 0:
-    percentage = (100.0 * (passed + skipped)) / expected
-    message += ' {:.2%} '.format(percentage)
+    fraction = (1.0 * (passed + skipped)) / expected
+    percentage = 100.0 * fraction
+    message += ' {:.2%} '.format(fraction)
   else:
     message += ' Failed '
 
