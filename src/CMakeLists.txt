@@ -4,8 +4,7 @@ include_directories (${CMAKE_SOURCE_DIR}
                      ${CMAKE_SOURCE_DIR}/src/libshared/src
                      ${FLOD_INCLUDE_DIRS})
 
-set (flod_SRCS Log.cpp     Log.h
-               Q.cpp       Q.h
+set (flod_SRCS Q.cpp Q.h
                clear.cpp
                config.cpp
                create.cpp
@@ -25,6 +24,7 @@ set (libshared_SRCS libshared/src/Args.cpp          libshared/src/Args.h
                     libshared/src/Configuration.cpp libshared/src/Configuration.h
                     libshared/src/FS.cpp            libshared/src/FS.h
                     libshared/src/JSON.cpp          libshared/src/JSON.h
+                    libshared/src/Log.cpp           libshared/src/Log.h
                     libshared/src/Pig.cpp           libshared/src/Pig.h
                     libshared/src/Table.cpp         libshared/src/Table.h
                     libshared/src/format.cpp        libshared/src/format.h

@@ -101,7 +101,7 @@ void manageQueue (
 
           // Only show non-trivial output.
           if (output != "")
-            log->write (format ("{1} --> {2}: {3}", name, script, output), true);
+            log->write (format ("{1} --> {2}: {3}", name, script, output));
         }
         catch (std::string& e)
         {
@@ -153,7 +153,7 @@ void handleProcess (
   // Log file override.
   std::shared_ptr <Log> log = std::make_shared <Log> ();
   if (config.has ("log.file"))
-    log->setFile (config.get ("log.file"));
+    log->file (config.get ("log.file"));
 
   log->write (std::string ("=== ") + PACKAGE_STRING + " ===");
   log->write ("Processing begin");
