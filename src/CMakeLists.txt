@@ -22,6 +22,7 @@ set (flod_SRCS Q.cpp Q.h
 set (libshared_SRCS libshared/src/Args.cpp          libshared/src/Args.h
                     libshared/src/Color.cpp         libshared/src/Color.h
                     libshared/src/Configuration.cpp libshared/src/Configuration.h
+                    libshared/src/Datetime.cpp      libshared/src/Datetime.h
                     libshared/src/FS.cpp            libshared/src/FS.h
                     libshared/src/JSON.cpp          libshared/src/JSON.h
                     libshared/src/Log.cpp           libshared/src/Log.h
