@@ -244,8 +244,11 @@ def writeReport(base_dir):
         report.write("              <td>{}</td>\n".format(project))
         report.write("              <td><a href=\"/{0}.{1}.html\">{1}</a></td>\n".format(project, branch))
 
+        commit = findLatestCommit(os.path.join(branch_dir, branch))
+        report.write("              <td>{}</td>".format(commit))
+
         # Write latest commit summary.
-        summary = summarizeCommit(findLatestCommit(os.path.join(branch_dir, branch)))
+        summary = summarizeCommit(commit)
         report.write("              <td>{}</td>\n".format(summary))
         report.write("            </tr>\n")
 
