@@ -253,8 +253,7 @@ def writeReport(base_dir):
 
         commit = findLatestCommit(os.path.join(branch_dir, branch))
         report.write("              <td>{}</td>\n".format(commit['commit'][:8]))
-        #report.write("              <td>{}</td>\n".format(datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()))
-        report.write("              <td>{}</td>\n".format(commit['timestamp']))
+        report.write("              <td>{}</td>\n".format(datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()))
 
         # Write latest commit summary.
         summary = summarizeCommit(commit)
