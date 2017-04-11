@@ -73,7 +73,7 @@ template_header="""<!DOCTYPE html>
 
   <body>
     <div class="flod-header flod-large">
-      <a href="https://cen.tasktools.org"><img src="/images/flod-m.png" alt="Flod"></a>
+      <a href="https://central.tasktools.org"><img src="/images/flod-m.png" alt="Flod"></a>
       <strong>&nbsp;FLOD Testing</strong> | All projects
     </div>
 
