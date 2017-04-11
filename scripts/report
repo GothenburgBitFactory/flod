@@ -305,11 +305,11 @@ def composeCommitDescription(config, project, commit):
     commit_url += '/commit/{}'.format(commit['commit'])
     link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
 
-  # BitBucket: https://git.tasktools.org/projects/tm/repos/task/commits/00a4cbf906901a13a10e1e5459db42813e3595ca
+  # Gitea:     https://git.tasktools.org/TM/task/commit/9fe77ab5b5daf8529985121b7fad42cddac7595e
   elif 'git.tasktools.org' in commit['repository']:
     project_name = project.replace('.git', '')
     commit_url = commit['repository'].replace('/scm/', '/projects/')
-    commit_url = commit_url.replace('/{}.git'.format(project_name), '/repos/{}/commits/{}/'.format(project_name, commit['commit']))
+    commit_url = commit_url.replace('/{}.git'.format(project_name), '/{}/commit/'.format(project_name, commit['commit']))
     link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
 
   else:
