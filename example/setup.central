@@ -11,7 +11,7 @@ mkdir work
 ../../src/central config --force work.dir $PWD/work            # Report files.
 ../../src/central config --force report.length 50              # Report cuts off at 50 commits, default 50
 ../../src/central config --force commit.locked 30              # Commits lock after 30 days, default 30
-../../src/central config --force report.destination cen.tasktools.org:/path/to/central/reports
+../../src/central config --force report.destination central.tasktools.org:/path/to/central/reports
 
 # Project-specific.
 ../../src/central config --force project.dev.description       'Example repository for demo purposes'
