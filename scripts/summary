@@ -256,6 +256,7 @@ def writeReport(base_dir):
         #report.write("              <td>{}</td>\n".format(datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()))
         report.write("              <td>{}</td>\n".format(commit['timestamp']))
 
+
         # Write latest commit summary.
         summary = summarizeCommit(commit)
         report.write("              <td>{}</td>\n".format(summary))
