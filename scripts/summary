@@ -84,6 +84,13 @@ template_header="""<!DOCTYPE html>
         <div class="row">
           <h2></h2>
           <table class="table table-condensed">
+            <tr>
+              <th>Project</th>
+              <th>Branch</th>
+              <th>Latest</th>
+              <th>Time</th>
+              <th>Status</th>
+            </tr>
 """
 
 template_copyright="""
