@@ -245,7 +245,7 @@ def writeReport(base_dir):
         report.write("              <td><a href=\"/{0}.{1}.html\">{1}</a></td>\n".format(project, branch))
 
         commit = findLatestCommit(os.path.join(branch_dir, branch))
-        report.write("              <td>{}</td>\n".format(commit['commit']))
+        report.write("              <td>{}</td>\n".format(commit['commit'][:8]))
         report.write("              <td>{}</td>\n".format(datetime.datetime.utcfromtimestamp(int(commit['timestamp'])).isoformat()))
 
         # Write latest commit summary.
