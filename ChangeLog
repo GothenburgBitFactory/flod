@@ -7,6 +7,7 @@
           (thanks to hosaka).
 - Added libshared.git as a submodule.
 - Rewritten to address performance, security and functionality.
+- Added summary report.
 
 ------ current release ---------------------------
 ------ old releases ------------------------------
