@@ -95,7 +95,7 @@ If the commit result across all platforms is considered good, then a 'clean'
 event is posted.
 
 The second is the summary script, which creates the overall summary page you
-see on https://cen.tasktools.org. This too is added as payload to a
+see on https://central.tasktools.org. This too is added as payload to a
 report, which is referenced in a publish event.
 
 
