@@ -22,6 +22,7 @@ functionality that implements the complex workflow of CI.
 
 ## Workflow
 
+```
    git        +------+      +------+      +------+      +------+      +------+      +-------+
    commit --> |change| -+-> |build | -+-> |result| ---> |digest| -+-> |clean | -+-> |publish|
               |      |  |   | P1   |  |   |      |      |      |  |   |      |  |   |       |
@@ -36,6 +37,7 @@ functionality that implements the complex workflow of CI.
                         +-> |build | -+
                             | P3   |
                             +------+
+```
 
 ## Git: commit
 
