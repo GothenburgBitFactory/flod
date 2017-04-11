@@ -299,17 +299,10 @@ def composeCommitDescription(config, project, commit):
     locked = ' <span class="badge"><span class="glyphicon glyphiconicon-lock glyphicon-white"></span> Locked</span>'
 
   # Gitea: https://vostok.tasktools.org/TM/task/commit/1c1d9428c52250bc244edd509e9316e6c24fdd47
-  if 'vostok.tasktools.org' in commit['repository']:
+  if 'git.tasktools.org' in commit['repository']:
     project_name = project.replace('.git', '')
     commit_url = commit['repository'].replace('.git', '')
     commit_url += '/commit/{}'.format(commit['commit'])
-    link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
-
-  # Gitea:     https://git.tasktools.org/TM/task/commit/9fe77ab5b5daf8529985121b7fad42cddac7595e
-  elif 'git.tasktools.org' in commit['repository']:
-    project_name = project.replace('.git', '')
-    commit_url = commit['repository'].replace('/scm/', '/projects/')
-    commit_url = commit_url.replace('/{}.git'.format(project_name), '/{}/commit/'.format(project_name, commit['commit']))
     link = '<a href="{}">{}</a>{}'.format(commit_url, commit['commit'][:8], locked)
 
   else:
