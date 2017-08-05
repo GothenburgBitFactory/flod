@@ -348,7 +348,7 @@ def composePlatformResult(platform, commit):
   html += '                  <div>\n'
 
   if percentage >= 100.0:
-    html += '                    <strong>100% {}</strong>\n'.format(good)
+    html += '                    <strong>100%</strong> {}\n'.format(good)
   else:
     html += '                    <strong>{:.2f}%</strong> {}/{}\n'.format(percentage, good, expected)
 
