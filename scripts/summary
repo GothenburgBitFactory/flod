@@ -86,7 +86,6 @@ template_header="""<!DOCTYPE html>
           <table class="table table-condensed">
             <tr>
               <th>Project</th>
-              <th>Branch</th>
               <th>Latest</th>
               <th>Time</th>
               <th>Status</th>
@@ -248,8 +247,7 @@ def writeReport(base_dir):
       branch_dir = os.path.join(base_dir, project)
       for branch in sorted(os.listdir(branch_dir)):
         report.write("            <tr>\n")
-        report.write("              <td>{}</td>\n".format(project))
-        report.write("              <td><a href=\"/{0}.{1}.html\">{1}</a></td>\n".format(project, branch))
+        report.write("              <td><a href=\"/{0}.{1}.html\">{0} {1}</a></td>\n".format(project, branch))
 
         commit = findLatestCommit(os.path.join(branch_dir, branch))
         report.write("              <td>{}</td>\n".format(commit['commit'][:8]))
