@@ -407,7 +407,7 @@ def writeReport(config, event, all_commits):
         <div class="row">
           <br />
 
-          <table>
+          <table class="results">
             <thead>
               <tr>
                 <th />\n""")
