@@ -360,7 +360,7 @@ def composePlatformResult(platform, commit):
   if int(commit['platforms'][platform]['warnings']) > 0 or \
      int(commit['platforms'][platform]['errors'])   > 0 or \
      int(commit['platforms'][platform]['failed'])   > 0:
-    control = ' data-toggle="collapse"; data-target="#log{}{}";'.format(commit['commit'][:8], platform)
+    control = ' data-toggle="collapse" data-target="#log{}{}"'.format(commit['commit'][:8], platform)
 
     if int(commit['platforms'][platform]['warnings']) > 0:
       warning_indicator = '<span class="label label-warning">W</span>'
@@ -438,7 +438,7 @@ def writeReport(config, event, all_commits):
         if platform in commit['platforms']:
           report.write (composePlatformResult(platform, commit))
         else:
-          report.write('                <td />\n')
+          report.write('                <td></td>\n')
       report.write('              </tr>\n')
 
     # Write summary commit count.
