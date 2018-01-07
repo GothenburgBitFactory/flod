@@ -103,18 +103,18 @@ template_footer="""
                 top: $(".flod-header").height(),
                 position: 'fixed'
             });
-    
+
             $(".results thead tr th").each(function () {
                 $(this).click(function() {
                     setTimeout(function () {
                         $(".results thead tr.size-row").height($(".results thead tr").height())
                         console.log( "first size-row:  " + $(".results thead tr.size-row").height() );
                         console.log( "first table:     " + $(".results thead tr").height() );
-    
+
                     }, 500);
                 })
             });
-    
+
             $("td[data-toggle=collapse]").each(function () {
                 $(this).click(function () {
                     setTimeout(function () {
