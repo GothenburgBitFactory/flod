@@ -52,7 +52,7 @@ template_header="""<!DOCTYPE html>
       /* "foo" element, "#foo ID, ".foo" class */
       html                   {position:relative; min-height:100%;}
       body                   {color:#bbb; background-color:#222; margin-top:60px; margin-bottom:80px; z-index:1}
-      th                     {border:3px solid #222; margin:4px; color:#bbb; padding:2px;}
+      th                     {border:3px solid #222; margin:4px; color:#bbb; padding:2px;  background-color:#222;}
       td                     {border:3px solid #222; margin:4px;             padding:2px;}
       a:link, a:visited      {color:#bbb;}
       a:hover                {color:#ddd;}
@@ -96,6 +96,35 @@ template_copyright="""
 template_footer="""
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.0.3/jquery.floatThead.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('table.results').floatThead({
+                top: $(".flod-header").height(),
+                position: 'fixed'
+            });
+    
+            $(".results thead tr th").each(function () {
+                $(this).click(function() {
+                    setTimeout(function () {
+                        $(".results thead tr.size-row").height($(".results thead tr").height())
+                        console.log( "first size-row:  " + $(".results thead tr.size-row").height() );
+                        console.log( "first table:     " + $(".results thead tr").height() );
+    
+                    }, 500);
+                })
+            });
+    
+            $("td[data-toggle=collapse]").each(function () {
+                $(this).click(function () {
+                    setTimeout(function () {
+                        $('table.results').floatThead();
+                        $('table.results').floatThead('reflow');
+                    }, 500);
+                });
+            });
+        });
+    </script>
 
     <!-- Piwik -->
     <script type="text/javascript">
