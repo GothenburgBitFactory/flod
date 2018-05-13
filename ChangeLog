@@ -12,6 +12,8 @@
 - Added libshared.git as a submodule.
 - Rewritten to address performance, security and functionality.
 - Added summary report.
+- Build requests now contain mapped dependency binaries. This allows for
+  configuration to specify 'cmake3' on CentOS7.
 
 ------ current release ---------------------------
 ------ old releases ------------------------------
