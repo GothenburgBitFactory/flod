@@ -14,6 +14,7 @@
 - Added summary report.
 - Build requests now contain mapped dependency binaries. This allows for
   configuration to specify 'cmake3' on CentOS7.
+- Added support for Github commit links.
 
 ------ current release ---------------------------
 ------ old releases ------------------------------
