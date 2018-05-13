@@ -41,6 +41,7 @@ public:
   bool destroy (bool force = false);
   bool scan (std::string&);
   void post (const std::string&) const;
+  int cleanup () const;
 
   std::string activateEvent (const std::string&) const;
   void archiveEvent (const std::string&) const;

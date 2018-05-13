@@ -26,6 +26,7 @@
 
 #include <cmake.h>
 #include <Q.h>
+#include <Datetime.h>
 #include <shared.h>
 #include <sstream>
 #include <iomanip>
@@ -198,6 +199,31 @@ std::vector <std::string> Q::events (const std::string& path) const
       events.push_back (entry);
 
   return events;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Scans the queue for events to remove.
+int Q::cleanup () const
+{
+  // Count the removals.
+  int count = 0;
+
+  // Calculate epoch 30 days ago.
+  Datetime now;
+  now -= 30 * 86400;
+  auto one_month_ago = now.toEpoch ();
+
+  for (const auto& entry : archive ())
+  {
+    File item (entry);
+    if (item.mtime () < one_month_ago)
+    {
+      //item.remove ();
+      ++count;
+    }
+  }
+
+  return count;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
