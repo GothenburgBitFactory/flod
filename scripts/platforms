@@ -65,6 +65,7 @@ def main(event_file):
     for dependency in config.get('project.{}.dependencies'.format(project)).split(','):
       mapped = config.get('platform.{0}.pkg.{1}'.format(platform, dependency))
       if mapped:
+        build.header('platform.pkg.{}'.format(dependency), mapped)
         dependencies.append(mapped)
     build.header('platform.dependencies', ','.join(dependencies))
 
