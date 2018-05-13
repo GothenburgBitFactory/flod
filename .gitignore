@@ -7,3 +7,4 @@ CPackConfig.cmake
 CPackSourceConfig.cmake
 cmake.h
 common-1.0-prefix
+patches/*
