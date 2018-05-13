@@ -178,7 +178,6 @@ def findLatestCommit(commit_dir):
   for commit in os.listdir(commit_dir):
     if len(commit) == 40: # Length of a SHA1.
       commit_json_file = os.path.join(commit_dir, commit, 'commit.json')
-      print('# findLatestCommit commit_json_file {}'.format(commit_json_file))
       with open(commit_json_file) as fh:
         commit_json = json.load(fh)
 
@@ -238,7 +237,6 @@ def summarizeCommit(commit):
 # Create the index.html fiŀe.
 def writeReport(base_dir):
   report_file = '{}/index.html'.format(base_dir)
-  print('# writeReport report_file {}'.format(report_file))
   with open(report_file, 'w') as report:
     report.write(template_header)
 
@@ -269,7 +267,6 @@ def writeReport(base_dir):
 ################################################################################
 # Publish the report file.
 def publishReport(config, report_file):
-  print('# publishReport report_file {}'.format(report_file))
   publish_event = flod.Event()
   publish_event.header('from', report_file)
   publish_event.header('to', os.path.join(config.get('report.destination'), 'index.html'))
